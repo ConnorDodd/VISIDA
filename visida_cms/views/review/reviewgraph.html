@@ -1,0 +1,260 @@
+<script src="../node_modules/jquery-csv/src/jquery.csv.min.js"></script>
+<script src="../node_modules/chart.js/dist/Chart.min.js"></script>
+<div id="content" ng-controller="graphController" class="container-fluid" style="margin-left: 40px;">
+	<div class="row content">
+		<div class="col-xs-12">
+			<span class="page-head h3">Explore Intake</span>
+			<span class="glyphicon glyphicon-refresh glyph-md {{ (loading > 0) && 'loading-run' || 'loading-done' }}" style="margin-left: 15px;"></span>
+			<hr class="head-hr">
+		</div>
+		<div class="col-xs-12">
+			<div class="form-inline" style="padding: 5px 0px 8px 0px;">
+				<div class="form-group">
+					<label for="sStudy">Study:</label>
+					<div style="padding: 0; display: inline-block; width: 200px;">
+						<select id="sStudy" chosen data-placeholder-text-single="'Select study'" no-results-text="'No matching studies'" ng-model="selectedStudy"
+							class="item-name align-middle" ng-options="s.id as s.name for s in searchConfig.studies" ng-change="studyChanged()" style="width: 100%"><!--  -->
+							<option value="">Any</option>
+						</select>
+						
+					</div>
+					<!-- <select id="sStudy" name="sStudy" ng-model="selectedStudy" class="form-control btn-pulse" ng-change="studyChanged()"  ng-options="s.id as s.name for s in searchConfig.studies">
+					</select> -->
+				</div>
+				<div class="form-group" style="margin-left: 10px;">
+					<label for="sHousehold">Household:</label>
+					<div style="padding: 0; display: inline-block; width: 200px;">
+						<select id="sHousehold" chosen data-placeholder-text-single="'Select household'" no-results-text="'No matching households'" ng-model="selectedHousehold"
+							class="item-name align-middle" style="width: 100%" ng-change="householdChanged()"><!-- ng-options="h.name as h.name for h in searchHouseholds"  -->
+							<option value="">Any</option>
+							<option ng-repeat="h in searchHouseholds" value="{{h.name}}">{{h.name}}</option>
+						</select>
+					</div>
+					<!-- <select id="sHousehold" name="sHousehold" ng-model="selectedHousehold" class="form-control" ng-change="householdChanged()" >
+						<option value="">Any</option>
+						<option ng-repeat="hh in searchHouseholds" value="{{ hh.name }}">{{ hh.name }}</option>
+					</select> -->
+				</div>
+				<!-- <div class="form-group" style="margin-left: 10px;">
+					<label for="member">Member:</label>
+					<select id="member" name="member" ng-model="selectedMember" class="form-control" ng-options="m.id as m.participantId for m in searchMembers" ng-change="memberChanged(selectedMember)">
+						<option value="">Any</option>
+					</select>
+				</div> -->
+				<button class="btn btn-primary btn-sm" style="margin-left: 20px;" ng-click="search()" ng-disabled="!selectedHousehold">Search</button>
+				<button class="btn btn-standard btn-sm" data-toggle="modal" data-target="#columnModal" style="margin-left: 20px;">Choose Columns</button>
+			</div>
+			<div ng-show="studyDetails">
+				<span class="text-danger" ng-if="!studyDetails.rdaModel">There is no model set for the selected study. You can update this <a target="_blank" href="#!/admin/study?id={{study.id}}">here.</a></span>
+				<span ng-if="studyDetails.rdaModel">Currently using the RDI model <span style="font-weight: bold;">{{studyDetails.rdaModel.name}}</span>. You can change this <a target="_blank" href="#!/admin/study?id={{study.id}}">here.</a></span>
+			</div>
+			<hr class="head-hr">
+		</div>
+		<div class="col-xs-12" ng-show="members">
+			<div style="margin-right: 16px;" class="graph-table-div">
+				<table id="graph-result-head" class="graph-table">
+					<thead>
+						<tr>
+							<th style="width: 20px; min-width: 20px;"></th>
+							<th>Date</th>
+							<!-- <th></th> -->
+							<th>Food Weight (g)</th>
+							<th ng-repeat="col in fctConfig" ng-if="col.valid && col.show">{{ col.external }}</th>
+						</tr>
+					</thead>
+				</table>
+			</div>
+			<div style="height: 400px;" class="graph-table-div">
+				<table style="height: 100%;" id="graph-result-table" class="graph-table" onscroll="document.getElementById('graph-result-head').scrollLeft = this.scrollLeft;">
+				</table>
+			</div>
+			<hr class="head-hr">
+		</div>
+		<div class="col-xs-12" ng-show="members" style="display: none;">
+			<p>
+				Select a row from the table above to view comparisons to recommended daily intake, food groups and nutrient breakdowns.<br/><br/>
+				The table on the left displays the percentage of recommended daily intake of each nutrient, for the selected row in the table. If an average row is selected, the average for all dates with a ticked checkbox will be used.<br/>
+				The table on the right displays the food groups consumed over the selection period.<br/>
+				Click on a nutrient in the bar graph to show a breakdown of the food groups contributing to that nutrient. Click on a segment in any of the pie graphs to dive down and view sub-groups within the selected food group. Clicking on the arrow under a pie graph will move you back up toward the root view. 
+			</p>
+			<hr class="head-hr">
+		</div>
+		<!-- <div class="col-xs-12 graph-table-div" ng-show="members">
+			<table class="graph-table">
+				<thead>
+					<tr>
+						<th></th>
+						<th></th>
+						<th ng-repeat="col in fctConfig" ng-if="col.valid && col.show">{{ col.external }}</th>
+					</tr>
+				</thead>
+				<tbody ng-repeat="m in members">
+					<tr>
+						<td style="font-weight: bold" colspan="100%">{{ m.participantId }}</td>
+					</tr>
+					<tr id="table-row-{{ row.rowId }}" ng-repeat="row in m.rows" role="button" ng-click="graphRow(row, m.participantId)">
+						<th><input type="checkbox" name=""></th>
+						<td>{{ row.date | date : 'dd/MM/yyyy' }}</td>
+						<td ng-repeat="col in fctConfig" ng-if="col.valid && col.show">{{ row[col.internal] | number:2 }}</td>
+					</tr>
+					<tr id="table-row-{{ m.average.rowId }}" role="button" ng-click="graphRow(m.average, m.participantId)" style="font-weight: bolder;">
+						<th></th>
+						<td style="font-style: italic;">Average</td>
+						<td ng-repeat="col in fctConfig" ng-if="col.valid && col.show">{{ m.average[col.internal] | number:2 }}</td>
+					</tr>
+				</tbody>
+				<tr id="table-row-{{ tAverage.rowId }}" role="button" ng-click="graphRow(tAverage)" style="background-color: #bcbcbc; font-weight: bold;">
+					<th></th>
+					<td style="font-weight: bold;">Total Avg</td>
+					<td ng-repeat="col in fctConfig" ng-if="col.valid && col.show">{{ tAverage[col.internal] | number:2 }}</td>
+				</tr>
+			</table>
+			<hr class="head-hr">
+		</div> -->
+		<div class="col-xs-12 col-md-6">
+			<span class="text-danger" ng-if="rdaError">{{rdaError}}</span>
+			<div id="rda-chart-container" style="margin:0; padding: 0; position: relative; height: 600px; width: 595px;">
+				<canvas id="chart-area-rda"></canvas>
+			</div>
+			<!-- <div style="text-align: center; font-size: smaller; color: #6f6f6f;" ng-if="selectedDateRowMember">
+				<span style="font-weight: bolder;">{{selectedDateRow.isAverage ? 'Average' : selectedDateRow.date }}: </span><span>{{ selectedDateRowMember.participantId }} {{selectedDateRowMember.age}}yrs old {{ selectedDateRowMember.isFemale ? 'Female' : 'Male' }}</span>
+				<span ng-if="selectedDateRowMember.age < 5" style="font-style: italic;">Is Breastfed: {{ selectedDateRowMember.isBreastfed ? 'Yes' : 'No' }}</span>
+				<span ng-if="selectedDateRowMember.lifeStage" style="font-style: italic;">Lifestage: {{ selectedDateRowMember.lifeStage }}</span>
+			</div> -->
+		</div>
+		<div class="col-xs-12 col-md-6">
+			<div id="left-chart-container" style="margin:0; padding: 0;">
+				<canvas id="chart-area-left"></canvas>
+			</div>
+			<div style="text-align: center;" ng-if="zoomLevel > 2" role="button" ng-click="unzoomFoodGroup()">
+				<span>Displaying subgroups of {{filterLabel}}</span><br/>
+				<span><span class="glyphicon glyphicon-arrow-left"/> Up one level</span>
+			</div>
+		</div>
+		<div class="col-xs-12 row" class="nutrient-graph-display" ng-if="rdaChart">
+			<div class="col-xs-2" style="height: 600px; padding-top: 20px;">
+				<span style="font-weight: bold; font-size: 1.4em;">Nutrient sources:</span>
+				<ul class="nutrient-display-selector">
+					<li ng-repeat="col in fctConfig" ng-if="col.valid && col.show">
+						<input type="checkbox" id="nutrient-display-{{col.internal}}" name="nutrient-display-{{col.internal}}" ng-model="nutrientSelector[col.internal]" ng-init="nutrientSelector[col.internal] = false;" ng-change="nutrientClickedCheckboxHandler(col.internal)">
+						<label for="nutrient-display-{{col.internal}}">{{col.external}}</label>
+					</li>
+				</ul>
+			</div>
+			<div class="col-xs-10 row">
+				<div class="col-md-3">
+					<div id="nutrient-chart-container-0" style="margin:0; padding: 0; position: relative; height: 600px;">
+						<canvas id="chart-area-nutrient-0"></canvas>
+					</div>
+					<div style="text-align: center;"  ng-if="nutrientGraphs[0] && nutrientGraphs[0].filter" role="button" ng-click="unzoomNutrient(0)">
+						<span>Displaying subgroups of {{nutrientGraphs[0].filterLabel}}</span><br/>
+						<span><span class="glyphicon glyphicon-arrow-left"/> Up one level</span>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div id="nutrient-chart-container-1" style="margin:0; padding: 0; position: relative; height: 600px;">
+						<canvas id="chart-area-nutrient-1"></canvas>
+					</div>
+					<div style="text-align: center;" ng-if="nutrientGraphs[1] && nutrientGraphs[1].filter" role="button" ng-click="unzoomNutrient(1)">
+						<span>Displaying subgroups of {{nutrientGraphs[0].filterLabel}}</span><br/>
+						<span><span class="glyphicon glyphicon-arrow-left"/> Up one level</span>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div id="nutrient-chart-container-2" style="margin:0; padding: 0; position: relative; height: 600px;">
+						<canvas id="chart-area-nutrient-2"></canvas>
+					</div>
+					<div style="text-align: center;" ng-if="nutrientGraphs[2] && nutrientGraphs[2].filter" role="button" ng-click="unzoomNutrient(2)">
+						<span>Displaying subgroups of {{nutrientGraphs[0].filterLabel}}</span><br/>
+						<span><span class="glyphicon glyphicon-arrow-left"/> Up one level</span>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div id="nutrient-chart-container-3" style="margin:0; padding: 0; position: relative; height: 600px;">
+						<canvas id="chart-area-nutrient-3"></canvas>
+					</div>
+					<div style="text-align: center;" ng-if="nutrientGraphs[3] && nutrientGraphs[3].filter" role="button" ng-click="unzoomNutrient(3)">
+						<span>Displaying subgroups of {{nutrientGraphs[0].filterLabel}}</span><br/>
+						<span><span class="glyphicon glyphicon-arrow-left"/> Up one level</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="columnModal" class="container modal fade" role="dialog">
+		<div class="modal-dialog">
+			<!-- Modal content-->
+			<div class="modal-content" style="">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Choose Columns</h4>
+					<p class="text-danger">Column names listed in red are missing food composition data in the assigned food composition database. Affected cells will be highlighted in red and may display incorrect results if used. View by food item to find offending item.</p>
+				</div>
+				<div class="modal-body">
+					<ul>
+						<li><input type="checkbox" ng-change="ColCheckChange(false, showNutrients)" ng-model="showNutrients" ng-init="showNutrients = true"><span style="font-weight: bolder;">Nutrients</span></li>
+						<li>
+							<ul>
+								<li ng-repeat="col in fctConfig" ng-if="col.valid && !col.internal.startsWith('adG')">
+									<input type="checkbox" ng-model="col.show"><span class="{{ col.warning ? 'text-danger' : ''}}" title="{{col.warning}}">{{ col.external }}</span>
+								</li>
+							</ul>
+						</li>
+						<!-- <li><input type="checkbox" ng-change="ColCheckChange(true, showAdg)" ng-model="showAdg" ng-init="showAdg = true"><span style="font-weight: bolder;">Food Groups</span></li>
+						<li>
+							<ul>
+								<li ng-repeat="col in fctConfig" ng-if="col.valid && col.internal.startsWith('adG')">
+									<input type="checkbox" ng-model="col.show"><span class="{{ col.warning ? 'text-danger' : ''}}" title="{{col.warning}}">{{ col.external }}</span>
+								</li>
+							</ul>
+						</li> -->
+					</ul>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="drawTable(data)">Ok</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div style="position: fixed; left: 0; right: 0; background-color: #000000aa; padding: 20px; margin: 0; top: 0; bottom: 0;" class="h-100 row align-items-center float-dialog" ng-show="errorRow" ng-click="loadError()">
+		<div class="floating-form" style="position: relative; padding: 10px;"  ng-click="$event.stopPropagation();">
+			<div style="overflow-y: scroll;">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span class="glyphicon glyphicon-remove btn-glyph glyph-md"></span><!-- &times; --></button>
+					<h4 class="modal-title">Errors</h4>
+					<div style="padding: 5px 0px;">
+						<span class="bold" style="text-align: center;">{{selectedHousehold}}</span><br/>
+						<span>{{errorRow.memberId}}</span><br/>
+						<span>{{errorRow.date}}</span>
+					</div>
+				</div>
+				<div class="modal-body">
+					<ul style="list-style: decimal-leading-zero; padding: 20px;">
+						<li ng-repeat="err in errorRow.errors"><a target="_blank" href="#!image?id={{err.id}}">{{err.desc}}</a></li>
+					</ul>
+				</div>
+			</div>
+			</div>
+		</div>
+	</div>
+	<!-- <div id="errorModal" class="container modal fade" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span class="glyphicon glyphicon-remove btn-glyph glyph-md"></span></button>
+					<h4 class="modal-title">Errors</h4>
+					<div style="padding: 5px 0px;">
+						<span class="bold" style="text-align: center;">{{selectedHousehold}}</span><br/>
+						<span>{{errorRow.memberId}}</span><br/>
+						<span>{{errorRow.date}}</span>
+					</div>
+				</div>
+				<div class="modal-body">
+					<ul style="list-style: decimal-leading-zero; padding: 20px;">
+						<li ng-repeat="err in errorRow.errors"><a target="_blank" href="#!image?id={{err.id}}">{{err.desc}}</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div> -->
+</div>

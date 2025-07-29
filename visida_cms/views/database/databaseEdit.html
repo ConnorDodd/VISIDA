@@ -1,0 +1,67 @@
+<div ng-controller="databaseEditController" class="container-fluid" style="margin-left: 40px;">
+	<div class="row content" style="padding-bottom: 95px;">
+		<div class="col-xs-12 page-head">
+			<span>Food Composition Table</span>
+			<span class="glyphicon glyphicon-refresh glyph-md {{ (loading > 0) && 'loading-run' || 'loading-done' }}" style="margin-left: 15px;"></span>
+			<span class="glyphicon glyphicon-plus glyph-md pull-right" role="button" ng-click="createDatabase()" style="padding-left: 10px;" title="Create"></span>
+			<hr class="head-hr">
+		</div>
+		<div class="col-xs-12">
+			<div ng-show="dbMessage">
+				<small class="text-danger" ng-show="!dbMessage.success">{{ dbMessage.txt }}</small>
+				<small class="text-success" ng-show="dbMessage && dbMessage.success">{{ dbMessage.txt }}</small>
+			</div>
+			<form class="form-inline" ng-submit="upload()"><div class="form-group" style="width: 100%">
+				<input type="file" class="form-control" ngf-accept="'*.csv'" ng-model="file" ngf-select="parse(file)">
+				<label for="table-select">Table :</label>
+				<select id="table-select" ng-model="tableId" class="form-control" ng-options="t.id as t.name for t in fctables track by t.id">
+				</select>
+				<input type="submit" class="btn btn-primary pull-right" value="Upload" ng-disabled="!tableId || file == null">
+			</div></form>
+			<hr class="head-hr">
+			<!-- <table style="width: 100%;" class="" ng-show="pages.length > 1">
+				<tr><td ng-repeat="p in pageNames" style="text-align: center;"><a href="#!/database" ng-click="switchPage($index)"><strong>{{ p }}</strong></a></td></tr>
+			</table> -->
+			<!-- <div style="overflow-x: auto; overflow-y: auto;">
+				<table id="fctable" class="fcthead stripe-table" style="" onscroll="document.getElementById('fcthead').scrollLeft = this.scrollLeft;" style="">
+				</table>
+			</div> -->
+		</div>
+		<div class="col-xs-12 text-center" ng-show="pages.length > 1" style="padding: 0;">
+			<ul class="pagination">
+				<li class="page-item {{ (currentPageIndex > 0) ? '' : 'disabled' }}">
+					<span class="page-link" role="button" ng-click="changePage(currentPageIndex - 1)">Previous</span>
+				</li>
+				<li class="page-item {{ (currentPageIndex == $index) && 'active' || '' }}" ng-repeat="p in pages">
+					<span class="page-link" role="button" ng-click="changePage($index)">{{$index + 1}}</span>
+				</li>
+				<li class="page-item {{ (currentPageIndex < pages.length-1) ? '' : 'disabled' }}">
+					<span class="page-link" role="button" ng-click="changePage(currentPageIndex + 1)">Next</span>
+				</li>
+			</ul>
+		</div>
+		<div id="recipe-table-container" class="col-xs-12 frz-table-container" style="height: 600px; margin-bottom: 100px;">
+			<table class="frz-table" id="recipe-table">
+				<colgroup width="120">
+					<col width="50">
+					<col width="70">
+					<col width="400">
+					<col width="400">
+				</colgroup>
+			</table>
+		</div>
+		<div class="col-xs-12 text-center" ng-show="pages.length > 1" style="padding: 0;">
+			<ul class="pagination">
+				<li class="page-item {{ (currentPageIndex > 0) ? '' : 'disabled' }}">
+					<span class="page-link" role="button" ng-click="changePage(currentPageIndex - 1)">Previous</span>
+				</li>
+				<li class="page-item {{ (currentPageIndex == $index) && 'active' || '' }}" ng-repeat="p in pages">
+					<span class="page-link" role="button" ng-click="changePage($index)">{{$index + 1}}</span>
+				</li>
+				<li class="page-item {{ (currentPageIndex < pages.length-1) ? '' : 'disabled' }}">
+					<span class="page-link" role="button" ng-click="changePage(currentPageIndex + 1)">Next</span>
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>

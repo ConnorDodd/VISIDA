@@ -1,0 +1,157 @@
+<!-- <script src="../node_modules/jquery-csv/src/jquery.csv.min.js"></script> -->
+<div ng-controller="databaseModController" class="container-fluid">
+	<div>
+		<h3>Create Table</h3>
+	</div>
+	<form class="form-inline" ng-submit="createTable(newTableName)">
+		<div class="form-group">
+			<input type="text" class="form-control" ng-model="newTableName">
+			<input type="submit" class="btn btn-primary" value="Create" ng-disabled="!newTableName || newTableName.length <= 0">
+			<small class="{{ tableMessage.success ? 'text-success' : 'text-danger' }}">{{ tableMessage.txt }} </small><br/>
+		</div>
+	</form>
+	<div class="row">
+		<div class="col-xs-12 col-sm-6 col-md-4" ng-repeat="h in testHead" style="border: 2px black solid">
+			<div style="width: 49%;">
+				<span style="font-weight: bold;">{{ h }}</span>
+			</div>
+			<div style="width: 50%; ">
+				<span>{{ h }}</span>
+			</div>
+		</div>
+	</div>
+	<div>
+		<h3>Upload Food Composition Table</h3>
+		<span class="glyphicon glyphicon-refresh glyph-md pull-right {{ (tableLoading) && 'loading-run' || 'loading-done' }}"></span>
+	</div>
+	<form class="form-inline" ng-submit="upload()"><div class="form-group">
+		<input type="file" class="form-control" ngf-accept="'*.csv'" ng-model="file" ngf-select="parse(file)">
+		<select ng-model="tableId" class="form-control">
+			<option ng-repeat="t in fctables" value="{{t.id}}">{{ t.name }}</option>
+		</select>
+		<label for="overwrite-check"> Update Existing: </label> <input id="overwrite-check" type="checkbox" ng-model="overwrite" ng-init="overwrite = false" ng-true-value="true" ng-false-value="false">
+		<input type="submit" class="btn btn-primary" value="Upload" ng-disabled="!loaded || file == null">
+		<small class="text-danger" ng-show="uploadMessage && !uploadMessage.success">{{ uploadMessage.txt }}</small>
+		<small class="text-success" ng-show="uploadMessage && uploadMessage.success">{{ uploadMessage.txt }}</small>
+	</div></form>
+	<div class="{{ (file != null && !loaded) && 'loader' || '' }}" style=""></div>
+	<div class="row" ng-show="entries.length && entries.length > 0" style="padding-left: 2em;">
+		<div style="overflow-x: auto; overflow-y: auto;"><form ng-submit="updateValue()">
+		<table class="fctable stripe-table">
+			<tr>
+				<th></th>
+				<th ng-repeat="h in headers" style="padding: 10px;">{{ h }}</th>
+			</tr>
+			<tr ng-repeat="e in entries">
+				<td style="font-weight: bold;">{{ $index }}</td>
+				<td ng-repeat="h in headers" style="padding: 10px; min-width: {{ h == 'Name' ? '160px' : '' }}">
+					{{ e[h] }}
+				</td>
+			</tr>
+		</table></form>
+		</div>
+	</div>
+	<div class="spaced">
+		<span class="h3">Upload Measures Information</span>
+		<span class="glyphicon glyphicon-refresh glyph-md {{ (measuresLoading) && 'loading-run' || 'loading-done' }}" style="margin-left: 20px"></span>
+	</div>
+	<form class="form-inline" ng-submit="uploadMeasures()"><div class="form-group">
+		<input type="file" class="form-control" ngf-accept="'*.csv'" ng-model="measureFile" ngf-select="parseMeasures(measureFile)">
+		<select ng-model="tableIdMeasures" class="form-control">
+			<option ng-repeat="t in fctables" value="{{t.id}}">{{ t.name }}</option>
+		</select>
+		<input type="submit" class="btn btn-primary" value="Upload" ng-disabled="measuresLoading || measureFile == null">
+		<small class="{{ measureMessage.success ? 'text-success' : 'text-danger' }}" ng-show="measureMessage">{{ uploadMeasureMessage.txt }}</small>
+	</div></form>
+	<div class="row" ng-show="displayMeasures && displayMeasures.length > 0" style="padding-left: 2em;">
+		<div style="overflow-x: auto; overflow-y: auto;">
+			<table class="stripe-table">
+				<tr>
+					<th></th>
+					<th>ID</th>
+					<th>Name</th>
+					<th>Density</th>
+					<th>Measures</th>
+				</tr>
+				<tr ng-repeat="m in displayMeasures">
+					<td style="font-weight: bold;">{{ $index }}</td>
+					<td>{{ m.originId }}</td>
+					<td>{{ m.name }}</td>
+					<td>{{ m.density }}</td>
+					<td>{{ m.measures }}</td>
+				</tr>
+			</table>
+			<span ng-show="displayMeasures.length >= 400">Displaying first 400 results</span>
+		</div>
+	</div>
+
+	<div class="spaced">
+		<span class="h3">Upload Measure Images</span>
+		<span class="glyphicon glyphicon-refresh glyph-md {{ (measuresLoading) && 'loading-run' || 'loading-done' }}" style="margin-left: 20px"></span>
+	</div>
+	<div style=" margin-left: 15px;">
+		<div>
+			<select chosen data-placeholder-text-single="'Select food item'" ng-model="selectedMeasureId" class="item-name align-middle" style="max-width: 400px; width: 400px;"  ng-change="changeMeasure(selectedMeasureId)">
+				<option value="">Select food item</option>
+				<option value="{{fi.id}}" ng-repeat="fi in foodItemList">{{ fi.name }}</option>
+				<!-- ng-options="fi.id as (fi.name + ' ' + fi.id) for fi in foodItemList" -->
+			</select>
+			<span class="glyphicon glyphicon-refresh glyph-add {{ (measureLoading) && 'loading-run' || 'loading-done' }}" style="vertical-align: middle;"></span>
+			<span class="glyphicon glyphicon-plus glyph-add btn-glyph" role="button" ng-click="addMeasure()" title="Add Measure"  style="vertical-align: middle;"></span>
+		</div>
+		<div class="row"  style="margin: 15px; width: 100%" ng-show="selectedMeasureId">
+			<div class="bordered-container col-xs-6 col-md-2" style="text-align: center; margin: 5px; position: relative;" ng-repeat="measure in exampleMeasure.measures">
+				<div class="uploadThumb text-center justify-center">
+					<img ng-src="{{ measure.imageUrl }}" style="width: 100%;">
+				</div>
+				<table style="margin: 0; padding-bottom: 0;">
+					<!-- <tr>
+						<td style="vertical-align: middle;"><span style="font-weight: bolder;">Desc : </span></td>
+						<td><span>{{ measure.description }}</span></td>
+					</tr> -->
+					<tr>
+						<td style="vertical-align: middle;"><span style="font-weight: bolder;">Grams:</span></td>
+						<td><span>{{ measure.sizeGrams }}</td>
+					</tr>
+				</table>
+				<span class="glyphicon glyphicon-remove glyph-md btn-glyph" role="button" style="color: red; position: absolute; top: 10px; right: 12px; opacity: .6;" ng-click="deleteMeasure(measure, $index)"></span>
+			</div>
+			<div class="bordered-container col-xs-6 col-md-2" style="text-align: center; margin: 5px; padding-bottom: 0; position: relative;" ng-repeat="measure in newMeasures">
+				<form class="form-group form-inline" ng-submit="addMeasureItem(measure, $index)">
+					<div class="uploadThumb text-center justify-center">
+						<img ng-if="measure.imageUrl" ng-src="{{ measure.imageUrl }}" style="width: 100%;">
+						<img ng-if="measure.image" ngf-thumbnail="measure.image" style="width: 100%;">
+					</div>
+					<!-- <input type="text" ng-model="measure.description" class="form-control" style="margin: 2px;" placeholder="Description"><br/> -->
+					<input type="text" ng-model="measure.sizeGrams" class="form-control" style="margin: 2px;" placeholder="Size (g)">
+					<input type="submit" class="btn btn-primary btn-sm" value="Add">
+				</form>
+				<span class="glyphicon glyphicon-remove glyph-md btn-glyph" role="button" style="color: red; position: absolute; top: 10px; right: 12px; opacity: .6;" ng-click="removeNewMeasure($index)"></span>
+			</div>
+			<div class="bordered-container col-xs-6 col-md-2" style="text-align: center; margin: 5px; height: 100%;">
+				<span style="vertical-align: middle; font-weight: bold; text-align: center; margin: 5px;">Add</span>
+				<div ngf-select="addNewMeasures(newImageFiles)" role="button" ngf-drop ng-model="newImageFiles" ngf-multiple="true" ngf-pattern="pattern" ngf-accept="'image/*'" class="drop-box" ngf-drag-over-class="dragover" ngf-allow-dir="true" style="width: 92%; height: 100%;">
+					<span style="vertical-align: middle; font-weight: bold;">Select or Drop Images</span>
+				</div>
+			</div>
+					<!-- <table style="margin: 0; padding-bottom: 0;">
+					<div class="uploadThumb text-center justify-center">
+						<img ngf-thumbnail="newMeasureImage" style="width: 100%;">
+					</div>
+						<tr>
+							<td style="vertical-align: middle;"><span style="font-weight: bolder;">Desc : </span></td>
+							<td><input type="text" ng-model="newMeasure.description" class="form-control" style="margin-left: 5px; margin-right: 10px" placeholder="Medium"></td>
+						</tr>
+						<tr>
+							<td style="vertical-align: middle;"><span style="font-weight: bolder;">Grams:</span></td>
+							<td><input type="text" ng-model="newMeasure.sizeGrams" class="form-control" style="margin-left: 5px; margin-right: 10px" placeholder="10"></td>
+						</tr>
+						<tr>
+							<td colspan="2"><input type="submit" class="btn btn-primary btn-sm" value="Add"></td>
+						</tr>
+					</table> -->
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

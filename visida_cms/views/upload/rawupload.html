@@ -1,0 +1,101 @@
+<div ng-controller="uploadController" class="container">
+	<h3 class="page-head has-hr">Uploads</h3>
+	<div class="row">
+		<div class="col-xs-12 pt2">
+			<div class="pt2">
+				<span class="row-head">Household Data</span><br/>
+
+				<form class="form-inline" ng-submit="uploadData(dataText, studyid)">
+					<div class="form-group">
+						<input type="file" class="form-control left" ngf-select="parseData(dataFile)" accept=".json" ng-model="dataFile">
+						<select class="form-control left" ng-model="studyid" ng-init="studyid=studies[0].id.toString()"><option ng-repeat="s in studies" value="{{ s.id }}">{{ s.name }}</option></select>
+					</div>
+					<div style="margin: 10px;">
+						<small ng-class="dataMessage.success ? 'text-success' : 'text-danger'" ng-show="dataMessage">{{ dataMessage.txt }}</small>
+					</div>
+					<p style="width: 100%; background-color: #f8f8f8; height: 256px; overflow: scroll; white-space: pre; font-size: smaller;" ng-hide="!dataText">
+						{{ dataText }}
+					</p>
+					<input id="uploadDataButton" type="submit" value="Upload" class="btn btn-primary" ng-disabled="!dataText || !studyid" style="margin-left: 1em;">
+				</form>
+			</div>
+			
+		</div>
+
+		<div class="col-xs-12 pt2">
+			<div>
+				<div style="margin-left: 10px;">
+					<span class="row-head">Image</span>
+					<div style="display: inline-block;" class="pull-right">
+						<label style="vertical-align: middle;" for="overwriteImage">Overwrite: </label>
+						<input id="overwriteImage" type=checkbox ng-model="overwriteImage" />
+					</div>
+				</div>
+				<form class="form-inline" ng-submit="uploadImage(imageFiles)">
+					<!-- <input type="file" class="form-control" ngf-select="imageRename(imageFile)" ngf-accept="'image/*'" ng-model="imageFile"> -->
+					<div ngf-select="imagesChosen(imageFiles)" role="button" ngf-drop ng-model="imageFiles" ngf-multiple="true" ngf-pattern="pattern" ngf-accept="'image/*'" class="drop-box container" ngf-drag-over-class="dragover" ngf-allow-dir="true" style="width: 100%">
+						<span ng-show="!imageFiles" style="vertical-align: middle; font-weight: bold;">Select or Drop Files</span>
+						<div class="col-xs-6 col-sm-4 col-md-2 col-lg-2" ng-repeat="file in imageFiles">
+							<div class="uploadThumb text-center justify-center">
+								<div class="upload-success text-success" ng-show="file.success">
+									<span class="glyphicon glyph-lg glyphicon-ok"/>
+								</div>
+								<div class="upload-fail" ng-show="file.fail">
+									<span title="{{ file.failmessage ? file.failmessage : 'Something went wrong.' }}" class="glyphicon glyph-lg glyphicon-remove text-danger"/>
+								</div>
+								<div class="text-center">
+									<img ngf-thumbnail="file" style="margin-bottom: 10px;">
+									<span>{{ file.name }}</span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div style="margin: 10px;">
+						<div class="progress center-block" ng-show="imageProgress > 0" style="width: 100%;">
+							<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0"
+								aria-valuemin="0" aria-valuemax="100" style="width:{{ imageProgress }}%">
+						    	{{ imageProgress }}%
+							</div>
+						</div>
+					</div>
+					<input id="uploadImageButton" type="submit" value="Upload" class="btn btn-primary" ng-disabled="!imageFiles || imageFiles.length <= 0" style="margin-left: 1em;">
+					<button type="button" class="btn btn-standard" ng-disabled="!imageFiles" style="margin-left: 1em;" ng-click="clearImages()">Clear</button>
+				</form>
+			</div>
+		</div>
+
+		<div class="col-xs-12 pt2">
+			<div>
+				<div style="margin-left: 10px;">
+					<span class="row-head">Audio</span>
+					<div style="display: inline-block;" class="pull-right">
+						<label style="vertical-align: middle;" for="overwriteAudio">Overwrite: </label>
+						<input id="overwriteAudio" type=checkbox ng-model="overwriteAudio" />
+					</div>
+				</div>
+				<form class="form-inline" ng-submit="uploadAudio(audioFiles)">
+					<!-- <input type="file" class="form-control" ngf-select="imageRename(imageFile)" ngf-accept="'image/*'" ng-model="imageFile"> -->
+					<div ngf-select="audioChosen(audioFiles)" role="button" ngf-drop ng-model="audioFiles" ngf-multiple="true" ngf-pattern="pattern" ngf-accept="'audio/*'" class="drop-box container" ngf-drag-over-class="dragover" ngf-allow-dir="true" style="width: 100%">
+						<span ng-show="!audioFiles" style="vertical-align: middle; font-weight: bold;">Select or Drop Files</span>
+						<ul class="list-group row" ng-hide="!audioFiles" style="margin: 10px;">
+							<li class="list-group-item col-xs-12 col-sm-6 col-lg-4" ng-repeat="file in audioFiles" ng-class="{ 'list-group-item-success': file.success == 1, 'list-group-item-danger': file.success == -1 }" style="height: 40px">
+								<span title="{{ file.failmessage }}" style="float: left; width: 90%; text-overflow: ellipsis; white-space: pre;">{{ file.name }}</span>
+								<span></span>
+							</li>
+						</ul>
+					</div>
+					<div style="margin: 10px;">
+						<div class="progress center-block" ng-show="audioProgress > 0" style="width: 100%;">
+							<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0"
+								aria-valuemin="0" aria-valuemax="100" style="width:{{ audioProgress }}%">
+						    	{{ audioProgress }}%
+							</div>
+						</div>
+					</div>
+					<input id="uploadAudioButton" type="submit" value="Upload" class="btn btn-primary" ng-disabled="!audioFiles" style="margin-left: 1em;">
+					<button type="button" class="btn btn-standard" ng-disabled="!audioFiles" style="margin-left: 1em;" ng-click="clearAudio()">Clear</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

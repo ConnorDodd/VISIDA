@@ -1,0 +1,745 @@
+<!-- <script type="text/javascript" src="./node_modules/hover-zoom/jquery.magnifier.min.js"></script> -->
+
+<script type="text/javascript" src="./node_modules/magnifier/event.js"></script>
+<link rel="stylesheet" type="text/css" href="./node_modules/magnifier/magnifier.css">
+<div id="content" ng-controller="eatImageController" class="container" resize>
+	<div class="row content" ng-show="loading > 0" style="height: 100%">
+		<div class="col-xs-12" style="height: 80%">
+			<span class="glyphicon glyphicon-refresh loading-run" style="font-size: 160px; position: absolute; left: 50%; top: 50%; margin: auto; margin-left: -80px"></span>
+		</div>
+	</div>
+	<div id="" class="row content" ng-show="loading == 0">
+		<div class="col-xs-12">
+			<span class="h3 page-head" style="font-weight: bolder; text-shadow: 2px 2px 5px #00000033;">{{ record.recordType }}: {{record.captureTime | date : 'h:mma dd/MM/yyyy' }}<!-- Image Capture Record: {{ record.imageName }} --></span>
+			<span class="pull-right glyph-md">
+				<a ng-if="pageData.PrevId !== 0" href="{{ buildLink(pageData.PrevId) }}">
+					<span class="glyphicon glyphicon-triangle-left btn-glyph" style="padding-right: 10px; color: #52732d;" /></a>
+				<span ng-if="pageData.PrevId === 0" class="glyphicon glyphicon-triangle-left" style="padding-right: 10px; color: #ababab;"/>
+
+				<a href="#!/records">
+					<span class="glyphicon glyphicon-align-justify btn-glyph" style="padding-right: 10px; color: #52732d;" /></a>
+
+				<a ng-if="pageData.NextId !== 0" href="{{ buildLink(pageData.NextId) }}">
+					<span class="glyphicon glyphicon-triangle-right btn-glyph" style="color: #52732d;" /></a>
+				<span ng-if="pageData.NextId === 0" class="glyphicon glyphicon-triangle-right" style="padding-right: 10px; color: #ababab;"/>
+			</span>
+			<hr class="head-hr">
+		</div>
+		<div class="col-xs-12">
+			<!-- <strong>Type: {{ record.recordType }}</strong> -->
+			<strong style="">Identification: 
+				<span class="label" ng-class="{'label-danger': record.tagIdent === 'Not Started', 'label-warning': record.tagIdent === 'In Progress', 'label-success': record.tagIdent === 'Completed'}">
+					{{ record.tagIdent }}
+				</span>
+			</strong>
+			<strong style="margin-left: 25px;">Quantification: 
+				<span class="label" ng-class="{'label-danger': record.tagPrt === 'Not Started', 'label-warning': record.tagPrt === 'In Progress', 'label-success': record.tagPrt === 'Completed'}">
+					{{ record.tagPrt }}
+				</span>
+			</strong>
+			<strong style="margin-left: 25px;">Fiducial Marker: 
+				<div style="display: inline-block; vertical-align: middle;">
+					<label>
+						<input type="checkbox" value="" ng-model="record.isFiducialPresent" ng-click="saveRecord()">
+					</label>
+				</div>
+			</strong>
+			<strong style="margin-left: 25px; color: orange;" ng-if="record.annotationStatus == 'Created'">Annotated
+				
+			</strong>
+			<div style="display: inline-block; margin-left: 25px;" ng-if="canAdmin"><!-- getUser().isAdmin -->
+				<span style="font-style: italic;" role="button" ng-click="toggleDisplayHistory();">Show History</span>
+			</div>
+			<!-- <div class="dropdown" style="display: inline-block; margin-left: 25px;" ng-if="getUser().username === 'shamus' || getUser().username === 'admin'">
+				<span class="dropdown-toggle" style="font-style: italic;" role="button" data-toggle="dropdown">Show History</span>
+				<ul class="dropdown-menu" style="padding: 5px; width: 400px;">
+					<li ng-repeat="update in record.portionUpdates" role="button" style="padding: 2px"><span>{{ update.message }}</span></li>
+				</ul>
+			</div> -->
+			<span style="margin-left: 25px; color: red; font-style: italic;" ng-show="record.lockedName && (record.lockedName != getUser().username)">
+				Currently being edited by {{ record.lockedName }}
+			</span>
+			<span class="pull-right">
+				<span class="glyphicon glyphicon-question-sign glyph-md btn-glyph" style="color: #295173; padding-right: 10px;" role="button" ng-click="showHelp()" title="Help"/>
+				<span class="glyphicon glyphicon-eye-open glyph-md btn-glyph" role="button" title="Hide" ng-if="canAdmin && !record.hidden" ng-click="record.hidden = true; saveRecord();"></span>
+				<span class="glyphicon glyphicon-eye-close glyph-md btn-glyph" role="button" title="Show" style="color: #ababab" ng-if="canAdmin && record.hidden" ng-click="record.hidden = false; saveRecord();"></span>
+			</span><br/>
+			<hr class="head-hr">
+		</div>
+		<div class="col-xs-12" style="margin-top: 10px;">
+			<div class="row">
+				<div class="col-md-12">
+					<ul class="list-group data-list">
+						<li class="list-group-item list-group-item-header">
+							<span class="h3 row-head">Details</span><br/>
+						</li>
+						<li class="list-group-item col-md" ng-if="record.audioUrl">
+							<audio controls src="{{ record.audioUrl }}">
+								<!-- <source src="{{ audio.audioUrl }}" type="audio/{{ audio.format }}"/> -->
+								Your browser does not support the audio element.
+							</audio>
+						</li>
+						<!-- <li class="list-group-item" ng-if="record.nTranscript">
+							<div>
+								<span style="font-weight: bold;">Automated transcript: </span>
+								<span>{{ record.nTranscript }}</span>
+							</div>
+						</li> -->
+
+						<li class="list-group-item" ng-if="record.nTranscript">
+							<div style="padding: 4px 0px">
+								<span style="font-weight: bold;">Native Transcript: </span>
+								<span ng-show="!record.nTranscriptionGroups">{{ record.nTranscript }}</span>
+								<div class="dropdown drop-suggestion should-preserve" ng-repeat="group in record.nTranscriptionGroups" style="display: inline-block;">
+									<span ng-if="!group.nodes">{{ group.key }}</span>
+									<span ng-if="group.nodes" class="dropdown-toggle matched-text" role="button" data-toggle="dropdown">{{ group.key }}</span>
+									<ul class="dropdown-menu" style="z-index: 3">
+										<li ng-repeat="node in group.nodes" role="button" ng-click="addItem(node.id)"><span>{{ node.value }}</span></li>
+									</ul>
+								</div>
+								<span class="glyphicon glyphicon-refresh loading-run" ng-show="transcriptLoading"></span>
+								<span class="glyphicon glyphicon-edit glyph-md btn-glyph pull-right" role="button" ng-click="editNTranscript()" style="color: #517329; margin-top: -6px;" title="Edit"></span>
+							</div>
+						</li>
+						<!-- CORRECTED NATIVE TRANSCRIPT -->
+						<li class="list-group-item" ng-if="!record.nTranscript">
+							<div style="display: flex;">
+								<div style="width: 100%; margin: 5px;">
+									<span style="font-weight: bold;">Corrected Native Transcript: </span><br/>
+									<textarea rows="3" class="form-control" ng-model="newNTranscriptText" style="resize: vertical;" />
+								</div>
+								<div style="padding: 0px 0px 5px 5px"><span class="glyphicon glyphicon-floppy-disk glyph-md btn-glyph" role="button" ng-click="updateNTranscript(newNTranscriptText)" title="Save" style="padding-bottom: 5px; color: #295173;"></span></div>
+							</div>
+						</li>
+
+						<!-- TEXTDESCRIPTION -->
+						<li class="list-group-item" ng-if="record.textDescription && !record.is24HR">
+							<div style="padding: 4px 0px">
+								<span style="font-weight: bold;">Text Description: </span>
+								<span ng-show="!record.transcriptionGroups">{{ record.textDescription }}</span>
+								<div class="dropdown drop-suggestion should-preserve" ng-repeat="group in record.transcriptionGroups" style="display: inline-block;">
+									<span ng-if="!group.nodes">{{ group.key }}</span>
+									<span ng-if="group.nodes" class="dropdown-toggle matched-text" role="button" data-toggle="dropdown">{{ group.key }}</span>
+									<ul class="dropdown-menu" style="z-index: 3">
+										<li ng-repeat="node in group.nodes" role="button" ng-click="addItem(node.id, group.quantity, group.measure)"><span>{{ node.value }}</span></li>
+									</ul>
+								</div>
+								<span class="glyphicon glyphicon-refresh loading-run" ng-show="textDescriptionLoading"></span>
+								<span class="glyphicon glyphicon-edit glyph-md btn-glyph pull-right" role="button" ng-click="editDescription()" style="color: #517329; margin-top: -6px;" title="Edit"></span>
+							</div>
+						</li>
+						<li class="list-group-item" ng-if="!record.textDescription">
+							
+							<div style="display: flex;">
+								<div style="width: 100%; margin: 5px;">
+									<span style="font-weight: bold;">Transcript of Audio in English: </span><br/>
+									<textarea rows="3" class="form-control" ng-model="newDescriptionText" style="resize: vertical;" />
+								</div>
+								<div style="padding: 0px 0px 5px 5px">
+									<span class="glyphicon glyphicon-floppy-disk glyph-md btn-glyph" role="button" ng-click="updateDescription(newDescriptionText)" title="Save" style="padding-bottom: 5px; color: #295173;"></span>
+								</div>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12 col-md-4">
+					<ul class="list-group">
+						<li class="list-group-item list-group-item-header">
+							<div style="display: flex;">
+								<div style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap; width: 100%;">
+									<span class="row-head" ng-if="!record.recipeId">Household: 
+										<a href="#!/records?&household={{ record.householdParticipantId }}">{{ record.householdParticipantId }}</a>
+									</span>
+									<span class="row-head" ng-if="record.recipeId">Recipe: <a href="#!/recipe?id={{ record.recipeId }}">{{ record.recipeName }}</a></span>
+								</div>
+								<div>
+									<a class="glyphicon glyphicon-home glyph-md btn-glyph-w" target="_blank" href="{{'#!/household?record=' + record.id + '&household=' + record.householdParticipantId + '&study=' + record.studyId + '&date=' + record.captureTime.substring(0, 10) }}" style="color: #295173; margin-top: -5px; padding-right: 5px;" title="Show in household view"></a>
+								</div>
+								<div>
+									<a class="glyphicon glyphicon-picture glyph-md btn-glyph-w pull-right" role="button" target="_blank" href="/#!/editimage?id={{record.id}}" style="color: #295173; margin-top: -5px;" title="View larger image"></a>
+								</div>
+							</div>
+						</li>
+						<li class="list-group-item" style="padding: 0px" ng-if="record.is24HR">
+							<table class="tfhr-table">
+								<tr><td class="bold">Name: </td><td>{{ record.recall.name }}</td></tr>
+								<tr><td class="bold">Time: </td><td>{{ record.recall.time | date : 'hh:mma' }}</td></tr>
+								<tr><td class="bold">Description: </td><td>{{ record.recall.description }}</td></tr>
+								<tr><td class="bold">Amount: </td><td>{{ record.recall.amount }}</td></tr>
+								<tr><td class="bold">Cooking/Prep: </td><td>{{ record.recall.prep }}</td></tr>
+								<tr><td class="bold">Recipe Link: </td><td><a href="#!/recipe?id={{ record.recall.recipeLinkId }}" style="font-weight: bolder;">{{ record.recall.recipeLink }}</a></td></tr>
+								<tr>
+									<td class="bold">Recipe Info: </td><td><!-- {{ record.recall.recipe }} -->
+										<div class="dropdown drop-suggestion" ng-repeat="group in record.transcriptionGroups" style="display: inline-block;">
+											<span ng-if="!group.nodes">{{ group.key }}</span>
+											<span ng-if="group.nodes" class="dropdown-toggle matched-text" role="button" data-toggle="dropdown">{{ group.key }}</span>
+											<ul class="dropdown-menu">
+												<li ng-repeat="node in group.nodes" role="button" ng-click="addItem(node.id, group.quantity, group.measure)"><span>{{ node.value }}</span></li>
+											</ul>
+										</div>
+									</td>
+								</tr>
+								<tr><td class="bold">Combined: </td><td>{{ record.recall.combined }}</td></tr>
+								<tr><td class="bold">Leftovers: </td><td>{{ record.recall.leftovers }}</td></tr>
+								<tr><td class="bold">Comments: </td><td>{{ record.recall.comments }}</td></tr>
+							</table>
+						</li>
+						<li id="image-div" class="list-group-item" style="padding: 0px" ng-if="!record.is24HR && record.imageUrl">
+							<div style="position: relative; z-index: 1"><!-- background-color: {{ record.imageUrl ? '#d7d7d7aa' : 'transparent' }}; padding: 6px; border-radius: 2px; -->
+								<!-- <img id="image" imageonload ng-src="{{ record.imageUrl != null ? record.imageUrl : 'images/noimage.png' }}" style="width: 100%; image-orientation: from-image;"> -->
+								<img id="image" imageonload ng-src="{{record.imageUrl}}" style="width: 100%; image-orientation: from-image;" class="img" data-large-img-url="{{record.imageUrl}}">
+								<!-- <a class="glyphicon glyphicon-picture glyph-md btn-glyph-w" role="button" target="_blank" href="/#!/editimage?id={{record.id}}" style="color: white; position: absolute; top: 10px; right: 12px; opacity: .6;" title="View larger image"></a> -->
+							</div>
+						</li>
+						<li class="list-group-item" style="padding: 0px" ng-if="!record.is24HR && !record.imageUrl">
+							<div class="text-description-box" ng-if="record.textDescription" style="padding: 10px">
+								<span style="font-weight: bold;">Text Description: </span>
+								<span ng-show="!record.transcriptionGroups">{{ record.textDescription }}</span>
+								<div class="dropdown drop-suggestion" ng-repeat="group in record.transcriptionGroups" style="display: inline-block;">
+									<span ng-if="!group.nodes">{{ group.key }}</span>
+									<span ng-if="group.nodes" class="dropdown-toggle matched-text" role="button" data-toggle="dropdown">{{ group.key }}</span>
+									<ul class="dropdown-menu">
+										<li ng-repeat="node in group.nodes" role="button" ng-click="addItem(node.id, group.quantity, group.measure)"><span>{{ node.value }}</span></li>
+									</ul>
+								</div>
+							</div>
+							<div style="position: relative;" ng-if="!record.textDescription">
+								<img id="image" imageonload ng-src="{{ record.imageUrl != null ? record.imageUrl : 'images/noimage.png' }}" style="width: 100%; image-orientation: from-image;">
+							</div>
+						</li>
+						<li class="list-group-item" ng-if="record.leftoverId || record.leftoverFromId" style="text-align: center;">
+							<span class="row-head" style="text-align: center;" ng-if="record.leftoverFromId"><a href="{{ buildLink(record.leftoverFromId) }}">View full meal</a><br/></span>
+							<span class="row-head" style="text-align: center;" ng-if="record.leftoverId"><a href="{{ buildLink(record.leftoverId) }}">View leftovers</a><br/></span>
+						</li>
+						<!-- <li class="list-group-item" style="text-align: center;">
+							<a role="button" ng-click="showAdvice = true;">{{ adviceSearchStr ? ('Advice for: ' + adviceSearchStr) : 'Show food item advice' }}</a>
+						</li> -->
+					</ul>
+				</div>
+				<style>
+					.long-chosen-container .chosen-container {
+						width: 100% !important;
+					}
+					#displayMeasureContainer .chosen-container {
+						width: 100% !important;
+					}
+				</style>
+				<div class="col-xs-12 col-md-8" ng-show="displayMeasures">
+					<ul class="list-group">
+						<li class="list-group-item list-group-item-header">
+							<span class="row-head" >Example Measures: <!-- ng-if="!record.recipeId"<a href="#!/records?&household={{ record.householdParticipantId }}">{{ record.householdParticipantId }}</a> --></span>
+							<span style="" class="pull-right text-danger" role="button" ng-click="endDisplayMeasures()">Close <span class="glyphicon glyphicon-remove"></span></span>
+						</li>
+						<li class="list-group-item col-md-6" style="padding: 0px; text-align: center; position: relative;">
+							<!-- <span style="position: absolute; top: 10px; right: 20px; color:white;" role="button" ng-click="endDisplayMeasures()">Close</span> -->
+							<img ng-src="{{displayMeasures.exampleMeasures.images[displayMeasureIndex].imageUrl}}" style="" ng-style="styleMeasureImage()" ng-click="endDisplayMeasures()">
+						</li>
+						<li class="list-group-item col-md-6" style="padding: 0px">
+							<ul style="overflow-y: scroll; padding: 0px" ng-style="styleMeasureImage()">
+								<li id="displayMeasureContainer" class="display-measure" style="width: 100%; height: auto;">
+									<select id="displayMeasureSelect" chosen data-placeholder-text-single="'Search'" no-results-text="'Loading'" ng-model="exampleMeasureId" style="" ng-options="em.id as em.name for em in exampleMeasures" ng-change="changeExampleMeasure(exampleMeasureId, displayMeasures)">
+										<option value="">None Selected</option>
+									</select>
+								</li>
+								<li ng-repeat="item in displayMeasures.exampleMeasures.images"  class="display-measure" style="background-color: {{displayMeasureIndex === $index ? '#f1f3f4' : 'white'}}" role="button" ng-click="changeMeasureIndex($index)">
+									<img ng-src="{{item.imageUrl}}" style="height: 100%;">
+									<div class="" style="display: inline-block; padding-left: 15px;">
+										<!-- <span class="bolder">{{item.description}}</span><br/> -->
+										<span><span class="bolder">Size: </span>{{item.sizeGrams}}g</span><br/>
+										<button class="btn btn-sm btn-primary" ng-click="endDisplayMeasures(item.sizeGrams)" style="padding-top: 5px;">Use Weight</button>
+									</div>
+								</li>
+							</ul>
+						</li>
+						<li class="list-group-item col-xs-12" style="text-align: center; background-color: #f1f3f4; font-weight: bolder" ng-click="endDisplayMeasures()" role="button">
+							<span>Close</span>
+						</li>
+					</ul>
+					<!-- <div class="col-xs-12" style="position: relative; height: 100%; background-color: #000000aa">
+						<div class="row">
+							<span class="col-xs-12 h3 row-head bordered-container" style="text-align: center; display: inline-block;">{{ displayMeasures.measure.name }}</span>
+							<div class="col-xs-12 col-sm-6 col-md-3" ng-repeat="item in displayMeasures.exampleMeasures.measures" style="height: 100%">
+								<div style="background-color: white; padding: 6px; text-align: center; height: 100%;" role="button" ng-click="endDisplayMeasures(item.sizeGrams)">
+									<img ng-src="{{item.imageUrl}}" style="width: 100%"><br/><br/>
+									<span class="row-head" style="text-align: center;">{{ item.description }}</span><br/>
+									<span class="row-head" style="text-align: center;">Size: {{ item.sizeGrams }}g</span>
+								</div>
+							</div>
+						</div>
+					</div> -->
+				</div>
+				<div class="col-xs-12 col-md-8" ng-show="!displayMeasures" style="position: relative;">
+					<!-- <div id="hoverimage" style="width: 100%;">
+					</div> -->
+					
+					<ul class="list-group">
+						<li class="list-group-item list-group-item-header">
+							<div>
+								<span class="row-head">Food Items</span>
+								<span class="pull-right glyph-list">
+									<span class="glyphicon glyphicon-plus btn-glyph" role="button" ng-click="addItem()" ng-if="(!record.isCompleted || canAdmin) && canIdentify" title="Add Item" style="color: #295173"><span style="font-family: sans-serif;"> Add</span></span>
+									<span class="glyphicon glyphicon-floppy-disk btn-glyph" role="button" title="Save All"  ng-style="styleSaveAll()" ng-click="saveAllItems()"><!-- ng-if="!record.isCompleted && canComplete" --><span style="font-family: sans-serif;"> Save All</span></span>
+									<span class="glyphicon glyphicon-ok btn-glyph complete-btn" role="button" title="Complete" ng-click="complete()" ng-if="!record.isCompleted && canComplete"><span style="font-family: sans-serif;">  Identification Completed</span></span>
+									<span class="glyphicon glyphicon-ok btn-glyph text-danger incomplete-btn" role="button" title="Incomplete" ng-click="uncomplete()" ng-if="record.isCompleted && canComplete" style=""><span style="font-family: sans-serif;"> Identification Completed</span></span>
+								</span>
+							</div>
+						</li>
+						<li  id="food-item-tr-{{ $index }}" class="list-group-item" ng-repeat="item in record.foodItems">
+							<div class="row">
+								<div class="col-md-1" style="padding: 0; margin: 0; padding-left: 10px">
+									<span id="{{ $index }}-tag" tag class="glyphicon glyphicon-tag btn-glyph glyph-md" style="color: {{ colors[$index] }};" role="button"><!--  --></span>
+									<a class="glyphicon glyphicon-link btn-glyph glyph-md" href="#!/recipe?id={{item.recipeId}}" style="color: #295173;" ng-if="item.recipeId" target="_blank"></a>
+								</div>
+								<div class="col-md-8 long-chosen-container" style="padding-right: 0px;">
+									<select id="food-item-{{ $index }}" chosen data-placeholder-text-single="'Select food item'" no-results-text="'No food items are assigned to this study'" ng-model="item.foodCompositionId"  class="long-chosen-container" style="" ng-options="fi.id as fi.name for fi in foodItemList" ng-change="changeFoodItem($index)" ng-disabled="!canIdentify">
+										<option value="">Not Selected</option>
+									</select>
+								</div>
+								<div class="col-md-3 glyph-md food-item-control-bar" style="text-align: right;" >
+									<span class="glyphicon glyphicon-info-sign btn-glyph" role="button" ng-click="toggleDisplayHistory(item);" ng-if="canAdmin" title="More Details"/>
+									<span class="glyphicon glyphicon-flag btn-glyph" style="color: #e47d30;" role="button" ng-click="flagFoodItem(item)" ng-if="canIdentify && !canAdmin" title="Flag as Incorrect"/>
+									<!-- ng-show="item.exampleMeasures" --><span class="glyphicon glyphicon-scale btn-glyph" role="button" ng-click="startDisplayMeasures(item, $index)" title="Show Example Measures"></span>
+									<!-- <span ng-show="!item.exampleMeasures" class="glyphicon glyphicon-scale" style="color: #ababab;"></span> -->
+									<span class="glyphicon glyphicon-question-sign btn-glyph"  role="button" ng-click="showHelp(item)" title="Help" />
+									<span class="glyphicon glyphicon-floppy-disk btn-glyph" role="button" ng-click="saveItem($index)" ng-show="item.dirty && !item.loading && (canIdentify || canQuantify)" title="Save" />
+									<span class="glyphicon glyphicon-floppy-disk" style="color: #ababab;" ng-show="(!item.dirty && !item.loading) || (!canIdentify && !canQuantify)"/>
+									<span class="glyphicon glyphicon-refresh 'loading-run'" ng-show="item.loading"></span>
+									<span class="text-danger glyphicon glyphicon-remove btn-glyph" role="button" style="color: #a94442;" ng-click="deleteItem($index)" ng-if="canIdentify" title="Remove" />
+								</div>
+							</div>
+							<div class="row">
+								<span class="col-md-1 center-span" style="">Measure: </span>
+								<div class="col-md-5">
+									<select id="measureSelect-{{$index}}" class="align-middle form-control fake-chosen {{ styleMeasure(item) }}" ng-model="item.measureMult" style="" ng-change="changeMeasureType(item, $index)" ng-init="item.measureMult = '1'" ng-disabled="!canQuantify || ((item.createdByAdmin || item.gestaltLock) && !getUser().isAdmin)">
+										<option value="1" selected>Raw gram input (g)</option>
+										<option value="{{ item.measure.density }}" ng-if="item.measure.density">Volume input (mL)</option>
+										<!-- <option value="{{ item.measure.density * 250 }}" ng-if="item.measure.density">Cups</option>
+										<option value="{{ item.measure.density * 5 }}" ng-if="item.measure.density">Tsp</option>
+										<option value="{{ item.measure.density * 20 }}" ng-if="item.measure.density">Tbsp</option> -->
+										<!-- <option value="{{ item.measure.density * 4 }}" ng-if="item.measure.density">Coffee spoon (teaspoon)</option>
+										<option value="{{ item.measure.density * 15 }}" ng-if="item.measure.density">Somlar/rice eating spoon</option>
+										<option value="{{ item.measure.density * 40 }}" ng-if="item.measure.density">Rice serving spoon </option> -->
+
+										<option ng-repeat="sm in item.standardMeasures" value="{{ item.measure.density * sm.mLs }}" ng-if="item.measure.density">{{ sm.name }}</option>
+
+										<option value="{{ mes.value }}" ng-repeat="mes in item.measure.measureList">{{ mes.name }}</option>
+										<!-- <option value="0">Use wiremesh app</option> -->
+									</select>
+								</div>
+								<div class="col-md-3" style="text-align: right; padding-right: 0px;">
+									<span class="center-span" style="">Quantity: </span>
+									<input type="number" class="fake-chosen form-control {{item.gestaltLock ? 'gestalt-locked':''}}" ng-model="item.measureEntry" ng-change="changeQuantity(item)" style="width: 70px; margin-left: 0px; display: inline-block;" ng-disabled="!canQuantify || !item.measureMult || ((item.createdByAdmin || item.gestaltLock) && !getUser().isAdmin) || item.measureMult === '0'" ng-init="item.measureEntry = 0"/>
+									<!-- || item.measureMult === '1' -->
+								</div>
+								<div class="col-md-3" style="text-align: right;">
+									<span class="center-span" style="">Grams: </span>
+									<input id="quantity-input-{{$index}}" type="number" class="fake-chosen form-control {{item.gestaltLock ? 'gestalt-locked':''}}" ng-model="item.quantityGrams" ng-change="changeRawGrams(item)" style="width: 70px; margin-left: 0px;display: inline-block;" ng-disabled="!canQuantify || ((item.createdByAdmin || item.gestaltLock) && !getUser().isAdmin)"/>
+								</div>
+							</div>
+						</li>
+						<li class="list-group-item" ng-if="(!record.isCompleted || canAdmin) && canIdentify && record.foodItems.length > 0" style="padding: 5px; padding-left: 10px;">
+							<span style="color: white">-</span>
+							<span class="glyphicon glyphicon-plus btn-glyph pull-right" role="button" ng-click="addItem()" title="Add Item" style="color: #295173"><span style="font-family: sans-serif; padding-right: 10px;"> Add</span></span>
+							<span class="glyphicon glyphicon-floppy-disk btn-glyph pull-right" role="button" title="Save All" ng-style="styleSaveAll()" ng-if="!record.isCompleted && canComplete" ng-click="saveAllItems()"><span style="font-family: sans-serif; padding-right: 10px;"> Save All</span></span>
+						</li>
+						<li class="list-group-item list-group-item-footer" ng-show="displaySuggestions">
+							<span style="text-align: center; padding-top: 6px; padding-bottom: 6px;">Suggestions</span>
+						</li>
+						<li class="list-group-item" ng-repeat="sugg in record.suggestions" ng-show="displaySuggestions" style="padding: 5px 15px;">
+							<div>
+								<span class="glyphicon glyphicon-info-sign" style="font-size: 2em; color: orange;" ng-show="!sugg.imageUrl"></span>
+								<span class="glyphicon glyphicon-picture btn-glyph" style="font-size: 2em;" ng-if="sugg.imageUrl" ng-click="toggleDisplayImage(sugg.imageUrl)"/>
+								<span class="">{{ sugg.name }}</span>
+								<button class="btn btn-sm btn-primary pull-right" ng-click="addSuggestion($index)">Add</button>
+							</div>
+						</li>
+						<li class="list-group-item list-group-item-footer list-group-item-link" role="button" ng-click="displaySuggestions = !displaySuggestions" ng-show="record.suggestions.length > 0">
+							<span style="text-align: center; padding-top: 2px; padding-bottom: 2px;">Hide/show suggestions</span>
+						</li>
+					</ul>
+					<!-- <div class="row" style="background-color: #f1f3f4;">
+					</div> -->
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-6">
+					<ul class="list-group data-list">
+						<li class="list-group-item list-group-item-header">
+							<span class="h3 row-head">Metadata</span>
+						</li>
+						<li class="list-group-item" >
+							<span style="padding-right: 10px;" role="button" title="Edit" ng-click="startEditTime()" ng-if="canAdmin"><strong>Time: </strong>{{record.captureTime | date : 'h:mma dd/MM/yyyy' }}
+								<span class="glyphicon glyphicon-edit" style="color: #44dac9;" ></span>
+							</span>
+							<span style="padding-right: 10px;" title="Edit" ng-if="!canAdmin"><strong>Time: </strong>{{record.captureTime | date : 'hh:mma dd/MM/yyyy' }}</span>
+						</li>
+						<li class="list-group-item" ng-if="record.recordType != 'Ingredient'">
+							<strong>Type: </strong>
+							<span style="padding-right: 10px;" ng-show="!record.leftoverFromId && !record.reviewDayAudio">This is {{ record.participants.length > 1 ? 'a shared' : 'an own' }} plate record</span>
+							<span style="padding-right: 10px;" ng-show="!record.reviewDayAudio">Recorded {{ record.leftoverFromId ? 'after eating meal' : 'before eating meal' }}</span>
+							<span style="padding-right: 10px;" ng-show="record.reviewDayAudio">This is a review day audio-only record.</span>
+						</li>
+						<li class="list-group-item" ng-if="record.recordType === 'Ingredient'">
+							<strong>Type: </strong>
+							<span style="padding-right: 10px;">This is an ingredient</span>
+						</li>
+						<li class="list-group-item">
+							<span ng-if="record.imageName"><span class="bold">Image Name: </span>{{ record.imageName }}<br/></span>
+							<span ng-if="record.imageName && !record.imageUrl">An image was recorded but not uploaded</span>
+							<span ng-if="!record.imageName">There was no image recorded for this record.</span>
+						</li>
+						<li class="list-group-item" ng-if="record.recordType != 'Ingredient'">
+							<span class="{{ record.finalized ? 'text-success' : 'text-danger' }}" style="padding-right: 5px; font-weight: bold;">{{ record.finalized ? 'Finalized' : 'Unfinalized' }}</span>
+							<span ng-if="record.finalizedTime"> at {{record.finalizedTime | date : 'hh:mma dd/MM/yyyy' }}</span>
+						</li>
+						<li class="list-group-item" ng-if="record.recordType === 'Ingredient'">
+							<strong>Household: </strong>
+							<span style="padding-right: 10px;">{{ record.householdParticipantId }}</span>
+						</li>
+						<li class="list-group-item" ng-repeat="participant in record.participants">
+							<span style="padding-right: 10px;"><strong>Participant: </strong>{{ participant.participantId }}</span>
+							<span style="padding-right: 10px;"><strong>Age: </strong>{{parseAge(participant.age)}}</span>
+							<span style="padding-right: 10px;"><strong>Gender: </strong>{{ participant.isFemale ? 'Female' : 'Male' }}</span>
+							<span style="padding-right: 10px;"><strong>Lifestage: </strong>{{ participant.lifeStage }}</span>
+							<span style="padding-right: 10px;"><strong>Breastfed: </strong>{{ participant.isBreastfed ? 'Yes' : 'No' }}</span>
+							<span class="pull-right" style="font-size: 16px; padding-right: 25px;" ng-if="canAdmin && participant.original">
+								<span class="glyphicon glyphicon-eye-open btn-glyph vertical-ending-span" role="button" title="Hide" ng-if="!participant.hidden" ng-click="removeParticipant(participant, $index)"></span>
+								<span class="glyphicon glyphicon-eye-close btn-glyph vertical-ending-span" role="button" title="Show" style="color: #ababab" ng-if="participant.hidden" ng-click="addParticipant(participant)"></span>
+							</span>
+							<span class="pull-right" style="font-size: 16px" ng-if="canAdmin && !participant.original">
+								<span class="glyphicon glyphicon-remove btn-glyph text-danger" role="button" title="Delete" ng-click="removeParticipant(participant, $index)"></span>
+							</span>
+						</li>
+						<li class="list-group-item" ng-if="record.recordType === 'EatRecord' && canAdmin">
+							<a role="button" ng-click="toggleParticipantDialog()">Add Participant..</a>
+						</li>
+						<li class="list-group-item" ng-if="record.guestInfo">
+							<span style="font-weight: bold; padding-right: 15px;">Total Number of People Eating: </span>
+							<span ng-show="record.guestInfo.adultFemaleGuests > 0" style="padding-right: 20px;">{{record.guestInfo.adultFemaleGuests}} Adult Females </span>
+							<span ng-show="record.guestInfo.adultMaleGuests > 0" style="padding-right: 20px;">{{record.guestInfo.adultMaleGuests}} Adult Males </span>
+							<span ng-show="record.guestInfo.childGuests > 0" style="padding-right: 20px;">{{record.guestInfo.childGuests}} Children </span>
+							<!-- <span class="pull-right glyphicon glyphicon-edit btn-glyph" role="button" title="Edit" style="color: #44dac9; font-size: 16px" ng-if="canAdmin" ng-click="toggleEditGuests()"></span> -->
+							<span class="pull-right glyphicon glyphicon-edit btn-glyph" role="button" title="Edit" style="color: #44dac9; font-size: 16px" ng-if="canAdmin" data-toggle="modal" data-target="#guestModal"></span>
+						</li>
+					</ul>
+				</div>
+				<div class="col-md-6">
+					<ul class="list-group data-list" style="margin-bottom: 10px;">
+						<li class="list-group-item list-group-item-header">
+							<span class="h3 row-head">Comments</span>
+							<span class="glyphicon glyphicon-plus pull-right glyph-add btn-glyph" style="font-size: 18px; margin-top: -2px;" role="button" ng-click="addComment()" title="Add Comment"></span>
+						</li>
+						<li class="list-group-item" style="padding-bottom: 0; padding: 0;">
+							<div style="padding-bottom: 0;">
+								<div class="new-comment-div" ng-show="newComment">
+									<!-- <span style="font-weight: bold;">Add comment: </span><br/> -->
+									<form ng-submit="addComment(newComment)">
+										<textarea id="commentInput" rows="3" class="form-control comment-entry" ng-model="newComment.text" placeholder="Add comment:" ng-change="commentTextChanged(newComment, '{{newComment.text}}')" style="width: 98%" />
+										<div class="commentControls" style="margin: 6px;">
+											<button class="btn btn-sm">Send<span class="glyphicon glyphicon-send" style="padding-left: 3px;" /></button>
+											<button type="button" class="btn btn-sm close-button" ng-click="cancelNewComment()" ng-if="record.comments && record.comments.length > 0">Close</button>
+											<span class="comment-toggle pull-right">
+												<span>High priority: </span>
+												<span class="glyphicon glyphicon-warning-sign btn-glyph" ng-class="newComment.highPriority ? 'text-danger' : 'btn-disabled'" role="button" ng-click="toggleCommentFlag(newComment)" style="font-weight: lighter;" title="Set as high priority"></span>
+											</span>
+											<span class="comment-toggle pull-right" style="padding-right: 20px;">
+												<span>Set as task: </span>
+												<span class="glyphicon glyphicon-edit btn-glyph" ng-class="newComment.isTask ? 'check-active' : 'btn-disabled'" role="button" ng-click="toggleTaskFlag(newComment)" style="font-weight: lighter; " title="Set as a task"></span>
+											</span>
+											<span class="comment-toggle pull-right" style="padding-right: 20px;">
+												<span class="btn-glyph" role="button" ng-click="toggleCommentMention(newComment)" style="font-weight: bold; color: #295173;" title="Tag a user">@</span>
+											</span>
+											<input id="mention-entry" name="mention" list="users" class="pull-right" ng-show="newComment.isMentioning" ng-model="newComment.mentionAutoFill" ng-change="commentMentionUpdated(newComment, newComment.mentionAutoFill)">
+											<datalist id="users">
+												<option ng-repeat="u in configUsers" value="{{u.userName}}"></option>
+											</datalist>
+										</div>
+									</form>
+								</div>
+								<div class="" ng-repeat="comment in record.comments" ng-show="commentIndex == $index && !newComment" my-post-repeat-directive style="padding: 5px;">
+									<div class="comment-box top">
+										<p id="comment-text-{{$index}}" class="">
+											<span class="glyphicon glyphicon-warning-sign text-danger" ng-if="comment.flag === 'Warning'" style="font-weight: lighter;"> </span> 
+
+											<span class="bolder">{{ comment.authorName }}: </span>
+											<span>{{ comment.text }}</span>
+
+											<!-- This all gets replaced in the directive anyway -->
+										</p>
+									 	<span class="glyphicon glyphicon-eye-open btn-glyph comment-hide" role="button" title="Hide" ng-if="canAdmin && !comment.hidden" ng-click="deleteComment(comment)"></span>
+										<span class="glyphicon glyphicon-eye-close btn-glyph comment-hide" role="button" title="Show" style="color: #ababab" ng-if="canAdmin && comment.hidden" ng-click="deleteComment(comment)"></span>
+
+										<input type="checkbox" class="" ng-model="comment.isTaskCompleted" ng-change="commentToggleTaskComplete(comment)" ng-if="comment.flag === 'Task'">
+									</div>
+									<div class="comment-box reply" ng-repeat="reply in comment.replies">
+										<p id="comment-reply-{{$parent.$index}}-{{$index}}" class="">
+											<span class="bolder">{{ reply.authorName }}: </span>
+											<span ng-class="styleComment(comment)">{{ reply.text }}</span>
+											<span class="glyphicon glyphicon-eye-open pull-right btn-glyph" role="button" title="Hide" ng-if="canAdmin && !reply.hidden" ng-click="deleteComment(reply)"></span>
+											<span class="glyphicon glyphicon-eye-close pull-right btn-glyph" role="button" title="Show" style="color: #ababab" ng-if="canAdmin && reply.hidden" ng-click="deleteComment(reply)"></span>
+											<!-- <span class="text-danger glyphicon glyphicon-plus btn-glyph pull-right" role="button" style="color: #517329;" ng-click="deleteComment(reply)" ng-if="canAdmin && reply.hidden" title="Undelete"/>
+											<span class="glyphicon glyphicon-remove btn-glyph pull-right" role="button" style="color: #a94442;" ng-click="deleteComment(reply)" ng-if="canAdmin && !reply.hidden" title="Delete"/> -->
+										</p>
+									</div>
+									<form ng-submit="addCommentReply(comment, comment.replyText)" style="margin-left: 30px;">
+										<textarea rows="2" class="form-control comment-entry" ng-model="comment.replyText" placeholder="Reply:" style="width: 98%" />
+										<div class="commentControls" style="margin: 6px;">
+											<button class="btn btn-sm">Reply<span class="glyphicon glyphicon-share-alt" style="padding-left: 3px;" /></button>
+										</div>
+									</form>
+								</div>
+								<div class="commentNav" ng-show="!newComment && record.comments.length > 1" >
+									<span class="glyphicon glyphicon-arrow-left" role="button" ng-click="changeComment(commentIndex-1)" ng-show="(commentIndex-1) >= 0"></span>
+									<span class="glyphicon glyphicon-arrow-left" ng-show="(commentIndex-1) < 0" style="color: #ababab"></span>
+									<span ng-repeat="comment in record.comments" role="button" ng-click="changeComment($index)" ng-class="commentIndex == $index ? 'bolder' : ''">{{ $index + 1 }}</span>
+									<span class="glyphicon glyphicon-arrow-right" role="button" ng-click="changeComment(commentIndex+1)" ng-show="(commentIndex+1) < record.comments.length"></span>
+									<span class="glyphicon glyphicon-arrow-right" ng-show="(commentIndex+1) >= record.comments.length" style="color: #ababab"></span>
+								</div>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="col-xs-12">
+			<div class="row" style="margin-top: 10px; margin-bottom: 10px;">
+				<a class="btn btn-primary col-sm-1 col-sm-offset-1" ng-disabled="pageData.PrevId === 0" href="{{ buildLink(pageData.PrevId) }}" ng-click="movePage($event)">Previous</a>
+				<a class="btn btn-primary col-sm-1 col-sm-offset-8" ng-disabled="pageData.NextId === 0" href="{{ buildLink(pageData.NextId)	}}" ng-click="movePage($event)">Next</a>
+			</div>
+		</div>
+	</div>
+
+	<!-- FLOATING TAGS THAT SIT OVER THE IMAGE IF COORDINATES ARE SET -->
+
+	<span id="{{ $index }}-tag-item" role="button" class="glyphicon glyphicon-tag food-tag" style="color: {{ colors[$index] }}; display: none; z-index: 2;" ng-style="styleTag(item)" tag ng-repeat="item in record.foodItems"></span>
+
+	<!-- POP UP DIALOGS BELOW -->
+
+	<div style="position: fixed; left: 0; right: 0; background-color: #000000aa; padding: 20px; margin: 0; top: 0; bottom: 0; display: flex;" class="h-100 row align-items-center float-dialog" ng-show="showAdvice" ng-click="showAdvice = false;">
+		<div class="floating-form" style="position: relative; padding: 10px;">
+			<div style="overflow-y: scroll;">
+				<span class="row-head">Advice for </span>
+				<hr style="margin: 0px; margin-bottom: 5px;">
+				<div class="bordered-container row" ng-repeat="item in advice">
+					<div class="col-md-4">
+						<span class="row-head">{{item.description}}</span><br/>
+						<span ng-repeat="fi in item.links" style="font-weight: bold; text-decoration: underline;" role="button" ng-click="addItem(fi.id)">{{fi.name}}<br/></span>
+					</div>
+					<div class="col-md-4">
+						<p>{{item.issueDescription}}</p>
+					</div>
+					<div class="col-md-4">
+						<p>{{item.solutionDescription}}</p>
+					</div>
+				</div>
+				<div ng-if="advice.length == 0" class="bordered-container">
+					<span class="text-danger">No advice found matching the identified items</span>
+				</div>
+				<a href="#!advice?search={{adviceSearch}}" target="_blank" ng-click="showAdvice = false;">Search for more advice.</a>
+			</div>
+		</div>
+	</div>
+
+	<div style="position: fixed; left: 0; right: 0; background-color: #000000aa; padding: 20px; margin: 0; top: 0; bottom: 0;" class="h-100 row align-items-center float-dialog" ng-show="displayImage" ng-click="toggleDisplayImage()">
+		<div class="col-xs-12" style="position: relative; height: 100%;">
+			<div style="position: absolute; left: 50%; height: 100%;">
+				<div style="height: 100%; position: relative; left: -50%;background-color: white; padding: 2px;">
+					<img ng-src="{{ displayImage }}" style="height: 100%;">
+				</div>
+			</div>
+			<div style="position: absolute; left: 50%; height: 100%;">
+				<div style="height: 100%; position: relative; left: -50%;">
+					<img ng-src="{{ displayImage }}" style="height: 100%; opacity: 0;">
+					<span class="glyphicon glyphicon-remove-circle glyph-md btn-glyph-w" role="button" ng-click="toggleDisplayImage()" style="position: absolute; right: 5px; top: 5px; color: white;"></span>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- <div style="position: fixed; left: 0; right: 0; background-color: #000000aa; padding: 20px; margin: 0; top: 0; bottom: 0;" class="h-100 row align-items-center" ng-show="displayMeasures" ng-click="endDisplayMeasures()">
+		<div class="col-xs-12" style="position: relative; height: 100%;">
+			<div class="row">
+				<span class="col-xs-12 h3 row-head bordered-container" style="text-align: center; display: inline-block;">{{ displayMeasures.measure.name }}</span>
+				<div class="col-xs-12 col-sm-6 col-md-3" ng-repeat="item in displayMeasures.exampleMeasures.measures" style="height: 100%">
+					<div style="background-color: white; padding: 6px; text-align: center; height: 100%;" role="button" ng-click="endDisplayMeasures(item.sizeGrams)">
+						<img ng-src="{{item.imageUrl}}" style="width: 100%"><br/><br/>
+						<span class="row-head" style="text-align: center;">{{ item.description }}</span><br/>
+						<span class="row-head" style="text-align: center;">Size: {{ item.sizeGrams }}g</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div> -->
+
+	<!-- <div style="position: fixed; left: 0; right: 0; padding: 0; top: 0; bottom: 0; margin: 0; display: flex; " class="h-100 row align-items-center" ng-show="editGuests">
+		<div class="floating-form" style="position: relative;">
+			<span class="row-head">Edit Total Number of People Eating</span>
+			<hr style="margin: 0px; margin-bottom: 5px;">
+			<form ng-submit="saveRecord(); editGuests = false;">
+				<table class="small-numeric">
+					<tr><th></th><th style="text-align: center;">Original</th><th style="text-align: center;">New</th></tr>
+					<tr><th>Adult Females:</th><th>{{ record.guestInfo.adultFemaleGuestsOrig }}</th><th><input class="form-control" type="number" ng-model="record.guestInfo.adultFemaleGuests"></th></tr>
+					<tr><th>Adult Males:</th><th>{{ record.guestInfo.adultMaleGuestsOrig }}</th><th><input class="form-control" type="number" ng-model="record.guestInfo.adultMaleGuests"></th></tr>
+					<tr><th>Children:</th><th>{{ record.guestInfo.childGuestsOrig }}</th><th><input class="form-control" type="number" ng-model="record.guestInfo.childGuests"></th></tr>
+				</table>
+				<hr style="margin: 0px; margin-bottom: 5px;">
+				<div style="width: 100%; text-align: center; padding-top: 10px">
+					<input type="submit" value="Save" class="btn btn-sm btn-primary"/>
+					<button class="btn btn-standard btn-sm" ng-click="editGuests = false;" type="button">Cancel</button>
+				</div>
+			</form>
+		</div>
+	</div> -->
+
+	<div id="guestModal" class="container modal fade" role="dialog">
+		<div class="modal-dialog" style="width: 400px;">
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Edit Total Number of People Eating</h4>
+				</div>
+				<div class="modal-body">
+					<form id="guestForm" ng-submit="saveRecord();">
+						<table class="small-numeric">
+							<tr><th></th><th style="text-align: center;">Original</th><th style="text-align: center;">New</th></tr>
+							<tr><th>Adult Females:</th><th>{{ record.guestInfo.adultFemaleGuestsOrig }}</th><th><input class="form-control" type="number" min="0" ng-model="record.guestInfo.adultFemaleGuests"></th></tr>
+							<tr><th>Adult Males:</th><th>{{ record.guestInfo.adultMaleGuestsOrig }}</th><th><input class="form-control" type="number" min="0" ng-model="record.guestInfo.adultMaleGuests"></th></tr>
+							<tr><th>Children:</th><th>{{ record.guestInfo.childGuestsOrig }}</th><th><input class="form-control" type="number" min="0" ng-model="record.guestInfo.childGuests"></th></tr>
+						</table>
+						<div style="width: 100%; text-align: center; padding-top: 10px">
+							<input type="submit" value="Save" class="btn btn-sm btn-primary"/>
+							<button class="btn btn-standard btn-sm" type="button" data-dismiss="modal">Cancel</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div style="position: fixed; left: 0; right: 0; padding: 0; top: 0; bottom: 0; margin: 0; display: flex; " class="h-100 row align-items-center float-dialog" ng-show="showParticipantDialog">
+		<div class="floating-form" style="position: relative;">
+			<span class="row-head">Add Participant</span>
+			<hr style="margin: 0px; margin-bottom: 5px;">
+			<form ng-submit="addParticipant(newParticipant); showParticipantDialog = false;">
+				<select class="form-control" ng-model="newParticipant.id" ng-options="hm.id as hm.participantId for hm in householdMembers" ng-show="householdMembers.length > 0"></select>
+				<span class="text-danger" style="text-align: center;" ng-if="!(householdMembers.length > 0)">Cannot add any more participants.<br/>Are all participants added?</span>
+				 <!-- + ' - ' + hm.age -->
+				<div style="width: 100%; text-align: center; padding-top: 10px">
+					<input type="submit" value="Save" class="btn btn-sm btn-primary" ng-disabled="!newParticipant.id"/>
+					<button class="btn btn-standard btn-sm" ng-click="showParticipantDialog = false;" type="button">Cancel</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<div style="position: fixed; left: 0; right: 0; padding: 0; top: 0; bottom: 0; margin: 0; display: flex; background-color: #000000aa;" class="h-100 row align-items-center float-dialog" ng-show="displayHistory == true" ng-click="displayHistory = false;">
+		<div class="floating-form" style="position: relative;" ng-click="$event.stopPropagation();">
+			<ul class="list-group" style="margin-bottom: 0px;">
+				<!-- <li class="list-group-item list-group-item-header" ng-if="historyFoodItem">WireMesh</li>
+				<li class="list-group-item" ng-if="historyFoodItem" style="max-width: 400px;">
+					<p ng-if="!record.imageUrl || !record.isFiducialPresent" style="margin: 0;">
+						WireMesh tool cannot be used without a present image containing a Fiducial Marker. Use the 'Fiducial Marker' checkbox below the title to force this setting if necessary.
+					</p>
+					<p ng-if="record.imageUrl && record.isFiducialPresent" style="margin: 0;">
+						{{ (historyFoodItem.foodCompositionDatabaseEntry && historyFoodItem.foodCompositionDatabaseEntry.density ) ? 'This record is ready to be sent to the WireMesh app'
+						 : (historyFoodItem.foodCompositionDatabaseEntry ? 'The selected food item does not have a density set in the database. It cannot be quantified by the WireMesh app'
+						 : 'There is no food item identified. It cannot be quantified by the WireMesh app' )}}
+					</p>
+				</li>
+				<li class="list-group-item horizontal-buttons" ng-if="historyFoodItem">
+					<div class="btn-group" role="group">
+						<button type="button" class="btn" ng-class="{active1: historyFoodItem.priority < 100}"  ng-click="historyFoodItem.priority = 99">Low Priority</button>
+						<button type="button" class="btn" ng-class="{active2: historyFoodItem.priority == 100}" ng-click="historyFoodItem.priority = 100">Mid Priority</button>
+						<button type="button" class="btn" ng-class="{active3: historyFoodItem.priority > 100}" ng-click="historyFoodItem.priority = 101">High Priority</button>
+					</div>
+				</li> -->
+				<li class="list-group-item list-group-item-header">History</li>
+				<!-- <li class="list-group-item col-xs-4"><div style="background-color: #52732e; height: 64px; color: white;"><span>Identify</span></div></li>
+				<li class="list-group-item col-xs-4"><div style="background-color: #52732e; height: 64px; color: white;"><span>Identify</span></div></li>
+				<li class="list-group-item col-xs-4"><div style="background-color: #52732e; height: 64px; color: white;"><span>Identify</span></div></li> -->
+				<li class="list-group-item horizontal-buttons">
+					<div class="btn-group" role="group">
+						<button type="button" class="btn" ng-class="{active: displayHistoryIdentify}" ng-click="displayHistoryIdentify = !displayHistoryIdentify">Identify</button>
+						<button type="button" class="btn" ng-class="{active: displayHistoryQuantify}" ng-click="displayHistoryQuantify = !displayHistoryQuantify">Quantify</button>
+						<button type="button" class="btn" ng-class="{active: displayHistoryDelete}" ng-click="displayHistoryDelete = !displayHistoryDelete">Delete</button>
+					</div>
+				</li>
+				<li class="list-group-item" ng-repeat="h in history" ng-if="(h.action === 'Quantify' && displayHistoryQuantify) || (h.action === 'Identify' && displayHistoryIdentify) || ((h.action === 'Delete' || h.action === 'Reject') && displayHistoryDelete)">
+					<div ng-if="h.action === 'Quantify' && displayHistoryQuantify">
+						<div class="time-span">
+							<span>{{ h.time | date : 'dd/MM/yyyy h:mma' }}</span>
+						</div>
+						<span style="font-weight: bolder">{{ h.userName }}</span> quantified <span style="color: {{getColorForFoodItem(h.foodItemId)}};"><span class="glyphicon glyphicon-tag"></span> item </span>as <span ng-if="h.toolSource">{{ h.toolMeasure }} {{ h.toolSource }} ({{ h.quantityGrams.toFixed(1) }}g)</span>
+						<span ng-if ="!h.toolSource">{{ h.quantityGrams.toFixed(1) }}g</span>
+					</div>
+					<div ng-if="h.action === 'Identify' && displayHistoryIdentify">
+						<div class="time-span">
+							<span>{{ h.time | date : 'dd/MM/yyyy h:mma' }}</span>
+						</div>
+						<span style="font-weight: bolder">{{ h.userName }}</span> identified <span style="color: {{getColorForFoodItem(h.foodItemId)}}; padding-left: 5px;"><span class="glyphicon glyphicon-tag"/> {{ getFoodCompositionFromId(h.foodCompositionId) }}</span>
+					</div>
+					<div ng-if="h.action === 'Delete' && displayHistoryDelete">
+						<div class="time-span">
+							<span>{{ h.time | date : 'dd/MM/yyyy h:mma' }}</span>
+						</div>
+						<span style="font-weight: bolder">{{ h.userName }}</span> deleted item <a href="" target="_blank" ng-click="undeleteItem(h.foodCompositionId, h.quantityGrams, h.toolMeasure, h.toolSource); $event.stopPropagation(); displayHistory = false;"><span ng-if="h.toolSource">{{ h.toolMeasure }} {{ h.toolSource }} of </span>{{ getFoodCompositionFromId(h.foodCompositionId) }} ({{ h.quantityGrams.toFixed(1) }}g)</a>
+					</div>
+					<div ng-if="h.action === 'Reject' && displayHistoryDelete">
+						<div class="time-span">
+							<span>{{ h.time | date : 'dd/MM/yyyy h:mma' }}</span>
+						</div>
+						<span style="font-weight: bolder">{{ h.userName }}</span> rejected item for reason {{ h.rejectReason }}
+					</div>
+				</li>
+			</ul>
+		</div>
+	</div>
+
+	<!-- <div style="position: fixed; left: 0; right: 0; padding: 0; top: 0; bottom: 0; margin: 0; display: flex; background-color: #000000aa" class="h-100 row align-items-center">
+		<div id="hoverimage" class="floating-form" style="position: relative;">
+		</div>
+	</div> -->
+	<div class="magnifier-preview" id="preview" style="width: 600px; height: 800px; position: fixed; top: 10%; left: 45%; pointer-events: none; overflow: hidden;"></div>
+
+	<div style="position: fixed; left: 0; right: 0; padding: 0; top: 0; bottom: 0; margin: 0; display: flex; background-color: #000000aa;" class="h-100 row align-items-center float-dialog" ng-show="displayEditTime" ng-click="displayEditTime = false;">
+		<div class="floating-form" style="position: relative;" ng-click="$event.stopPropagation();">
+			<form ng-submit="saveEditTime(editTimeTime, editTimeDate)">
+				<ul class="list-group" style="margin-bottom: 0px;">
+					<li class="list-group-item list-group-item-header">Edit Time</li>
+					<li class="list-group-item">
+						<span class="bold">Time:</span>
+						<input type="time" name="editTimeTime" class="form-control" ng-model="editTimeTime">
+					</li>
+					<li class="list-group-item">
+						<span class="bold">Date:</span>
+						<input type="date" name="editTimeTime" class="form-control" ng-model="editTimeDate">
+					</li>
+					<li class="list-group-item">
+						<input type="submit" name="editTimeTime" class="btn btn-primary" value="Save" ng-model="editTimeDate">
+					</li>
+				</ul>
+			</form>
+		</div>
+	</div>
+
+	<!-- <div style="position: fixed; left: 0; right: 0; padding: 0; top: 0; bottom: 0; margin: 0; display: flex; " class="h-100 row align-items-center" ng-show="showParticipantDialog">
+		<div class="floating-form" style="position: relative;">
+			<span class="row-head">Add Participant</span>
+			<hr style="margin: 0px; margin-bottom: 5px;">
+			<form ng-submit="addParticipant(newParticipant); showParticipantDialog = false;">
+				<select class="form-control" ng-model="newParticipant.id" ng-options="hm.id as hm.participantId for hm in householdMembers" ng-show="householdMembers.length > 0"></select>
+				<span class="text-danger" style="text-align: center;" ng-if="!(householdMembers.length > 0)">Cannot add any more participants.<br/>Are all participants added?</span>
+				<div style="width: 100%; text-align: center; padding-top: 10px">
+					<input type="submit" value="Save" class="btn btn-sm btn-primary" ng-disabled="!newParticipant.id"/>
+					<button class="btn btn-standard btn-sm" ng-click="showParticipantDialog = false;" type="button">Cancel</button>
+				</div>
+			</form>
+		</div>
+	</div> -->
+
+	<!-- Show Help -->
+	<help-dialog></help-dialog>
+</div>

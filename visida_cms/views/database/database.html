@@ -1,0 +1,74 @@
+<div ng-controller="databaseController" class="container-fluid" style="margin-left: 40px;">
+	<div class="row content" style="padding-bottom: 95px;">
+		<div class="col-xs-12 page-head">
+			<span>Food Composition Table</span>
+			<span class="glyphicon glyphicon-refresh glyph-md {{ (loading > 0) && 'loading-run' || 'loading-done' }}" style="margin-left: 15px;"></span>
+			<hr class="head-hr">
+		</div>
+		<div class="col-xs-12">
+			<div ng-show="dbMessage">
+				<small class="text-danger" ng-show="!dbMessage.success">{{ dbMessage.txt }}</small>
+				<small class="text-success" ng-show="dbMessage && dbMessage.success">{{ dbMessage.txt }}</small>
+			</div>
+			<div class="form-inline row" style="padding: 5px 0px 8px 20px;">
+				<div class="" style="display: inline-block;">
+					<label for="databaseSearch">Table :</label>
+					<select id="table-select" ng-model="tableId" class="form-control" ng-change="changeDatabase(tableId)" ng-options="t as t.name for t in fctables track by t.id">
+						<!-- <option ng-repeat="t in fctables" value="{{t.id}}">{{ t.name }}</option> -->
+					</select>
+				</div>
+				<form ng-submit="searchItems(databaseSearch)" style="display: inline-block; padding-left: 40px;">
+					<label for="databaseSearch">Search :</label>
+					<input type="text" name="databaseSearch" ng-model="databaseSearch" class="form-control" style="width: 250px" ng-disabled="!tableId">
+					<input class="button btn btn-standard" type="submit" name="" value="Search"/>
+				</form>
+
+				<button class="btn btn-primary pull-right" style="margin-right: 30px;" ng-click="exportTable()" ng-disabled="!tableId">Export</button>
+			</div>
+			<hr class="head-hr">
+			<!-- <table style="width: 100%;" class="" ng-show="pages.length > 1">
+				<tr><td ng-repeat="p in pageNames" style="text-align: center;"><a href="#!/database" ng-click="switchPage($index)"><strong>{{ p }}</strong></a></td></tr>
+			</table> -->
+			<!-- <div style="overflow-x: auto; overflow-y: auto;">
+				<table id="fctable" class="fcthead stripe-table" style="" onscroll="document.getElementById('fcthead').scrollLeft = this.scrollLeft;" style="">
+				</table>
+			</div> -->
+		</div>
+		<div class="col-xs-12 text-center" ng-show="pages.length > 1" style="padding: 0;">
+			<ul class="pagination">
+				<li class="page-item {{ (currentPageIndex > 0) ? '' : 'disabled' }}">
+					<span class="page-link" role="button" ng-click="changePage(currentPageIndex - 1)">Previous</span>
+				</li>
+				<li class="page-item {{ (currentPageIndex == $index) && 'active' || '' }}" ng-repeat="p in pages">
+					<span class="page-link" role="button" ng-click="changePage($index)">{{$index + 1}}</span>
+				</li>
+				<li class="page-item {{ (currentPageIndex < pages.length-1) ? '' : 'disabled' }}">
+					<span class="page-link" role="button" ng-click="changePage(currentPageIndex + 1)">Next</span>
+				</li>
+			</ul>
+		</div>
+		<div id="recipe-table-container" class="col-xs-12 frz-table-container" style="height: 600px; margin-bottom: 100px;">
+			<table class="frz-table" id="recipe-table">
+				<colgroup width="120">
+					<col width="50">
+					<col width="70">
+					<col width="400">
+					<col width="400">
+				</colgroup>
+			</table>
+		</div>
+		<div class="col-xs-12 text-center" ng-show="pages.length > 1" style="padding: 0;">
+			<ul class="pagination">
+				<li class="page-item {{ (currentPageIndex > 0) ? '' : 'disabled' }}">
+					<span class="page-link" role="button" ng-click="changePage(currentPageIndex - 1)">Previous</span>
+				</li>
+				<li class="page-item {{ (currentPageIndex == $index) && 'active' || '' }}" ng-repeat="p in pages">
+					<span class="page-link" role="button" ng-click="changePage($index)">{{$index + 1}}</span>
+				</li>
+				<li class="page-item {{ (currentPageIndex < pages.length-1) ? '' : 'disabled' }}">
+					<span class="page-link" role="button" ng-click="changePage(currentPageIndex + 1)">Next</span>
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>

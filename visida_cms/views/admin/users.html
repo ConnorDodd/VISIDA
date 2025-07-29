@@ -1,0 +1,168 @@
+<div class="container" ng-controller="adminController">
+	<div class="row content">
+		<div class="col-xs-12 page-head">
+			<span class="">Users</span>
+			<span class="glyphicon glyphicon-plus glyph-md pull-right" role="button" ng-click="showUserForm = true" style="padding-left: 10px;" title="Create"></span>
+			<span class="glyphicon glyphicon-refresh glyph-md pull-right {{ (userLoading) && 'loading-run' || 'loading-done' }}"></span>
+			<hr class="head-hr">
+		</div>
+		<div class="col-xs-12" style="display: table; margin: 0px 25px">
+			<label for="search" style="display: table-cell; width: 1px">Search:</label>
+			<input type="text" name="search" ng-change="updateUserSearch(search)" ng-model="search" class="form-control" style="display: table-cell; width: 94%;">
+		</div>
+		<small class="text-danger">{{ userError }}</small>
+		<div class="col-sm-12 container spaced">
+			<div class="list-group" style="margin: 15px;">
+				<table id="userTable" class="table-bordered" style="border-spacing: 0; border-collapse:collapse; table-layout:fixed; width: 100%">
+					<tr class="row-head">
+						<td>
+							Username
+							<span class="glyphicon glyphicon-sort" style="color: #517329; float: right; padding-right: 1px; font-size: 14px; vertical-align: middle;" role="button" ng-click="sortUserTable(0)" />
+						</td>
+						<td>
+							Email
+							<span class="glyphicon glyphicon-sort" style="color: #517329; float: right; padding-right: 1px; font-size: 14px; vertical-align: middle;" role="button" ng-click="sortUserTable(1)" /></td>
+						<td>
+							User Type
+							<span class="glyphicon glyphicon-sort" style="color: #517329; float: right; padding-right: 1px; font-size: 14px; vertical-align: middle;" role="button" ng-click="sortUserTable(2)" />
+						</td>
+						<td>
+							Last Login
+							<span class="glyphicon glyphicon-sort" style="color: #517329; float: right; padding-right: 1px; font-size: 14px; vertical-align: middle;" role="button" ng-click="sortUserTable(3)" />
+						</td>
+						<td>
+							Status of Account
+							<span class="glyphicon glyphicon-sort" style="color: #517329; float: right; padding-right: 1px; font-size: 14px; vertical-align: middle;" role="button" ng-click="sortUserTable(4)" />
+						</td>
+					</tr>
+					<tr class="" ng-repeat="user in users" ng-if="!user.hidden">
+						<th style="word-wrap:break-word;"><a href="#!/admin/user?id={{ user.id }}" ng-if="user.userName !== 'admin'">{{ user.userName }}</a><span ng-if="user.userName === 'admin'">admin</span></th>
+						<td style="word-wrap:break-word; font-size: 11px;">
+							{{ user.email }}
+						</td>
+						<td>
+							{{ user.role }}
+						</td>
+						<td>{{ user.displayDate | date : 'HH:mm a dd/MM/yyyy' }}</td>
+						<td>{{ user.isActive ? "active" : "deactivated" }}</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+
+
+
+		<!-- <div class="col-xs-12 page-head" style="padding-top: 40px;">
+		<span class="">App Users</span>
+		<span class="glyphicon glyphicon-plus glyph-md pull-right" role="button" ng-click="showUserForm = true" style="padding-left: 10px;" title="Create"></span>
+		<span class="glyphicon glyphicon-refresh glyph-md pull-right {{ (userLoading) && 'loading-run' || 'loading-done' }}"></span>
+		<hr class="head-hr">
+	</div>
+	<div class="col-xs-12" style="display: table; margin: 0px 25px">
+		<label for="searchApp" style="display: table-cell; width: 1px">Search:</label>
+		<input type="text" name="searchApp" ng-change="updateAppUserSearch(searchApp)" ng-model="searchApp" class="form-control" style="display: table-cell; width: 94%;">
+	</div>
+	<div class="col-xs-12">
+		<div class="col-xs-12 col-md-6 col-lg-4" ng-repeat="user in appUsers" ng-if="!user.hidden" style="padding: 0px">
+			<a href="#!/admin/user?id={{ user.id }}" ng-if="user.userName !== 'admin'">
+				<div class="bordered-container" style="border-width: 2px; padding:10px 0px; margin:10px">
+					<div class="has-hr" style="margin: 0px 10px">
+						<span style="font-size: 18px;">{{ user.userName }}
+							<span style="color:#9c0005;" ng-if="!userLoading && !user.isActive"> - Deactivated</span></span>
+						<span class="pull-right" style="font-weight: bolder; vertical-align: text-bottom;">{{ user.role }}</span>
+					</div>
+					<div style="margin: 0px 10px">
+						<span>{{ user.email}}</span>
+						<span class="pull-right">{{ user.displayDate | date : 'HH:mm a dd/MM/yyyy' }}</span>
+					</div>
+				</div>
+			</a>
+		</div>
+	</div>
+	<div class="col-xs-12" style="text-align: center;">
+		<a href="" ng-show="userAppShowCount < userAppShowTotal" ng-click="updateAppUserAmount()">Show More</a>
+	</div> -->
+
+
+
+		<div style="position: fixed; left: 0; right: 0; padding: 0; top: 0; bottom: 0; margin: 0; display: flex; " class="h-100 col-xs-12 align-items-center" ng-show="showUserForm">
+			<div style="width: 100%; height: 100%; position: absolute; background-color: #00000066;" ng-click="showUserForm = false;"></div>
+			<div class="floating-form" style="position: relative;" ng-show="showUserForm">
+				<span class="row-head">Create User</span>
+				<hr style="margin: 0px; margin-bottom: 5px;">
+				<form ng-submit="createUser(newUserEmail, newUserUsername, newUserRole)">
+					<table>
+						<tr>
+							<td style="vertical-align: middle;"><label for="newEmail">Email: </label></td>
+							<td><input class="form-control" id="newEmail" type="text" name="newEmail" placeholder="jsmith@uon.edu.au" ng-model="newUserEmail"></td>
+						</tr>
+						<tr>
+							<td style="vertical-align: middle;"><label for="newUsername">Username: </label></td>
+							<td><input class="form-control" id="newUsername" type="text" name="newUsername" placeholder="jsmith" ng-model="newUserUsername"></td>
+						</tr>
+						<!-- <tr>
+						<td><label for="newPassword">Password: </label></td>
+						<td><input class="form-control" id="newPassword" type="password" name="newPassword" ng-model="newUserPassword"></td>
+					</tr> -->
+						<tr>
+							<td style="vertical-align: middle;"><label for="newRole">Role: </label></td>
+							<td><select id="newRole" class="form-control" name="newRole" ng-model="newUserRole"><option ng-repeat="role in roles">{{ role.role }}</option></select></td>
+						</tr>
+					</table>
+					<div class="{{ (newUserLoading ) && 'loader' || '' }}"></div>
+					<div style="text-align: center;">
+						<small class="text-danger" style="white-space: pre-line;">{{ newUserError }}</small>
+					</div>
+					<hr style="margin: 0px; margin-bottom: 5px;">
+					<div style="width: 100%; text-align: center; padding-top: 10px">
+						<input type="submit" value="Create" class="btn btn-sm btn-primary" />
+						<button class="btn btn-standard btn-sm" ng-click="showUserForm = false;" type="button">Cancel</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- <div>
+		<table>
+			<tr>
+				<th>Username</th>
+				<th>Role</th>
+			</tr>
+			<tr ng-repeat="user in users">
+				<td><a href="#!/admin/user?id={{ user.id }}">{{ user.userName }}</a></td>
+				<td>
+					<form ng-submit="assignRole(user.id, selectedRole)" ng-if="user.userName !== 'admin'">
+						<select ng-model="selectedRole" ng-init="selectedRole = user.role.role">
+							<option ng-repeat="uRole in roles">{{ uRole.role }}</option>
+						</select>
+						<input type="submit" style="margin-left: .3em;" value="Set" ng-if="user.userName !== 'admin'">
+					</form>
+				</td>
+				<td>
+					<button ng-click="deleteUser(user.id)" ng-if="user.userName !== 'admin'"><span class="glyphicon glyphicon-remove"/> Delete User</button>
+				</td>
+			</tr>
+		</table>
+		<br/>
+		<form ng-submit="createUser(newUserUsername, newUserPassword, newUserRole)">
+			<table>
+				<tr>
+					<td><label for="newUsername">Username: </label></td>
+					<td><input id="newUsername" type="text" name="newUsername" placeholder="jsmith" ng-model="newUserUsername"></td>
+				</tr>
+				<tr>
+					<td><label for="newPassword">Password: </label></td>
+					<td><input id="newPassword" type="password" name="newPassword" ng-model="newUserPassword"></td>
+				</tr>
+				<tr>
+					<td><label for="role">Role: </label></td>
+					<td><select name="role" ng-model="newUserRole"><option ng-repeat="role in roles">{{ role.role }}</option></select></td>
+				</tr>
+			</table>
+			<div class="{{ (newUserLoading ) && 'loader' || '' }}"></div>
+			<small class="text-danger">{{ newUserError }}</small>
+			<input type="submit" style="margin-left: .5em;" value="Create User">
+		</form><br/>
+		
+	</div> -->
+</div>

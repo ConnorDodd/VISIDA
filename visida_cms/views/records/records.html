@@ -1,0 +1,247 @@
+<div id="content" ng-controller="eatController" class="container">
+	<!-- <div style="position: absolute; bottom: 10px; right: 10px;" window-size-directive>Size: {{ windowWidth }}</div> -->
+	<div class="row content" ng-show="loading > 0" style="height: 100%">
+		<div class="col-xs-12" style="height: 80%">
+			<span class="glyphicon glyphicon-refresh loading-run" style="font-size: 160px; position: absolute; left: 50%; top: 50%; margin: auto; margin-left: -80px"></span>
+		</div>
+	</div>
+	<div class="row content" ng-show="loading == 0">
+		<div class="col-xs-12">
+			<span class="page-head">Analyze Image Records</span>
+			<span class="pull-right" ng-show="!loading && timeTaken" style="font-size: x-small; margin-top: 10px;">Showing records {{ ((pageData.currentPage - 1) * pageData.pageSize) + 1}} - {{((pageData.currentPage - 1) * pageData.pageSize) + images.length}} of {{pageData.totalCount}}<br/>Loaded in {{timeTaken}}ms</span>
+			<span class="glyphicon glyphicon-refresh glyph-md pull-right {{ (loading) && 'loading-run' || 'loading-done' }}"></span>
+			<hr class="head-hr">
+		</div>
+		<div id="searchdiv" class="col-xs-12" ng-show="!loading" style="width: 100%;">
+			<form ng-submit="search()" class="form-inline">
+				<div class="form-group search-container" style="padding: 5px 0px 8px 0px;">
+					<div class="col-sm-6 col-md-3">
+						<label for="searchRecordType">Record Type:</label><br/>
+						<select id="searchRecordType" name="searchRecordType" ng-model="searchRecordType" class="form-control fake-chosen">
+							<option value="">Any</option>
+							<option value="EatRecordLeftovers">Eat Record or Leftovers</option>
+							<option value="EatRecord">Eat Record</option>
+							<option value="Leftovers">Leftovers</option>
+							<option value="Ingredient">Ingredient</option>
+						</select>
+					</div>
+					<div class="col-sm-6 col-md-3">
+						<label for="sStudy">Study:</label><br/>
+						<div style="padding: 0; display: inline-block; width: 80%">
+							<select id="sStudy" chosen data-placeholder-text-single="'Select study'" no-results-text="'No matching studies'" ng-model="selectedStudy"
+								class="item-name align-middle" style="width: 100%" ng-options="s.id as s.name for s in searchConfig.studies" ng-change="studyChanged(true)"><!--  -->
+								<option value="">Any</option>
+								<!-- <option ng-repeat="s in searchConfig.studies" value="{{s.id}}">{{ s.name}}</option> -->
+							</select>
+							
+						</div>
+						<!-- <select id="sStudy" name="sStudy" ng-model="selectedStudy" class="form-control btn-pulse" ng-change="studyChanged()"  ng-options="s.id as s.name for s in searchConfig.studies">
+							<option value="">Any</option>
+						</select> -->
+					</div>
+					<div class="col-sm-6 col-md-3">
+						<label for="sHousehold">Household:</label><br/>
+						<div style="padding: 0; display: inline-block; width: 80%">
+							<select id="sHousehold" chosen data-placeholder-text-single="'Select household'" no-results-text="'No matching households'" ng-model="selectedHousehold"
+								class="item-name align-middle" style="width: 100%" ng-change="householdChanged(true)"><!-- ng-options="h.name as h.name for h in searchHouseholds"  -->
+								<option value="">Any</option>
+								<option ng-repeat="h in searchHouseholds" value="{{h.name}}">{{h.name}}</option>
+							</select>
+						</div>
+						<!-- <select id="sHousehold" name="sHousehold" ng-model="selectedHousehold" class="form-control" ng-change="householdChanged()" >
+							<option value="">Any</option>
+							<option ng-repeat="hh in searchHouseholds" value="{{ hh.name }}">{{ hh.name }}</option>
+						</select> -->
+					</div>
+					<div class="col-sm-6 col-md-3">
+						<label for="sParticipant">Participant:</label><br/>
+						<div style="padding: 0; display: inline-block; width: 80%">
+							<select id="sParticipant" chosen data-placeholder-text-single="'Select participant'" no-results-text="'No matching participants'" ng-model="selectedHouseholdMember"
+								class="item-name align-middle" style="width: 100%" ng-change="householdMemberChanged()"><!-- ng-options="h.name as h.name for h in searchHouseholds"  -->
+								<option value="">Any</option>
+								<option ng-repeat="p in searchParticipants" value="{{p}}">{{p}}</option>
+							</select>
+						</div>
+						<!-- <select id="sHousehold" name="sHousehold" ng-model="selectedHousehold" class="form-control" ng-change="householdChanged()" >
+							<option value="">Any</option>
+							<option ng-repeat="hh in searchHouseholds" value="{{ hh.name }}">{{ hh.name }}</option>
+						</select> -->
+					</div>
+					<div class="col-xs-12">
+						<hr class="head-hr">
+					</div>
+					<div class="col-sm-6" ng-show="showAdvanced">
+						<label for="sText">Search food:</label>
+						<input type="text" name="sText" placeholder="search" ng-model="searchText" class="form-control" style="width: 70%">
+						<span class="glyphicon glyphicon-remove btn-glyph" title="Clear" role="button" ng-click="searchText = ''"> </span>
+					</div>
+					<div class="col-sm-6" ng-show="showAdvanced">
+						<label for="cText">Search comments:</label>
+						<div class="display: inline-block dropdown" style="display: inline-block; vertical-align: middle; padding: 2px; padding-left: 10px;">
+							<span class="dropdown-toggle glyphicon glyphicon-tags btn-glyph" style="color: #517329;" title="Choose tag" role="button" data-toggle="dropdown"> </span>
+							<ul class="dropdown-menu comment-search-tags" style="padding: 5px; width: 500px;">
+								<li ng-click="searchCommentText = 'I\'m unsure about the best match for this item in the database'">I'm unsure about the best match for this item in the database.</li>
+								<li ng-click="searchCommentText = 'I cannot identify this item'">I cannot identify this item.</li>
+								<li ng-click="searchCommentText = 'I cannot quantify this item'">I cannot quantify this item.</li>
+								<li ng-click="searchCommentText = 'This record is a duplicate'">This record is a duplicate.</li>
+								<li ng-click="searchCommentText = 'The record type is incorrect'">The record type is incorrect.</li>
+								<li ng-click="searchCommentText = 'There is an error with the participant(s) for this record'">There is an error with the participant(s) for this record.</li>
+								<li ng-click="searchCommentText = 'There is an error with the total number of individuals eating'">There is an error with the total number of individuals eating.</li>
+								<li ng-click="searchCommentText = 'This record is not valid'">This record is not valid.</li>
+								<li ng-click="searchCommentText = 'This record contains identifying information'">This record contains identifying information.</li>
+							</ul>
+						</div>
+						<input type="text" name="cText" placeholder="search" ng-model="searchCommentText" class="form-control" style="width: 70%; margin-left: 3px;">
+						<span class="glyphicon glyphicon-remove btn-glyph" title="Clear" role="button" ng-click="searchCommentText = ''"> </span>
+					</div>
+					<!-- <div class="col-xs-12" style="height: 12px;"></div> -->
+					<div class="col-sm-6 col-md-3" ng-show="showAdvanced">
+						<label for="identified">Identified:</label>
+						<select id="identified" name="identified" ng-model="searchIdent" class="form-control">
+							<option value="">Any</option>
+							<!-- <option value="-1">Not Started</option> -->
+							<option value="-1">In Progress</option>
+							<option value="1">Completed</option>
+							<!-- <option value="2">Not Completed</option> -->
+						</select>
+					</div>
+					<div class="col-sm-6 col-md-3" ng-show="showAdvanced">
+						<label for="portioned">Quantified:</label>
+						<select id="portioned" name="portioned" ng-model="searchPrt" class="form-control">
+							<option value="">Any</option>
+							<option value="-1">In Progress</option>
+							<!-- <option value="0">In Progress</option> -->
+							<option value="1">Completed</option>
+							<!-- <option value="2">Not Completed</option> -->
+						</select>
+					</div>
+					<div class="col-sm-6 col-md-3" ng-show="showAdvanced">
+						<label for="show-hidden">Show hidden:</label>
+						<select id="show-hidden" name="show-hidden" ng-model="searchHidden" class="form-control">
+							<option value="">Only unhidden</option>
+							<option value="0">Both</option>
+							<option value="1">Only hidden</option>
+							<!-- <option value="2">Not Completed</option> -->
+						</select>
+					</div>
+					<div class="col-sm-6 col-md-3" ng-show="showAdvanced">
+						<label for="variation">Gestalt Variation:</label>
+						<input type="number" id="variation" name="variation" ng-model="searchVariation" class="form-control" style="width: 80px;">
+						<span style="font-weight: bold; padding: 3px; vertical-align: middle;">%</span>
+					</div>
+					<div class="col-xs-12" ng-show="showAdvanced">
+						<hr class="head-hr">
+					</div>
+					<div class="col-sm-12 col-md-12">
+						<label for="perpage">Results per page:</label>
+						<select id="perpage" name="perpage" ng-model="pageSize" class="form-control">
+							<option value="10">10</option>
+							<option value="25">25</option>
+							<option value="50">50</option>
+						</select>
+						<button class="btn btn-standard btn-sm" type="button" role="button" data-toggle="modal" data-target="#daysModal" style="margin-left: 12px;">Choose Days</button>
+						<input id="searchButton" type="submit" value="Search" class="btn btn-primary btn-sm">
+						<button class="btn btn-standard btn-sm" type="button" role="button" ng-click="clearSearch()" style="margin-left: 12px;">Clear</button>
+						<button class="btn btn-standard btn-sm" type="button" ng-click="showAdvanced = !showAdvanced">{{ showAdvanced ? 'Hide' : 'Show'}} Advanced</button>
+					</div>
+				</div>
+			</form>
+			<hr class="head-hr">
+		</div>
+		<div class="row text-center" ng-show="!images.length > 0">
+			<span class="text-danger">There is no records matching the search filters.</span>
+		</div>
+		<div ng-include="'views/records/navigation.html'"/>
+		<div id="image-table-div" class="col-xs-12"  ng-show="images.length > 0">
+			<table id="image-table">
+				<tr>
+					<th role="button" ng-click="toggleSearchOrder()"><span>Details<span class="glyphicon bold {{ searchOrder === 'desc' ? 'glyphicon-menu-up' : 'glyphicon-menu-down'}} pull-right"></span></span></th>
+					<!-- <th>Time</th> -->
+					<th>Participants</th>
+					<th>Image Capture</th>
+					<!-- <th class="text-center">Fiducial Marker</th> -->
+					<!-- <th class="text-center">Identified</th> -->
+					<!-- <th class="text-center">Quantified</th> -->
+					<th>Food Items</th>
+					<th>Comments</th>
+				</tr>
+				<tr ng-repeat="img in images" class="bordered-tr" role="button" ng-click="linkRecord(img, $event)" ng-middle-click="linkRecordCtrl(img)" ng-mousedown="linkMouseDown(img, $event)">
+					<td>
+						<span class="row-head">{{ img.recordType }} </span>
+						<span class="glyphicon" ng-class="{'glyphicon-headphones': !img.textDescription, 'glyphicon-text-size': img.textDescription}" style="margin-left: 2px;"></span><br/>
+						<span>{{ img.captureTime | date : 'dd/MM/yyyy' }}</span><br/>
+						<span>{{ img.captureTime | date : 'hh:mm a' }}</span>
+					</td>
+					<!-- <td>{{ img.imageName.substring(img.imageName.lastIndexOf('_')+1, img.imageName.lastIndexOf('_')+20) }}</td> -->
+					<!-- <td>{{ img.captureTime | date : 'HH:mm a dd/MM/yyyy' }}</td> -->
+					<td style="position: relative;">
+						<a href="#!/records?page=1&results={{ pageSize }}&household={{ img.householdParticipantId }}{{ searchIdent ? '&identified=' + searchIdent : '' }}{{ searchPrt ? '&portioned=' + searchPrt : '' }}" style="font-weight: bold;">{{ img.householdParticipantId}}</a><br/>
+						<span ng-repeat="p in img.participants" style="font-style: italic;">{{p.participantId}}<br/></span>
+						<span class="plate-tag-records">
+							<span ng-if="img.participantCount > 1">Shared Plate</span>
+							<span ng-if="img.participantCount == 1">Own Plate</span>
+						</span>
+					</td>
+					<td><img class="foodimage" ng-src="{{ getImageSrc(img) }}"/></td>
+					<!-- <td style="text-align: center; vertical-align: middle;"><span class="glyphicon glyph-lg glyphicon-{{ img.isFiducialPresent && 'ok text-success' || 'remove text-danger' }}"/></td> -->
+					<!-- <td style="text-align: center; vertical-align: middle;">
+						<span class="glyphicon glyph-lg" ng-class="{'text-danger glyphicon-remove': img.tagIdent === -1, 'yellow glyphicon-time': img.tagIdent === 0, 'text-success glyphicon-ok': img.tagIdent === 1}"></span>
+					</td>
+					<td style="text-align: center; vertical-align: middle;">
+						<span class="glyphicon glyph-lg" ng-class="{'text-danger glyphicon-remove': img.tagPrt === -1, 'yellow glyphicon-time': img.tagPrt === 0, 'text-success glyphicon-ok': img.tagPrt === 1}"></span>
+					</td> -->
+					<td>
+						<span class="{{ getStatusStyle(img.tagIdent) }}">Identification {{ getStatusName(img.tagIdent) }}</span><br/>
+						<span class="{{ getStatusStyle(img.tagPrt) }}">Quantification {{ getStatusName(img.tagPrt) }}</span><br/>
+						<span ng-repeat="fi in img.foodItems">{{buildFoodString(fi)}} 
+							<span class="bolder">[{{ fi.createdByAdmin ? 'A' : (fi.gestaltCount ? fi.gestaltCount : '0')}}<span class="{{styleGestaltDiff(fi)}}">; {{fi.gestaltDifference | number:1}}% diff</span>]
+							</span><br/>
+						</span>
+					</td>
+					<td>
+						<span ng-repeat="comment in img.comments" style="{{comment.hidden ? 'text-decoration: line-through;' : ''}}"><span class="bold" ng-if="comment.authorName">{{comment.authorName}}: </span>{{comment.text | limitTo : 60}}<br/></span>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div ng-include="'views/records/navigation.html'"/>
+		<span class="pull-right" ng-show="!loading && timeTaken" style="font-size: x-small; margin-top: 20px;">loaded in {{timeTaken}}ms - Showing records {{ ((pageData.currentPage - 1) * pageData.pageSize) + 1}} - {{((pageData.currentPage - 1) * pageData.pageSize) + images.length}} of {{pageData.totalCount}}</span>
+	</div>
+	<div id="daysModal" class="container modal fade" role="dialog">
+		<div class="modal-dialog">
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Select Days</h4>
+				</div>
+				<div class="modal-body modal-days">
+					<ul>
+						<li><input id="allcb" type="checkbox" ng-change="toggleAllDays(allDaysChecked)" ng-model="allDaysChecked"><label for="allcb" style="font-weight: bolder; padding-left: 10px;">All</label></li>
+						<li ng-repeat="d in searchDays"><input id="day-cb-{{$index}}" name="day-cb-{{$index}}"  ng-change="toggleDay(d)" type="checkbox" ng-model="d.checked"><label for="day-cb-{{$index}}" style="font-weight: bolder; padding-left: 10px;">{{d.date | date:'dd/MM/yyyy'}}</label></li>
+					</ul>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- <tr ng-repeat="img in images" class="bordered-tr">
+	<td><span class="row-head">{{ img.recordType }} </span><span class="glyphicon" ng-class="{'glyphicon-headphones': !img.textDescription, 'glyphicon-text-size': img.textDescription}" style="margin-left: 2px;"></span></td>
+	<td><a href="#!image?id={{img.id}}{{searchRecipe ? '&recipe=' + searchRecipe : ''}}{{ searchRecordType ? '&recordType=' + searchRecordType : '' }}{{ selectedStudy ? '&study=' + selectedStudy : '' }}{{ selectedHousehold ? '&household=' + selectedHousehold : '' }}{{ searchIdent ? '&identified=' + searchIdent : '' }}{{ searchPrt ? '&portioned=' + searchPrt : '' }}">{{ img.imageName.substring(img.imageName.lastIndexOf('_')+1, img.imageName.lastIndexOf('_')+20) }}</a>
+	<td><a href="#!/records?page=1&results={{ pageSize }}&household={{ img.householdParticipantId }}{{ searchIdent ? '&identified=' + searchIdent : '' }}{{ searchPrt ? '&portioned=' + searchPrt : '' }}">{{ img.householdParticipantId}}</a></td>
+	<td><a href="#!image?id={{img.id}}{{searchRecipe ? '&recipe=' + searchRecipe : ''}}{{ searchRecordType ? '&recordType=' + searchRecordType : '' }}{{ selectedStudy ? '&study=' + selectedStudy : '' }}{{ selectedHousehold ? '&household=' + selectedHousehold : '' }}{{ searchIdent ? '&identified=' + searchIdent : '' }}{{ searchPrt ? '&portioned=' + searchPrt : '' }}"><img class="foodimage" ng-src="{{  img.imageUrl != null ? img.imageUrl : (img.audioUrl ? 'images/audioimage.png' : 'images/noimage.png')  }}"/></a></td>
+	<td style="text-align: center; vertical-align: middle;"><span class="glyphicon glyph-lg glyphicon-{{ img.isFiducialPresent && 'ok text-success' || 'remove text-danger' }}"/></td>
+	<td style="text-align: center; vertical-align: middle;">
+		<span class="glyphicon glyph-lg" ng-class="{'text-danger glyphicon-remove': img.tagIdent === -1, 'yellow glyphicon-time': img.tagIdent === 0, 'text-success glyphicon-ok': img.tagIdent === 1}"></span>
+	</td>
+	<td style="text-align: center; vertical-align: middle;">
+		<span class="glyphicon glyph-lg" ng-class="{'text-danger glyphicon-remove': img.tagPrt === -1, 'yellow glyphicon-time': img.tagPrt === 0, 'text-success glyphicon-ok': img.tagPrt === 1}"></span>
+	</td>
+	<td>
+		<span ng-repeat="fi in img.foodItems">{{ fi.quantityGrams != 0 ? fi.quantityGrams + 'g' : '~' }} {{ fi.name }}<br/></span>
+	</td>
+</tr> -->

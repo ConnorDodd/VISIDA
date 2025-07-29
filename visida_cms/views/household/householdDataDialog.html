@@ -1,0 +1,137 @@
+<div ng-show="selectedRecord != null">
+	<!-- <div style="position: fixed; left: 0; right: 0; background-color: #000000aa; margin: 0; top: 0; bottom: 0;" class="h-100 row align-items-center" ng-click="showHelpDialog = false;">
+	</div> -->
+	<div style="position: fixed; left: 0; right: 0; margin: 0; background-color: #000000aa; top: 0; bottom: 0; display: flex;" class="h-100 row align-items-center"  ng-click="selectRecord(null)">
+		<div class="floating-form" style="position: relative;"  ng-click="$event.stopPropagation();">
+			<div style="vertical-align: middle;"><!--  ng-if="selectedRecord.recordType === 'EatRecord'"> -->
+				<div style="padding-bottom: 3px;">
+					<span class="row-head"><a href="#!image?id={{selectedRecord.id}}" target="_blank">{{selectedRecord.recordType}}</a></span>
+					<div style="display: inline-block; font-size: 26px;">
+						<div class="hoverfile" style="padding: 5px;" ng-repeat="p in selectedRecord.displayObj.participants">
+							<span class="glyphicon glyphicon-user" style="color: {{p.color}}"></span>
+								<p class="hoverfiletext">{{p.participantId}}<br/><br/>{{p.age}}yr old {{p.age < 18 ? 'Child' : (p.isFemale ? 'Female' : 'Male')}}</p>
+						</div>
+						<div ng-if="selectedRecord.displayObj.guestInfo && selectedRecord.displayObj.guestInfo.totalHeads > 1" class="hoverfile">
+							<span class="glyphicon glyphicon-user" style="color: yellow;"></span>
+							<span class="glyphicon glyphicon-user" style="color: #d4d480; position: absolute; left: 10px; top: -5px;"></span>
+							<div style="display: inline-block; font-size: 10px; font-weight: bolder; padding-left: 10px;">
+								<span>Adult F: {{selectedRecord.displayObj.guestInfo.adultFemaleGuests}}</span><br/>
+								<span>Adult M: {{selectedRecord.displayObj.guestInfo.adultMaleGuests}}</span><br/>
+								<span>Child: {{selectedRecord.displayObj.guestInfo.childGuests}}</span><br/>
+							</div>
+						</div>
+					</div>
+					<div style="margin-left: 40px; display: inline-block;">
+						<span class="glyphicon glyphicon-eye-open glyph-md btn-glyph" role="button" title="Hide" ng-if="!selectedRecord.hidden" ng-click="toggleHidden(selectedRecord)"></span>
+						<span class="glyphicon glyphicon-eye-close glyph-md btn-glyph" role="button" title="Show" style="color: #ababab" ng-if="selectedRecord.hidden" ng-click="toggleHidden(selectedRecord)"></span>
+					</div>
+					<span class="glyphicon glyphicon-remove pull-right" style="font-size: 1.2em;" ng-click="selectRecord(null)" role="button">
+				</div>
+				<hr>
+				<div class="row">
+					<div class="col-md-4">
+						<ul style="list-style: disc;">
+							<li ng-repeat="fi in selectedRecord.foodItems">{{ fi.quantityGrams != 0 ? fi.quantityGrams.toFixed(1) + 'g' : '~' }} {{ fi.name}}</li>
+						</ul>
+					</div>
+					<div class="hhview-update-image col-md-4" role="button" ng-click="changeImage(selectedRecord)">
+						<div ng-if="selectedRecord.imageUrl"><img ng-src="{{selectedRecord.imageThumbUrl ? selectedRecord.imageThumbUrl : selectedRecord.imageUrl}}" style="height: 256px;"></div>
+						<div ng-if="!selectedRecord.imageUrl" class="hhview-text" style="width: 190px;"><p style="width: 100%;">{{ selectedRecord.textDescription }}</p></div>
+
+						<div class="hhview-update-image-button">
+							<div>
+								<span>Change Image</span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<span class="bolder" style="width: 100%;">Comments:</span>
+						<ul style="list-style: disc; min-width: 225px;">
+							<li ng-repeat="comment in selectedRecord.comments" ng-if="!comment.hidden"><span class="bold" ng-if="comment.authorName">{{comment.authorName}}: </span>{{comment.text | limitTo : 60}} <i>{{ comment.createdTime | date: 'HH:mma dd/MM/yyyy' }}</i></li>
+						</ul><br/>
+						<button type="button" class="btn btn-standard btn-sm" ng-click="selectedRecord.newComment = ''" ng-if="selectedRecord.newComment === undefined">Add Comment</button>
+						<div ng-if="selectedRecord.newComment !== undefined">
+							<textarea style="width: 100%;" rows="3" ng-model="selectedRecord.newComment"></textarea><br/>
+							<button type="button" class="btn btn-primary btn-sm" ng-click="addComment(selectedRecord)">Send</button>
+						</div>
+					</div>
+				</div>
+				<hr>
+				<div ng-if="selectedRecord.recordType === 'EatRecord'">
+					<label>Participants: </label>
+					<div ng-repeat="p in selectedRecord.editParticipants" style="vertical-align: middle;"><input type="checkbox" name="checkbox-edit-{{p.name}}" class="" ng-change="toggleRecordParticipant(selectedRecord, p)" ng-model="p.checked"><label style="padding-left: 5px;" for="checkbox-edit-{{p.name}}">{{p.name}}</label></div><br/>
+					<hr>	
+				</div>
+				<!-- <div class="hhview-update-image" role="button" ng-click="changeImage(selectedRecord)">
+					<div ng-if="selectedRecord.imageUrl"><img ng-src="{{selectedRecord.imageThumbUrl ? selectedRecord.imageThumbUrl : selectedRecord.imageUrl}}" style="height: 256px;"></div>
+					<div ng-if="!selectedRecord.imageUrl" class="hhview-text"><p style="width: 100%;">{{ selectedRecord.textDescription }}</p></div>
+
+					<div class="hhview-update-image-button">
+						<div>
+							<span>Change Image</span>
+						</div>
+					</div>
+				</div> -->
+				<div>
+					<div class="form-inline">
+						<label for="convertTo">Move To: </label>
+						<select name="convertTo" ng-model="convertDestination" class="form-control">
+							<option value="eatrecord" ng-if="selectedRecord.recordType !== 'EatRecord'">New Eat Record</option>
+							<option value="ingredient">Ingredient</option>
+							<option value="leftovers">Leftovers</option>
+							<option value="recipe">New Recipe</option>
+						</select>
+					</div>
+				</div>
+				<hr>
+				<div ng-if="convertDestination === 'eatrecord'">
+					<p>
+						This option will change the selected record to a new <i>Eat Record</i> type. This will remove it from the current record, but it will retain food item identification/quantification and comments.
+					</p>
+					<form class="form" ng-submit="convertToEatRecord(selectedRecord, destinationParticipants)">
+						<label for="destinationRecipe">Select Participants: </label>
+						<div ng-repeat="p in household.householdMembers" style="vertical-align: middle;"><label for="checkbox-{{p.participantId}}">{{p.participantId}}</label><input type="checkbox" name="checkbox-{{p.participantId}}" class="" ng-change="updateParticipantCheckbox(p)" ng-model="p.checked"></div><br/>
+						<input type="submit" value="Convert" class="btn btn-primary" ng-disabled="!destinationParticipants">
+					</form>
+				</div>
+				<div ng-if="convertDestination === 'ingredient'">
+					<p>
+						This option will change the selected record to the <i>Ingredient</i> type, and move it to the selected recipe. This will remove any leftovers or participant data, but will retain food item identification/quantification and comments.
+					</p>
+					<form class="form-inline" ng-submit="convertToIngredient(selectedRecord, destinationRecipe)">
+						<label for="destinationRecipe">Add to recipe: </label>
+						<select name="destinationRecipe" ng-model="destinationRecipe" class="form-control">
+							<option value="{{r.id}}" ng-repeat="r in household.householdRecipes">{{r.name}} {{ r.captureTime | date : 'hh:mma dd/MM/yyyy'}}</option>
+						</select><br/><br/>
+						<input type="submit" value="Convert" class="btn btn-primary" ng-disabled="!destinationRecipe">
+					</form>
+				</div>
+				<div ng-if="convertDestination === 'leftovers'">
+					<p>
+						This option will change the selected record to the <i>Leftovers</i> type, and attach it to the selected record. This will remove it from the current record, but it will retain food item identification/quantification and comments
+					</p>
+					<form class="form-inline" ng-submit="convertToLeftovers(selectedRecord, destinationRecord, destinationSwitch)">
+						<label for="destinationRecord">Add to record: </label>
+						<button class="btn btn-standard" ng-click="chooseEatRecord(selectedRecord); $event.stopPropagation();" ng-show="!destinationRecord">Choose record</button>
+						<span ng-show="destinationRecord" class="fake-a" role="button" ng-click="chooseEatRecord(selectedRecord)">{{ destinationRecord.captureTime | date : 'hh:mma dd/MM/yyyy' }}</span><br/><br/>
+						<input type="checkbox" name="destSwitch" ng-model="destinationSwitch"><label for="destSwitch">Switch with existing leftovers</label><br/>
+						<input type="submit" value="Convert" class="btn btn-primary" ng-disabled="!destinationRecord">
+					</form>
+				</div>
+				<div ng-if="convertDestination === 'recipe'">
+					<p>
+						This option will change the selected record to a new <i>Recipe</i>. The new recipe will not have any ingredients, and you will need to add ingredients manually.
+					</p>
+					<form class="form-inline" ng-submit="convertToRecipe(selectedRecord)">
+						<!-- <p>To identify items for a recipe, there must be an ingredient attached to it. You can use the image for the record you're currently converting </p>
+						<input type="checkbox" ng-model="destinationRecipeCreateIngredient" -->
+						<label>Text Description:</label><br/>
+						<textarea style="width: 100%;" rows="5" ng-model="selectedRecord.textDescription"></textarea>
+							<br/>
+						<input type="submit" value="Convert" class="btn btn-primary">
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

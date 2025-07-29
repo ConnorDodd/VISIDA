@@ -1,0 +1,154 @@
+<!doctype html>
+<html ng-app="visida_cms">
+<head>
+	<title ng-bind="$root.title">Visida</title>
+	<link rel="stylesheet" type="text/css" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="./node_modules/chosen-js/chosen.css">
+	<link href="./other_modules/frz-table/frz-table.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<script src="./node_modules/jquery/dist/jquery.min.js"></script>
+	<script src="./node_modules/angular/angular.min.js"></script>
+	<script src="./node_modules/angular-route/angular-route.min.js"></script>
+	<script src="./node_modules/angular-cookies/angular-cookies.min.js"></script>
+	<script src="./node_modules/ng-file-upload/dist/ng-file-upload.min.js"></script>
+	<script src="./node_modules/underscore/underscore-min.js"></script>
+	<!-- <script src="./node_modules/chosen-js/chosen.jquery.min.js"></script> -->
+	<script src="./other_modules/chosen-js-mod/chosen.jquery.js"></script>
+	<!-- <script src="./node_modules/jszip/dist/jszip.min.js"></script> -->
+	<script src="./node_modules/angular-chosen-localytics/dist/angular-chosen.min.js"></script>
+	<script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="./node_modules/restangular/dist/restangular.js"></script>
+	<script lang="javascript" src="./node_modules/xlsx/dist/xlsx.full.min.js"></script>
+	<script type="text/javascript" src="./other_modules/magnifier/magnifier.js"></script>
+	<script src="./other_modules/frz-table/frz-table.js"></script>
+	<!-- <link rel="icon" type="image/x-icon" href="favicon_sqr.ico"/> -->
+</head>
+<body ng-controller="headController">
+	<nav class="navbar"  ng-if="showHeader">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<!-- <a class="navbar-brand" href="#!">V I S I D A</a> -->
+				<a class="navbar-brand" href="#!" style="padding: 5px 10px;">
+					<img src="images/header_icon_w.png" style="height: 40px;" />
+				</a>
+			</div>
+			<ul class="nav navbar-nav">
+				<!-- <li><a href="#!">Home</a></li> -->
+				<li><a href="#!records">Eating Occasion</a></li>
+				<li><a href="#!cook">Recipe</a></li>
+				<li><a href="#!household">Household</a></li>
+				<!-- <li class="dropdown">
+					<a role="button" class="dropdown-toggle" data-toggle="dropdown">Households
+        			<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="#!household">Household Data</a></li>
+						<li><a href="#!breastfeeding">Breastfeeding Occasions</a></li>
+					</ul>
+				</li> -->
+				<!-- <li><a href="#!advice">Advice</a></li> -->
+				<li><a href="#!database" ng-if="!(getUser().isAdmin)">Food Composition Database</a></li>
+				<li class="dropdown" ng-if="getUser().isAdmin">
+					<a role="button" class="dropdown-toggle" data-toggle="dropdown">FCD
+        			<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="#!database">View Databases</a></li>
+						<li><a href="#!databasemod">Create &amp; Edit</a></li>
+						<!-- <li><a href="#!rda">Recommended Intakes</a></li> -->
+					</ul>
+				</li>
+				<li class="dropdown">
+					<a role="button" class="dropdown-toggle" data-toggle="dropdown">Review
+        			<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="#!reviewdata">Export Intake Data</a></li>
+						<li><a href="#!reviewrecipe">Export Recipe Data</a></li>
+						<li><a href="#!reviewgraph">Explore Intake</a></li>
+						<!-- <li><a href="#!appusage">App Usage</a></li> -->
+					</ul>
+				</li>
+				<li class="dropdown" ng-if="getUser().isAdmin">
+					<a role="button" class="dropdown-toggle" data-toggle="dropdown">Admin
+        			<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="#!admin/users">Users</a></li>
+						<li><a href="#!admin/studies">Studies</a></li>
+						<li><a href="#!upload">Upload</a></li>
+						<li><a href="#!recall">Upload 24hr Recall</a></li>
+					</ul>
+				</li>
+			</ul>
+			<ul class="nav navbar-nav navbar-right">
+				<li class="navbar-button"><button class="btn navbar-btn" data-toggle="modal" data-target="#reportIssueModal"> Report an Issue </button></li>
+				<li class="navbar-button"><button class="btn navbar-btn" ng-click="logout()"><span class="glyphicon glyphicon-log-out"></span> Log out </button></li>
+			</ul>
+			<div class="navbar-user-details">
+				<span>
+					{{ getUser().username }}<br/>
+					{{ getUser().role }}
+				</span>
+			</div>
+		</div>
+	</nav>
+
+	<ng-view></ng-view>
+
+	<div id="timer-div" class="timer" style="display: none;" role="button" ng-click="resetTimer()">
+		<span>Logging out in: <span id="timer-text"></span></span><br/>
+		<small>Click to cancel</small>
+	</div>
+
+	<div id="speed-div" class="timer timer-hide" style="" ng-click="" ng-if="timeTaken">
+		<span>Loaded in {{timeTaken}}ms</span><br/>
+	</div>
+	
+    <!--Report issue Modal-->
+    <div id="reportIssueModal" class="container modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+			<div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Report an Issue</h4>
+                </div>
+                <div class="modal-body modal-days">
+                    <p>Username: {{ userName }}</p>
+                    <p>Role: {{ admin ? "admin" : isCoord ? "Study Coordinator" : "Analyst" }}</p>
+                    <form>
+                        <label for="page">What page were you on when you experienced the issue?</label>
+                        <input autocomplete="off" type="text" id="page" style="width: 100%; margin-bottom: 10px;" placeholder="Page name" ng-model="page"/>
+                        <label for="issue">Describe the issue</label>
+                        <textarea id="issue" style="width: 100%; margin-bottom: 8px;" rows="5" placeholder="What were you trying to do at the time? How did the site behave unexpectedly?" ng-model="issue"></textarea>
+                        <label for="expect">Potential Solution</label>
+                        <textarea type="text" id="expect" style="width: 100%;" rows="5" placeholder="What should be changed? Is there a particular solution you are requesting?" ng-model="expect"></textarea>
+                    </form>
+                </div>
+				<div class="modal-footer">
+                    <button type="button" class="btn" data-dismiss="modal">Cancel</button>
+					<button type="button" class="btn btn-primary" ng-click="reportIssue()">Send Email</button>
+				</div>
+			</div>
+        </div>
+    </div>
+
+    <!-- auth component 
+	<script type="text/javascript" src="views/auth/auth.controller.js"></script>-->
+
+	<script type="text/javascript" src="index.js" rewrite></script>
+
+	<script type="text/javascript" src="views/home/home.js" rewrite="true"></script>
+	<script type="text/javascript" src="views/records/records.js"></script>
+	<script type="text/javascript" src="views/image/image.js"></script>
+	<script type="text/javascript" src="views/image/editimage.js"></script>
+	<script type="text/javascript" src="views/cook/cook.js"></script>
+	<script type="text/javascript" src="views/upload/upload.js"></script>
+	<script type="text/javascript" src="views/review/review.js"></script>
+	<script type="text/javascript" src="views/review/recipereview.js"></script>
+	<script type="text/javascript" src="views/review/appusage.js"></script>
+	<script type="text/javascript" src="views/admin/admin.js"></script>
+	<script type="text/javascript" src="views/admin/study.js"></script>
+	<script type="text/javascript" src="views/database/database.js"></script>
+	<script type="text/javascript" src="views/advice/advice.js"></script>
+	<script type="text/javascript" src="views/household/household.js"></script>
+	<script type="text/javascript" src="views/database/databaseEdit.js"></script>
+</body>
+</html>

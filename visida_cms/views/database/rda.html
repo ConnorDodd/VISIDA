@@ -1,0 +1,87 @@
+<div ng-controller="rdaController" class="container-fluid" style="margin-left: 40px;">
+	<div class="row content">
+		<div class="col-xs-12 page-head">
+			<span>Recommended Daily Intake</span>
+			<span class="glyphicon glyphicon-refresh glyph-md {{ (loading > 0) && 'loading-run' || 'loading-done' }}" style="margin-left: 15px;"></span>
+			<span class="glyphicon glyphicon-plus glyph-md pull-right" role="button" ng-click="createModel()" style="padding-left: 10px;" title="Create"></span>
+			<hr class="head-hr">
+		</div>
+		<div class="col-xs-12">
+			<div ng-show="dbMessage">
+				<small class="text-danger" ng-show="!dbMessage.success">{{ dbMessage.txt }}</small>
+				<small class="text-success" ng-show="dbMessage && dbMessage.success">{{ dbMessage.txt }}</small>
+			</div>
+			<div class="row" style="padding: 5px 0px 8px 0px;">
+				<div class="col-sm-12 form-inline">
+					<label for="databaseSearch">RDA Model :</label>
+					<select class="form-control" ng-model="selectedModel" ng-options="t.id as t.name for t in rdas track by t.id" ng-change="loadModel(selectedModel)">
+						<option value="">Select a model to view</option>
+					</select>
+					<button class="btn btn-standard btn-sm" data-toggle="modal" data-target="#columnModal" ng-disabled="!selectedModel" style="margin-left: 20px;">Choose Columns</button>
+					<button class="btn btn-primary btn-sm" ng-disabled="!selectedModel" style="margin-left: 20px; color: white;" ng-click="saveModel()"><span class="glyphicon glyphicon-floppy-disk" style="color: white;"/> Save</button>
+				</div>
+			</div>
+			<hr class="head-hr">
+			<div class="row" ng-show="selectedModel" style="overflow: hidden; overflow-x: scroll; margin-left: 275px;">
+				<table class="rda-table">
+					<tr>
+						<th class="head-col" style="background-color: white; height: 65px;"><div><span>Description</span></div></th><!--  style="transform: translate(200px, 51px) rotate(315deg);" -->
+						<th><div><span>Gender</span></div></th>
+						<th><div><span>Starting Age</span></div></th>
+						<th><div><span>Ending Age</span></div></th>
+						<th><div><span>Childbearing Stage</span></div></th>
+						<th><div><span>Weight</span></div></th>
+						<th ng-repeat="col in fctConfig" ng-if="col.valid"><div><span>{{ col.external }}</span></div></th>
+						<th></th>
+					</tr>
+					<tr id="row-{{ $index }}" ng-repeat="row in data">
+						<!-- <td id=""><input type="text" ng-model="row.description" ng-change="checkPaste($index, row.description)" style="width: 215px;" /></td> -->
+						<td id="" class="head-col"><textarea ng-model="row.description" ng-change="checkPaste($index, row.description)" style="width: 259px;" rows="1" ></textarea></td>
+						<td id=""><select id="gender" ng-model="row.gender"><option value="Child">Child/Infant</option><option value="Female">Female</option><option value="Male">Male</option></select></td>
+						<td id=""><input type="numeric" ng-model="row.ageLowerBound"></td>
+						<td id=""><input type="numeric" ng-model="row.ageUpperBound"></td>
+						<!-- <td><select ng-model="row.childbearing"><option value="0">None or N/A</option><option value="3">1st Trimester</option></select></td> -->
+						<td id=""><select ng-model="row.childbearing"><option value="None">None or N/A</option><option value="Pregnant">Pregnant</option><option value="Breastfeeding">Breastfeeding</option><option value="PregnantAndBreastfeeding">Pregnant & Breastfeeding</option></select></td>
+						<td id=""><input type="numeric" ng-model="row.weight"></td>
+						<td ng-repeat="col in fctConfig" ng-if="col.valid"><input type="text" ng-model="row[col.internal]"/></td>
+						<td><span class="glyphicon glyphicon-remove text-danger btn-glyph" style="width: 20px; border: none; font-size: 14px; vertical-align: middle;" ng-click="removeRow($index)" /></td>
+					</tr>
+				</table>
+			</div>
+				<span  ng-show="selectedModel" class="glyphicon glyphicon-plus btn-glyph" role="button" ng-click="addRow()" title="Add Item" style="color: #295173; padding-left: 25px;"><span style="font-family: sans-serif; padding-right: 10px;"> Add</span></span>
+		</div>
+	</div>
+	<div id="columnModal" class="container modal fade" role="dialog">
+		<div class="modal-dialog">
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Choose Columns</h4>
+				</div>
+				<div class="modal-body">
+					<ul>
+						<li>
+							<ul>
+								<li ng-repeat="col in fctConfig" ng-if="!col.internal.startsWith('adG')">
+									<input type="checkbox" ng-model="col.valid" ng-change="updateColumnCheck(col, $evt)"><span>{{ col.external }}</span>
+								</li>
+							</ul>
+						</li>
+						<!-- <li><input type="checkbox" ng-change="ColCheckChange(true, showAdg)" ng-model="showAdg" ng-init="showAdg = true"><span style="font-weight: bolder;">Food Groups</span></li>
+						<li>
+							<ul>
+								<li ng-repeat="col in fctConfig" ng-if="col.valid && col.internal.startsWith('adG')">
+									<input type="checkbox" ng-model="col.show"><span class="{{ col.warning ? 'text-danger' : ''}}" title="{{col.warning}}">{{ col.external }}</span>
+								</li>
+							</ul>
+						</li> -->
+					</ul>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

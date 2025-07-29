@@ -1,0 +1,52 @@
+<div ng-controller="recallController" class="container">
+	<div class="row content">
+		<div class="col-xs-12">
+			<span class="h3 page-head left">Upload 24hr Recall Data</span>
+			<span class="glyphicon glyphicon-refresh glyph-md pull-right {{ (loading > 0) && 'loading-run' || 'loading-done' }}"></span>
+			<hr class="head-hr">
+		</div>
+		<div class="col-xs-12 spaced">
+			<p>Welcome to the 24hr recall upload tool.</a></p>
+		</div>
+		<div class="col-xs-12">
+			<div class="row">
+				<div class="col-xs-12 col-sm-12">
+					<form class="form-inline" ng-submit="upload()">
+						<div class="form-group">
+							<input type="file" class="form-control" ngf-accept="'*.xlsx'" ng-model="file" ngf-select="parse(file)">
+							<select ng-model="studyId" class="form-control">
+								<option ng-repeat="s in studies" value="{{s.id}}">{{ s.name }}</option>
+							</select>
+							<input type="submit" class="btn btn-primary" value="Upload" ng-disabled="!households || !studyId"><br/>
+							<small class="text-danger" ng-show="uploadMessage && !uploadMessage.success">{{ uploadMessage.txt }}</small>
+							<small class="text-success" ng-show="uploadMessage && uploadMessage.success">{{ uploadMessage.txt }}</small>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<div class="col-xs-12" style="margin-top: 25px;" ng-show="households">
+			<span class="h3">Households</span>
+			<div class="hh-display level-0" ng-repeat="hh in households" role="button" ng-click="showHousehold(hh)">
+				<span class="bold">{{ hh.participantId }}</span><span class="glyphicon glyphicon-plus pull-right"></span>
+				<div class="hh-display level-1" ng-repeat="hm in hh.householdMembers" ng-show="hh.show" ng-click="$event.stopPropagation()">
+					<span class="bold">{{ hm.participantHouseholdMemberId }}</span><br/>
+					<span><span class="bold">Age:</span> {{ hm.age }}</span><br/>
+					<span><span class="bold">Gender:</span> {{ hm.isFemale ? 'Female' : 'Male' }}</span><br/>
+					<div class="hh-display level-2" ng-repeat="fr in hm.foodRecords">
+						<span class="bold">{{ fr.dateObj | date : 'dd/MM/yyyy' }}</span><br/>
+						<div class="hh-display level-3" ng-repeat="eo in fr.eatingOccasions">
+							<span><span class="bold">Start Time:</span> {{ eo.startTime }}</span><br/>
+							<span><span class="bold">End Time:</span> {{ eo.endTime }}</span><br/>
+							<span><span class="bold">Is Breastfeeding:</span> {{ eo.isBreastfeedOccasion ? 'Yes' : 'No' }}</span><br/>
+							<div class="hh-display level-4" ng-repeat="fi in eo.foodItems">
+								<span><span class="bold">Time:</span> {{ fi.captureTime }}</span><br/>
+								<p>{{ fi.description }}</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

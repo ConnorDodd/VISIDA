@@ -1,0 +1,115 @@
+<script src="../node_modules/jquery-csv/src/jquery.csv.min.js"></script>
+<div id="content" ng-controller="recipereviewController" class="container-fluid" style="margin-left: 40px;">
+	<div class="row content" style="padding-bottom: 95px;">
+		<div class="col-xs-12">
+			<span class="page-head h3">Review Recipes</span>
+			<span class="glyphicon glyphicon-refresh glyph-md {{ (loading) && 'loading-run' || 'loading-done' }}" style="margin-left: 15px;"></span>
+			<hr class="head-hr">
+		</div>
+		<div id="searchdiv" style="display: {{ loading ? 'none' : '' }} padding-bottom: 0;" class="col-xs-12">
+			<form ng-submit="search()" class="form-inline">
+				<div class="form-group search-container" style="padding: 5px 0px 8px 0px; width: 100%">
+					<div class="col-sm-6 col-md-4" style="height: 24px;">
+						<label for="sStudy">Study:</label>
+						<div style="padding: 0; display: inline-block; width: 80%">
+							<select id="sStudy" chosen data-placeholder-text-single="'Select study'" no-results-text="'No matching studies'" ng-model="selectedStudy"
+								class="item-name align-middle" style="width: 100%" ng-options="s.id as s.name for s in searchConfig.studies" ng-change="studyChanged()">
+								<option value=""></option>
+							</select>
+							
+						</div>
+					</div>
+
+					<button class="btn btn-standard btn-sm" type="button" data-toggle="modal" data-target="#householdModal" ng-disabled="!selectedStudy" style="margin-left: 20px;">Choose Households</button>
+					<input type="submit" value="Search" class="btn btn-primary btn-sm" style="margin-left: 20px;" ng-disabled="!(hhCount > 0)">
+					<button class="btn btn-standard btn-sm" data-toggle="modal" data-target="#columnModal" style="margin-left: 20px;" type="button">Choose Columns</button>
+					<button class="btn btn-standard btn-sm" style="margin-left: 20px;" ng-click="export()" type="button" ng-disabled="!showTable">Export</button>
+				</div>
+			</form>
+			<!-- <div class="col-xs-12" style="padding: 5px 0px 8px 0px;">
+				<button class="btn btn-standard btn-sm" data-toggle="modal" data-target="#columnModal" style="margin-left: 20px;">Choose Columns</button>
+				<button class="btn btn-primary btn-sm" style="margin-left: 20px;" ng-click="export()" ng-disabled="showTable != true">Export</button>
+			</div> -->
+			<hr class="head-hr">
+		</div>
+		<div id="recipe-table-container" class="col-xs-12 frz-table-container" style="height: 600px;">
+			<table class="frz-table" id="recipe-table">
+				<colgroup width="120">
+					<col width="40">
+					<col width="400">
+				</colgroup>
+			</table>
+		</div>
+	</div>
+	<div id="columnModal" class="container modal fade" role="dialog">
+		<div class="modal-dialog">
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Choose Columns</h4>
+					<p class="text-danger">Column names listed in red are missing food composition data in the assigned food composition database. Affected cells will be highlighted in red and may display incorrect results if used. View by food item to find offending item.</p>
+				</div>
+				<div class="modal-body">
+					<ul>
+						<!-- <li><input type="checkbox" ng-model="showRowNumbers" ng-init="showRowNumbers = false"><span style="font-weight: bolder;">Row Numbers</span></li> -->
+						<!-- <li><input type="checkbox" ng-model="showHid" ng-init="showHid = true"><span style="font-weight: bolder;">Household</span></li> -->
+						<li><input type="checkbox" ng-model="showDate" ng-init="showDate = true"><span style="font-weight: bolder;">Date</span></li>
+						<li><input type="checkbox" ng-model="showTime" ng-init="showTime = true"><span style="font-weight: bolder;">Time</span></li>
+						<!-- <li><input type="checkbox" ng-model="showName" ng-init="showName = true"><span style="font-weight: bolder;">Name</span></li> -->
+						<li><input type="checkbox" ng-model="showYF" ng-init="showYF = true"><span style="font-weight: bolder;">Yield Factor</span></li>
+						<li><input type="checkbox" ng-model="showEO" ng-init="showEO = true"><span style="font-weight: bolder;">Linked EOs</span></li>
+						<li ng-show="showHidden"><input type="checkbox" ng-model="showHiddenD" ng-init="showHiddenD = false"><span style="font-weight: bolder;">Hidden Status</span></li>
+						<!-- <li><input type="checkbox" ng-model="showQuantity" ng-init="showQuantity = true"><span style="font-weight: bolder;">Quantity</span></li> -->
+						<li><input type="checkbox" ng-change="ColCheckChange(false, showNutrients)" ng-model="showNutrients" ng-init="showNutrients = true"><span style="font-weight: bolder;">Nutrients</span></li>
+						<li>
+							<ul>
+								<li ng-repeat="col in fctConfig" ng-if="col.valid && !col.internal.startsWith('adG')">
+									<input type="checkbox" ng-model="col.show"><span class="{{ col.warning ? 'text-danger' : ''}}" title="{{col.warning}}">{{ col.external }}</span>
+								</li>
+							</ul>
+						</li>
+						<li><input type="checkbox" ng-change="ColCheckChange(true, showAdg)" ng-model="showAdg" ng-init="showAdg = true"><span style="font-weight: bolder;">Food Groups</span></li>
+						<li>
+							<ul>
+								<li ng-repeat="col in fctConfig" ng-if="col.valid && col.internal.startsWith('adG')">
+									<input type="checkbox" ng-model="col.show"><span class="{{ col.warning ? 'text-danger' : ''}}" title="{{col.warning}}">{{ col.external }}</span>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="updateTable(data)">Ok</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="householdModal" class="container modal fade" role="dialog">
+		<div class="modal-dialog">
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Choose Households</h4>
+				</div>
+				<div class="modal-body modal-days">
+					<input id="hiddencb" type="checkbox" ng-init="showHidden = false" ng-model="showHidden" ng-change="showHiddenD = showHidden" style="margin-left: 14px;"><label for="hiddencb" style="font-weight: bolder; padding-left: 10px;">Include Hidden Records</label>
+					<hr class="head-hr"/>
+					<div class="form-inline">
+						<label class="bolder">Search: </label>
+						<input type="text" class="form-control" name="" ng-model="filterHouseholds" ng-change="changeFilterHouseholds(filterHouseholds)">
+					</div>
+					<hr class="head-hr"/>
+					<ul>
+						<li><input id="allcb" type="checkbox" ng-change="toggleAllHouseholds(allChecked)" ng-model="allChecked"><label for="allcb" style="font-weight: bolder; padding-left: 10px;">All</label></li>
+						<li ng-repeat="h in searchHouseholds" ng-show="!h.hidden"><input id="hhcb-{{$index}}" name="hhcb-{{$index}}"  ng-change="toggleHousehold(h.checked)" type="checkbox" ng-model="h.checked"><label for="hhcb-{{$index}}" style="font-weight: bolder; padding-left: 10px;">{{h.name}}</label></li>
+					</ul>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

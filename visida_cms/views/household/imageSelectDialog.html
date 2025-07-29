@@ -1,0 +1,32 @@
+<div ng-show="displaySelectOptions">
+	<div style="position: fixed; left: 0; right: 0; margin: 0; background-color: #000000aa; top: 0; bottom: 0; display: flex;" class="h-100 row align-items-center"  ng-click="displaySelectOptions = null">
+		<div class="floating-form col-xs-12 col-md-8" style="position: relative; height: 80%;"  ng-click="$event.stopPropagation();">
+			<div class="scroll-container">
+				<div style="padding-bottom: 3px;">
+					<span class="row-head">Select an Image</span>
+					<span class="glyphicon glyphicon-remove pull-right" style="font-size: 1.2em;" ng-click="displaySelectOptions = null;" role="button">
+				</div>
+				<hr style="margin: 0px; margin-bottom: 5px;">
+				<!-- <div style="vertical-align: middle;" ng-if="alsoCopyAudio !== undefined"><input type="checkbox" name="checkMoveAudio" ng-model="alsoCopyAudio"><label style="padding-left: 5px;" for="checkMoveAudio">Also move audio and text description</label></div>
+				<hr style="margin: 0px; margin-bottom: 5px;"> -->
+				<div class="select-demo-container">
+					<div ng-repeat="icon in displaySelectOptions" role="button" class="select-demo {{selected ? 'select-demo-active' : ''}}" ng-click="iconSelected(icon)">
+						<div>
+							<span ng-if="icon.captureTime" style="font-weight: bolder;">{{icon.captureTime | date : 'hh:mma'}}<br/></span>
+							<img ng-src="{{icon.imageUrl}}" ng-show="icon.imageUrl" class="">
+							<!-- <div></div> -->
+							<p ng-show="!icon.imageUrl">{{icon.textDescription}}</p>
+						</div>
+						<div class="select-participants">
+							<span ng-repeat="p in icon.participants" class="glyphicon glyphicon-user" style="color: {{p.color}}"></span>
+							<div ng-if="icon.guestInfo" style="display: inline; position: relative;">
+								<span class="glyphicon glyphicon-user" style="color: yellow;"></span>
+								<span class="glyphicon glyphicon-user" style="color: #d4d480; position: absolute; left: 4px; top: -2px;"></span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

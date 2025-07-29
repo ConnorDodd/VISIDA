@@ -1,0 +1,10 @@
+<div id="content" ng-controller="eatImageController">
+	<div style="width: 100%;">
+		<img id="image" src="{{ record.imageUrl != null ? record.imageUrl : '' }}" style="position: absolute; width: 100%;">
+		<svg style="position: absolute;" width="{{ getHG({x:1,y:1}).x}}" height="{{ getHG({x:1,y:1}).y}}" ng-if="record && record.homography">
+			<!--<polyline points="{{record.homography.topLeftX}},{{record.homography.topLeftY}} 100,100"  style="stroke: red;stroke-width:3" /> -->
+			<line style="stroke:rgb(0,0,255);stroke-width:4;" x1="{{ getHGL($index).x }}" y1="{{ getHGL($index).y }}" x2="{{ getHGL($index+1 < record.homography.points.length ? $index+1 : 0).x }}" y2="{{ getHGL($index+1 < record.homography.points.length ? $index+1 : 0).y }}" ng-repeat="point in record.homography.points" /> 
+			<circle fill="red" r="6" cx="{{ getHG(point).x }}" cy="{{ getHG(point).y }}" ng-repeat="point in record.homography.points"/>
+		</svg>
+	</div>
+</div>

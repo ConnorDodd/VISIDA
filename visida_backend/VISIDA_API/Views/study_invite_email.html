@@ -1,0 +1,24 @@
+﻿<!DOCTYPE html>
+<html>
+	<body style="padding: 10px; font-family: sans-serif;">
+		<img src="https://dev-visida.newcastle.edu.au/images/header_icon.png"
+			 style="width: 160px;" />
+		<div style="padding: 20px; background-color: white; border-radius: 2px;">
+			<h4 style="color: #475932; font-size: 30px; font-weight: bold; margin-bottom: 10px">VISIDA - Invite to Study: {{study}}</h4>
+			<hr>
+			<p style="font-weight: 500">
+				You have been invited by {{from}} to participate in the study {{study}} in the role <span style="font-weight: bolder;">{{role}}</span>. To join, log in <a href="{{url}}" target="_">here</a> and your new study will be available.
+			</p>
+			<style type="text/css">
+				#bigbutton {
+					height: 32px; width: 256px; background-color: #CBD6BE; font-weight: bold; color: #555; cursor: pointer; border: 0; border-radius: 2px;
+				}
+				#bigbutton:hover{
+					background-color: #B2C29F;
+				}
+			</style>
+			<a href="{{url}}" target="_" style="height: 32px; width: 256px; background-color: #CBD6BE; font-weight: bold; color: #555; cursor: pointer; border: 0; border-radius: 2px; text-decoration: none; padding: 10px 20px;">Log In</a>
+			<!-- <a href="{{url}}" target="_"> <button id="bigbutton" style="height: 32px; width: 256px; background-color: #CBD6BE; font-weight: bold; color: #555; cursor: pointer; border: 0; border-radius: 2px;">Reset your Password</button></a> -->
+		</div>
+	</body>
+</html>

@@ -1,0 +1,164 @@
+<div ng-show="showHelpDialog">
+	<!-- <div style="position: fixed; left: 0; right: 0; background-color: #000000aa; margin: 0; top: 0; bottom: 0;" class="h-100 row align-items-center" ng-click="showHelpDialog = false;">
+	</div> -->
+	<div style="position: fixed; left: 0; right: 0; margin: 0; background-color: #000000aa; top: 0; bottom: 0; display: flex;" class="h-100 row align-items-center float-dialog">
+		<div class="floating-form col-xs-12 col-md-8" style="position: relative;">
+			<div style="padding-bottom: 3px;">
+				<span class="row-head">Help</span>
+				<span class="glyphicon glyphicon-remove pull-right" style="font-size: 1.2em;" ng-click="showHelpDialog = false;" role="button">
+			</div>
+			<hr style="margin: 0px; margin-bottom: 5px;">
+			<div class="panel-group" id="accordion">
+				<div class="panel panel-default">
+					<div class="panel-heading" class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#helpOne" role="button">
+						<h5 class="panel-title">
+							<span>I can't add or edit items.</span>
+						</h5>
+					</div>
+
+					<div id="helpOne" class="panel-collapse collapse">
+						<div class="panel-body">
+							<p>
+								If the record is marked as <span class="text-success">Completed</span>, you will not be able to add or edit new items. If an item is wrong and needs review, <a data-toggle="collapse" data-parent="#accordion" href="#helpRequest" target="_self">make a request for an admin</a>.<br/>
+								If the record is not completed, you may be restricted in what you can modify. An administrator can assign you to a study with <span class="bolder">identification</span> only, <span class="bolder">quantification</span> only, both together or <span class="bolder">view</span> only permissions. Please contact an administrator if you believe your permission level to be incorrect.
+							</p>
+						</div>
+					</div>
+				</div>
+				<div class="panel panel-default">
+					<div class="panel-heading" class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#helpTwo" role="button">
+						<h5 class="panel-title">
+							This record is invalid/incorrect.
+						</h5>
+					</div>
+
+					<div id="helpTwo" class="panel-collapse collapse">
+						<div class="panel-body">
+							<p>
+								If this record is a duplicate, has an unusable image or is invalid in some other way it should be hidden from the study so it will not pollute results.<br/>
+								<span ng-if="canAdmin">This can be done by clicking the <span class="glyphicon glyphicon-eye-open"/> (eye) symbol so it becomes <span class="glyphicon glyphicon-eye-close" style="color: #ababab"/>.
+								This will continue to display the record to you and other administrators, but will hide it from any analysts and will not include any data from this record in any system output.</span>
+								<span ng-if="!canAdmin">This can only be done by an admin. If you believe this is required, <a data-toggle="collapse" data-parent="#accordion" href="#helpRequest" target="_self">make an admin request</a>.</span>
+							</p>
+						</div>
+					</div>
+				</div>
+				<div class="panel panel-default">
+					<div class="panel-heading" class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#helpThree" role="button">
+						<h5 class="panel-title">
+							Participant or guest metadata is incorrect.
+						</h5>
+					</div>
+
+					<div id="helpThree" class="panel-collapse collapse">
+						<div class="panel-body">
+							<p>
+								If you believe the listed participants or guest count to be inaccurate, this can be corrected.<br/>
+								<span ng-if="canAdmin">To show or hide an original participant, click the <span class="glyphicon glyphicon-eye-open"/> symbol adjacent to the participant so it becomes <span class="glyphicon glyphicon-eye-close" style="color: #ababab"/> (or vice-versa to hide). To add a missing participant, use the "Add Participant.." option under the participants.
+								Hidden participants will continue to display to you and other administrators, but will hide it from any analysts and will not be included in any system output.</span>
+								<span ng-if="!canAdmin">This can only be done by an admin. If you believe this is required, <a data-toggle="collapse" data-parent="#accordion" href="#helpRequest" target="_self">make an admin request</a>.</span>
+							</p>
+						</div>
+					</div>
+				</div>
+				<div class="panel panel-default">
+					<div class="panel-heading" class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#helpRequest" role="button">
+						<h5 class="panel-title">
+							Making an admin request.
+						</h5>
+					</div>
+
+					<div id="helpRequest" class="panel-collapse collapse">
+						<div class="panel-body">
+							<p ng-if="canAdmin">
+								Admin requests made by other users will appear on your <a href="#!home">Home</a> screen as a comment tagged with the <span class="glyphicon glyphicon-warning-sign text-danger"/> symbol. You can also make an admin request, for example to seek advice about a difficult item, if there is other admin accounts. This is done by making a new comment with the <span class="glyphicon glyphicon-warning-sign text-danger"/> symbol turned on.
+							</p>
+							<p ng-if="!canAdmin">
+								Some tasks such as removing/editing completed records or metadata are retricted to admin accounts. If you believe data in a record to be incorrect, alerting an admin can allow them to repair it. Administrators can also assist with identifying food items or difficult records.
+								To alert an admin, add a new comment with the <span class="glyphicon glyphicon-warning-sign text-danger"/> symbol turned on or use a following option:
+								<!-- <ul class="list-group" style="margin-bottom: 0px;">
+									<li class="list-group-item list-group-item-header" role="button" ng-click="addHelpComment('I cannot identify item with id: ')" ng-show="helpContextItem">I cannot identify this item.</li>
+									<li class="list-group-item list-group-item-header" role="button" ng-click="addHelpComment('Database does not contain an record for item with id: ')"  ng-show="helpContextItem">I can identify this item but it is missing from database.</li>
+									<li class="list-group-item list-group-item-header" role="button" ng-click="addAdminRequest('There is an error with the image.')">There is an error with the image.</li>
+									<li class="list-group-item list-group-item-header" role="button" ng-click="addAdminRequest('There is an error with the participant list.')">There is an error with the participants.</li>
+									<li class="list-group-item list-group-item-header" role="button" ng-click="writeAdminRequest();">Write my own description.</li>
+								</ul> -->
+							</p>
+						</div>
+					</div>
+				</div>
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h5 class="panel-title">
+							There is an issue with this item.
+						</h5>
+					</div>
+
+					<div id="helpRequest" class="">
+						<div class="panel-body">
+							<p>Clicking an option below will create a comment and alert an coordinator to your issue. You may be asked for more details.</p>
+							<ul class="list-group list-link-group" style="margin-bottom: 0px;">
+								<li class="list-group-item" role="button" ng-click="addHelpComment('I\'m unsure about the best match for this item in the database. id: ', 'Please describe the food item')" ng-show="helpContextItem">
+									<span class="help-head">I'm unsure about the best match for this item in the database.</span><br/>
+									<span class="help-body">I can identify the item, but there is no exact match in the food list.</span>
+								</li>
+								<li class="list-group-item" role="button" ng-click="addHelpComment('I cannot identify this item. id: ', 'Please enter any more details')" ng-show="helpContextItem">
+									<span class="help-head">I cannot identify this item.</span><br/>
+									<span class="help-body">The information available in the image, voice recording and/or text description is not enough to code.</span>
+								</li>
+								<li class="list-group-item" role="button" ng-click="addHelpComment('I cannot quantify this item. id: ', 'Please enter any more details')" ng-show="helpContextItem">
+									<span class="help-head">I cannot quantify this item.</span><br/>
+									<span class="help-body">There is not a suitable tool available to quantify the item.</span>
+								</li>
+								<li class="list-group-item" role="button" ng-click="addAdminRequest('This record is a duplicate.')">
+									<span class="help-head">This record is a duplicate.</span><br/>
+									<span class="help-body">This exact record appears more than once.</span>
+								</li>
+								<li class="list-group-item" role="button" data-toggle="collapse" href="#helpMetadata" role="button">
+									<span class="help-head">There is an issue with the Metadata of this record.</span><br/>
+									<span class="help-body">Click to expand. There is an issue with record type, participants or plate type.</span>
+									<div id="helpMetadata" class="panel-collapse collapse">
+										<ul class="list-group list-link-group">
+											<li class="list-group-item" role="button" ng-click="addAdminRequest('The record type is incorrect.', 'How is this record type incorrect?')">
+												<span class="help-head">The record type is incorrect.</span><br/>
+												<span class="help-body">The record type listed in the metadata is incorrect. For example, the record is captured as an eating occasion, but is actually an ingredient for a recipe.</span>
+											</li>
+											<li class="list-group-item" role="button" ng-click="addAdminRequest('There is an error with the participant(s) for this record.', 'What is wrong with participants?')">
+												<span class="help-head">There is an error with the participant(s) for this record.</span><br/>
+												<span class="help-body">The record type listed in the metadata is incorrect. For example, the record is captured as an eating occasion, but is actually an ingredient for a recipe.</span>
+											</li>
+											<li class="list-group-item" role="button" ng-click="addAdminRequest('There is an error with the total number of individuals eating.', 'What is wrong with total individuals eating?')">
+												<span class="help-head">There is an error with the total number of individuals eating.</span><br/>
+												<span class="help-body">The total number of individuals eating the shared dish listed in the metadata is incorrect.</span>
+											</li>
+										</ul>
+									</div>
+								</li>
+								<li class="list-group-item" role="button" ng-click="addAdminRequest('This record is not valid.')">
+									<span class="help-head">This record is not valid.</span><br/>
+									<span class="help-body">This record is not an eating occasion or recipe.</span>
+								</li>
+								<li class="list-group-item" role="button" ng-click="addAdminRequest('This record contains identifying information.')">
+									<span class="help-head">This record contains identifying information.</span><br/>
+									<span class="help-body">This record, in addition to food items, contains information that may identify a person.</span>
+								</li>
+								<li class="list-group-item" role="button" ng-click="addAdminRequest('', 'Please describe your issue.')">
+									<span class="help-head">I have another issue.</span><br/>
+									<span class="help-body">My issue is none of the above options.</span>
+								</li>
+
+
+
+								<!-- <li class="list-group-item list-group-item-header" role="button" ng-click="addHelpComment('I cannot identify item with id: ')" ng-show="helpContextItem">I cannot identify this item.</li>
+								<li class="list-group-item list-group-item-header" role="button" ng-click="addHelpComment('Database does not contain an record for item with id: ')"  ng-show="helpContextItem">I can identify this item but it is missing from database.</li>
+								<li class="list-group-item list-group-item-header" role="button" ng-click="addAdminRequest('There is an error with the image.')">There is an error with the image.</li>
+								<li class="list-group-item list-group-item-header" role="button" ng-click="addAdminRequest('There is an error with the participant list.')">There is an error with the participants.</li>
+								<li class="list-group-item list-group-item-header" role="button" ng-click="writeAdminRequest();">Write my own description.</li> -->
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

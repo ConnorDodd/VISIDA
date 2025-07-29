@@ -1,0 +1,156 @@
+<script src="../node_modules/jquery-csv/src/jquery.csv.min.js"></script>
+<div id="content" ng-controller="reviewController" class="container-fluid" style="margin-left: 40px;">
+	<div class="row content">
+		<div class="col-xs-12">
+			<span class="page-head h3">Review Intake</span>
+			<span class="glyphicon glyphicon-refresh glyph-md {{ (loading) && 'loading-run' || 'loading-done' }}" style="margin-left: 15px;"></span>
+			<hr class="head-hr">
+		</div>
+		<div id="searchdiv" style="display: {{ loading ? 'none' : '' }} padding-bottom: 0;" class="col-xs-12">
+			<form ng-submit="search()" class="form-inline">
+				<div class="form-group search-container" style="padding: 5px 0px 8px 0px; width: 100%">
+					<div class="col-sm-6 col-md-4" style="height: 24px;">
+						<label for="sStudy">Study:</label>
+						<div style="padding: 0; display: inline-block; width: 80%">
+							<select id="sStudy" chosen data-placeholder-text-single="'Select study'" no-results-text="'No matching studies'" ng-model="selectedStudy"
+								class="item-name align-middle" style="width: 100%" ng-options="s.id as s.name for s in searchConfig.studies" ng-change="studyChanged()">
+								<option value=""></option>
+							</select>
+							
+						</div>
+					</div>
+					<button class="btn btn-standard btn-sm" type="button" data-toggle="modal" data-target="#householdModal" ng-disabled="!selectedStudy" style="margin-left: 20px;">Choose Households</button>
+					<div class="form-group" style="margin-left: 20px;">
+						<label for="date">View By: </label>
+						<select id="date" name="date" ng-model="groupBy" class="form-control fake-chosen" ng-init="groupBy = 'day'" ng-change="showTime = true; showShared = true;">
+							<option value="day">Day</option>
+							<option value="record">Record</option>
+							<option value="foodItem">Food Item</option>
+						</select>
+					</div>
+
+					<input type="submit" value="Search" class="btn btn-primary btn-sm" style="margin-left: 20px;" ng-disabled="!(hhCount > 0)">
+				</div>
+			</form>
+			<div class="col-xs-12" style="padding: 5px 0px 8px 0px;">
+				<button class="btn btn-standard btn-sm" data-toggle="modal" data-target="#columnModal" style="margin-left: 20px;">Choose Columns</button>
+				<button class="btn btn-primary btn-sm" style="margin-left: 20px;" ng-click="export()" ng-disabled="!allRows">Export</button>
+			</div>
+			<hr class="head-hr">
+		</div>
+		<div class="col-xs-12">
+			<div style="margin-right: 16px;">
+				<table id="intake-result-head" class="recipe-result-table">
+					<thead>
+						<tr id="intake-result-head-tr" style="border-bottom: 2px black solid; ">
+							<th></th>
+							<th></th>
+							<th ng-if="showHid" role="button" ng-click="toggleSort('h')">Household<span class="glyphicon bold {{classSort('h')}}" style="padding-left: 5px;"></span></th>
+							<th ng-if="showPId" role="button" ng-click="toggleSort('p')">Participant<span class="glyphicon bold {{classSort('p')}}" style="padding-left: 5px;"></span></th>
+							<th ng-if="showDate" role="button" ng-click="toggleSort('d')">Date<span class="glyphicon bold {{classSort('d')}}" style="padding-left: 5px;"></span></th>
+							<th ng-if="showTime" role="button" ng-click="toggleSort('t')">Time<span class="glyphicon bold {{classSort('t')}}" style="padding-left: 5px;"></span></th>
+							<th ng-if="showName" style="min-width: 300px;">Name</th>
+							<th ng-if="showShared">Shared</th>
+							<th role="button" ng-click="toggleSort('w')">Weight (g) <span class="glyphicon bold {{classSort('w')}}" style="padding-left: 5px;"></span></th>
+							<th ng-repeat="col in fctConfig" ng-if="col.valid && col.show">{{ col.external }}</th>
+						</tr>
+					</thead>
+				</table>
+			</div>
+			<div style="overflow-x: auto; overflow-y: auto;">
+				<table id="intake-result-table" class="recipe-result-table" style="overflow: scroll; height: 650px;" onscroll="document.getElementById('intake-result-head').scrollLeft = this.scrollLeft;">
+				</table>
+			</div>
+		</div>
+	</div>
+	<div id="columnModal" class="container modal fade" role="dialog">
+		<div class="modal-dialog">
+			<!-- Modal content-->
+			<div class="modal-content" style="">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Choose Columns</h4>
+					<p class="text-danger">Column names listed in red are missing food composition data in the assigned food composition database. Affected cells will be highlighted in red and may display incorrect results if used. View by food item to find offending item.</p>
+				</div>
+				<div class="modal-body">
+					<ul>
+						<li><input type="checkbox" ng-model="showHid" ng-init="showHid = true"><span style="font-weight: bolder;">Household</span></li>
+						<li><input type="checkbox" ng-model="showPId" ng-init="showPId = true"><span style="font-weight: bolder;">Participant</span></li>
+						<li><input type="checkbox" ng-model="showDate" ng-init="showDate = true"><span style="font-weight: bolder;">Date</span></li>
+						<li><input type="checkbox" ng-model="showTime" ng-init="showTime = true"><span style="font-weight: bolder;">Time</span></li>
+						<li><input type="checkbox" ng-model="showShared" ng-init="showShared = true"><span style="font-weight: bolder;">Shared</span></li>
+						<!-- <li ng-show="groupBy === 'day'"><input type="checkbox" ng-model="showMeals" ng-init="showMeals = true"><span style="font-weight: bolder;">Meals</span></li> -->
+						<!-- <li><input type="checkbox" ng-model="showQuantity" ng-init="showQuantity = true"><span style="font-weight: bolder;">Quantity</span></li> -->
+						<li><input type="checkbox" ng-change="ColCheckChange(false, showNutrients)" ng-model="showNutrients" ng-init="showNutrients = true"><span style="font-weight: bolder;">Nutrients</span></li>
+						<li>
+							<ul>
+								<li ng-repeat="col in fctConfig" ng-if="col.valid && !col.internal.startsWith('adG')">
+									<input type="checkbox" ng-model="col.show"><span class="{{ col.warning ? 'text-danger' : ''}}" title="{{col.warning}}">{{ col.external }}</span>
+								</li>
+							</ul>
+						</li>
+						<li><input type="checkbox" ng-change="ColCheckChange(true, showAdg)" ng-model="showAdg" ng-init="showAdg = true"><span style="font-weight: bolder;">Food Groups</span></li>
+						<li>
+							<ul>
+								<li ng-repeat="col in fctConfig" ng-if="col.valid && col.internal.startsWith('adG')">
+									<input type="checkbox" ng-model="col.show"><span class="{{ col.warning ? 'text-danger' : ''}}" title="{{col.warning}}">{{ col.external }}</span>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="drawTable(data)">Ok</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="householdModal" class="container modal fade" role="dialog">
+		<div class="modal-dialog">
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Choose Households</h4>
+				</div>
+				<div class="modal-body modal-days">
+					<input id="hiddencb" type="checkbox" ng-init="showHidden = false" ng-model="showHidden" ng-change="showHiddenD = showHidden" style="margin-left: 14px;"><label for="hiddencb" style="font-weight: bolder; padding-left: 10px;">Include Hidden Records</label>
+					<hr class="head-hr"/>
+					<div class="form-inline">
+						<label class="bolder">Search: </label>
+						<input type="text" class="form-control" name="" ng-model="filterHouseholds" ng-change="changeFilterHouseholds(filterHouseholds)">
+					</div>
+					<hr class="head-hr"/>
+					<ul>
+						<li><input id="allcb" type="checkbox" ng-change="toggleAllHouseholds(allChecked)" ng-model="allChecked"><label for="allcb" style="font-weight: bolder; padding-left: 10px;">All</label></li>
+						<li ng-repeat="h in searchHouseholds" ng-show="!h.hidden"><input id="hhcb-{{$index}}" name="hhcb-{{$index}}"  ng-change="toggleHousehold(h.checked)" type="checkbox" ng-model="h.checked"><label for="hhcb-{{$index}}" style="font-weight: bolder; padding-left: 10px;">{{h.name}}</label></li>
+					</ul>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="errorModal" class="container modal fade" role="dialog">
+		<div class="modal-dialog">
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span class="glyphicon glyphicon-remove btn-glyph glyph-md"></span><!-- &times; --></button>
+					<h4 class="modal-title">Errors</h4>
+					<div style="padding: 5px 0px;">
+						<span class="bold" style="text-align: center;">{{errorRow.household}}</span><br/>
+						<span>{{errorRow.member}}</span><br/>
+						<span>{{errorRow.date}}</span>
+					</div>
+				</div>
+				<div class="modal-body">
+					<ul style="list-style: decimal-leading-zero; padding: 20px;">
+						<li ng-repeat="err in errorRow.errors"><a href="#!image?id={{err.id}}" target="_blank">{{err.desc}}</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

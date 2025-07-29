@@ -1,0 +1,28 @@
+<div id="form-login-container" class="container" ng-controller="loginController">
+    <div class="row">
+        <div class="col-md-offset-4 col-md-3">
+            <div id="form-login" class="form-login">
+            <form ng-submit="login()">
+                <h4 class="page-head" style="text-shadow: 2px 1px #47593233;">VISIDA</h4>
+                <input type="text" id="userName" class="form-control input-sm chat-input" placeholder="email or username" ng-model="username" ng-disabled="loading"/>
+                </br>
+                <input type="password" id="userPassword" class="form-control input-sm chat-input" placeholder="password" ng-model="password" ng-disabled="loading"/>
+                </br>
+                <p class="text-center" style="margin-top: -14px;"><small class="alert-danger" >{{ error }}</small></p>
+                <div class="wrapper">
+                    <span class="group-btn">     
+                        <input type="submit" style="margin-top: 7px;" class="btn btn-primary btn-md" value="login"><i class="fa fa-sign-in"></i></a>
+                    </span>
+                    <span class="glyphicon glyphicon-refresh glyph-md {{ (loading) && 'loading-run' || 'loading-done' }}" style="position: absolute; right: 0; top: 0;"></span>
+                </div>
+            </form>
+                <span class="fake-a" style="text-align: center;font-size: smaller; display: block; margin-top: -50px; padding-bottom: 35px;" ng-click="RequestResetPassword()">Forgot my password</a>
+            </div>
+            <div style="text-align: center; font-size: smaller;">
+                <br/>
+                <!-- <a href="offline.html">View the offline version</a><br/> -->
+                <a href="mailto:visida@newcastle.edu.au">Contact Us</a>
+            </div>
+        </div>
+    </div>
+</div>

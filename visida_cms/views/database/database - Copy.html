@@ -1,0 +1,51 @@
+<div ng-controller="databaseController" class="container-fluid">
+	<div class="row has-hr spaced" style="margin-left: 10px">
+		<span class="h3 page-head">Food Composition Table</span>
+		<span class="glyphicon glyphicon-refresh glyph-md {{ (dbLoading) && 'loading-run' || 'loading-done' }}" style="margin-left: 15px;"></span>
+	</div>
+	<div ng-show="dbMessage">
+		<small class="text-danger" ng-show="!dbMessage.success">{{ dbMessage.txt }}</small>
+		<small class="text-success" ng-show="dbMessage && dbMessage.success">{{ dbMessage.txt }}</small>
+	</div>
+	<div class="form-inline row" style="padding: 15px 10px;">
+		<div class="col-sm-3">
+			<label for="databaseSearch">Table :</label>
+			<select ng-model="tableId" class="form-control" ng-change="changeDatabase(tableId)">
+				<option ng-repeat="t in fctables" value="{{t.id}}">{{ t.name }}</option>
+			</select>
+		</div>
+		<div class="col-sm-5">
+			<label for="databaseSearch">Search :</label>
+			<input type="text" name="databaseSearch" ng-change="updateSearch(databaseSearch)" ng-model="databaseSearch" class="form-control" style="width: 80%" ng-disabled="!tableId">
+		</div>
+	</div>
+		<!--
+		<select id="databaseSearch" class="chosen-select align-middle item-name" data-placeholder="Select name" ng-show>
+			<option ng-repeat="item in items" value="{{ name }}">{{ item.name }}</option>
+		</select> -->
+	<table style="width: 100%;" class="">
+		<tr><td ng-repeat="p in pageNames"><a href="#!/database" ng-click="switchPage($index)"><strong>{{ p }}</strong></a></td></tr>
+	</table>
+	<div style="margin-right: 16px;">
+		<table id="fcthead" class="fcthead">
+			<tr>
+				<!-- <th style="min-width: 120px;">Origin</th>
+				<th style="min-width: 160px;">Name</th>
+				<th style="min-width: 160px;">Alternate Name</th>
+				<th>Density(g/ml)</th>
+				<th style="padding-right: 15px">Total Sugar</th>
+				<th style="padding-right: 10px">Added Sugar</th> -->
+				<th ng-repeat="h in headers" style="padding: 10px;">{{ h.external }}</th>
+			</tr>
+		</table>
+	</div>
+	<div style="overflow-x: auto; overflow-y: auto;">
+		<table id="fctable" class="fcthead stripe-table" style="" onscroll="document.getElementById('fcthead').scrollLeft = this.scrollLeft;" style="table-layout: fixed;">
+			<tr ng-repeat="item in items">
+				<td ng-repeat="h in headers" style="padding: 10px;">
+					{{ item[h.internal] }}
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>

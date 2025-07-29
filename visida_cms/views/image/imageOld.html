@@ -1,0 +1,174 @@
+<div id="content" ng-controller="eatImageController" class="container body-content">
+	<div id="imageHeader" class="row">
+		<div class="row">
+			<h3>Image Capture Record: {{ record.imageName }}</h3>
+			<strong>Type: {{ record.recordType }}</strong>
+			<strong style="margin-left: 25px;">Identification: 
+				<span class="label" ng-class="{'label-danger': record.tagIdent === 'Not Started', 'label-warning': record.tagIdent === 'In Progress', 'label-success': record.tagIdent === 'Completed'}">
+					{{ record.tagIdent }}
+				</span>
+			</strong>
+			<strong style="margin-left: 25px;">Portion Size: 
+				<span class="label" ng-class="{'label-danger': record.tagPrt === 'Not Started', 'label-warning': record.tagPrt === 'In Progress', 'label-success': record.tagPrt === 'Completed'}">
+					{{ record.tagPrt }}
+				</span>
+			</strong>
+			<strong style="margin-left: 25px;">Fiducial Marker: 
+				<div style="display: inline-block; vertical-align: middle;">
+					<label>
+						<input type="checkbox" value="" ng-model="record.isFiducialPresent" ng-click="saveRecord()">
+					</label>
+				</div>
+			</strong>
+			<span style="margin-left: 25px; color: red; font-style: italic;" ng-show="record.lockedName && (record.lockedName != getUser().username)">
+				Currently being edited by {{ record.lockedName }}
+			</span>
+		</div>
+	</div>
+	<div class="container" style="margin-top: 20px;">
+		<div class="col-xs-12 col-sm-4">
+			<strong>Household: </strong><a href="#!/analyze?&household={{ record.householdParticipantId }}">{{ record.householdParticipantId }}</a>
+			<a href="#!image?id={{record.leftoverId}}{{ searchHousehold ? '&household=' + searchHousehold : '' }}{{ searchIdent ? '&identified=' + searchIdent : '' }}{{ searchPrt ? '&portioned=' + searchPrt : '' }}" 	ng-if="record.leftoverId && record.leftoverId != null" style="font-weight: bold;">View Leftovers</a>
+			<a href="#!image?id={{record.leftoverFromId}}{{ searchHousehold ? '&household=' + searchHousehold : '' }}{{ searchIdent ? '&identified=' + searchIdent : '' }}{{ searchPrt ? '&portioned=' + searchPrt : '' }}" ng-if="record.leftoverFromId && record.leftoverFromId != null" style="font-weight: bold;">View Full Meal</a>
+			
+			<div style="position: relative;  background-color: {{ record.imageUrl ? '#d7d7d7aa' : 'transparent' }}; padding: 6px;">
+				<img id="image" ng-src="{{ record.imageUrl != null ? record.imageUrl : 'images/noimage.png' }}" style="width: 100%;"> <!-- src="{{ record.imageUrl != null ? record.imageUrl : 'images/noimage.png' }}"   -->
+			</div>
+
+
+		</div>
+		<div class="col-xs-12 col-sm-8 text-left">
+			<!--<a href="#!homography?id={{ record.id }}" ng-show="record.homography">View Homography</a>-->
+			<div class="">
+				<span class="h3">Description</span><br/>
+				<ul class="list-group">
+					<li class="list-group-item">
+						<audio controls src="{{ record.audioUrl }}">
+							<!-- <source src="{{ audio.audioUrl }}" type="audio/{{ audio.format }}"/> -->
+							Your browser does not support the audio element.
+						</audio>
+					</li>
+					<li class="list-group-item" ng-if="record.textDescription">
+						<div>
+							<span style="font-weight: bold;">Description: </span>
+							<span>{{ record.textDescription }}</span>
+						</div>
+					</li>
+					<li class="list-group-item" ng-if="record.nTranscript">
+						<div>
+							<span style="font-weight: bold;">Transcript: </span>
+							<span>{{ record.nTranscript }}</span>
+						</div>
+					</li>
+					<li class="list-group-item" ng-if="record.transcript">
+						<div>
+							<span style="font-weight: bold;">Translation: </span>
+							<span>{{ record.transcript }}</span><br/>
+						</div>
+					</li>
+				</ul>
+			</div>
+			<hr/>
+			<!-- <span class="h3">Comments</span>
+			<span class="glyphicon glyphicon-plus glyph-md pull-right" role="button" ng-click="newText = ''" style="color: #44dac9" title="Create"></span><br/>
+			<div id="textCarousel" class="carousel slide" data-ride="carousel" style="margin-top: 10px; padding: 10px; padding-bottom: 0;">
+				<ol class="carousel-indicators">
+					<li data-target="#textCarousel" data-slide-to="{{ $index }}" class="{{ $index == 0 ? 'active' : '' }}" ng-repeat="text in record.eatImageTexts"></li>
+				</ol>
+
+				<div class="carousel-inner">
+					<div class="item {{ $index == 0 ? 'active' : '' }}" ng-repeat="text in record.eatImageTexts">
+				  		<p>{{ text.description }}
+					</div>
+				</div>
+				<br/>
+				<br/>
+				<span class="left carousel-control" href="#textCarousel" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></span>
+				<span class="right carousel-control" href="#textCarousel" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></span>
+			</div> -->
+			<div class="" style="margin-left: 1em;">
+				<h3 class="row">Identification of Food Items</h3>
+				<span class="row" ng-if="record.leftoverFromId">This record is leftovers of another record. Would you like to <a role="button" ng-click="inheritParent()">inherit its food items?</a></span>
+				<div style="padding: 5px 15px;" ng-show="message.txt != null">
+					<small class="{{ message.success ? 'text-success' : 'text-danger' }}">{{ message.txt }} </small><br/>
+				</div>
+				<div class="row">
+
+					<!-- Ignore this bit it's just a test -->
+
+					<!-- <select id="foodItemList" class="chosen-select"><option ng-repeat="name in foodItemList" value="{{ name }}"></option></select>-->
+					<table id="food-item-table" ng-show="record.foodItems.length > 0">
+						<tr>
+							<th></th>
+							<th>Name</th>
+							<th>Grams (g)</th>
+							<th>Volume (ml)</th>
+							<th></th>
+							<th></th>
+						</tr>
+						<tr ng-repeat="item in record.foodItems" style="width: 100%; overflow: hidden;">
+						<form class="form-inline form-group">
+							<td>
+								<span class="glyphicon glyphicon-tag" style="font-size: 2em; color: {{ colors[$index] }}" role="button" ng-click="startTag(item, $index)"></span>
+							</td>
+							<td style="width: 60%; ">
+								<!-- <input ng-if="item.unsaved" type="text" ng-model="item.name" class="form-control" placeholder="Select an item" list="foodItemList" /> -->
+								<div ng-show="item.unsaved">
+									<select id="food-item-{{ $index }}" chosen data-placeholder-text-single="'Select food item'" no-results-text="'No food items are assigned to this study'" ng-model="item.name"  class="item-name align-middle" style="max-width: 400px; width: 400px;" ng-options="fi for fi in foodItemList">
+									</select>
+								</div>
+								<style>
+								.chosen-container {
+									width: 400px !important;
+									margin-top: 15px;
+								}
+							</style>
+								<span ng-if="!item.unsaved">{{ item.name }}</span><br/>
+								<small ng-if="!item.unsaved && getUser().isAdmin" style="font-style: italic; text-align: center; margin-top: 5px;">Created by: {{ item.createdBy.userName }}</small>
+							</td>
+							<td style="width: 20%">
+								<input ng-if="item.unsaved" type="number" ng-model="item.quantityGrams" class="form-control" />
+								<span ng-if="!item.unsaved">{{ item.quantityGrams }}g</span>
+							</td>
+							<td style="width: 20%">
+								<input ng-if="item.density > 0 && item.unsaved" type="number" class="form-control" ng-model="item.quantityML" ng-change="convertML(item)"/>
+								<span ng-if="item.density > 0 && !item.unsaved">{{ item.quantityML }}ml</span>
+							</td>
+							<td ng-if="!record.isCompleted || getUser().isAdmin">
+								<button ng-if="item.unsaved" ng-click="saveItem($index)" class="btn btn-primary">Save</button>
+								<button ng-if="!item.unsaved" ng-click="unsaveItem($index)" class="btn btn-standard">Edit</button>
+							</td>
+							<td ng-if="!record.isCompleted || getUser().isAdmin">
+								<span class="glyphicon glyphicon-remove" role="button" ng-click="deleteItem($index)"/>
+							</td>
+						</form>
+						</tr>
+					</table>
+					<button ng-click="addItem()" class="btn btn-primary" ng-if="!record.isCompleted || getUser().isAdmin">Add Item</button>
+					<button ng-click="complete()" class="btn btn-success" ng-if="!record.isCompleted">Complete</button>
+					<span class="text-success" ng-if="record.isCompleted">Completed</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row container">
+		<div class="row" style="margin-top: 10px; margin-bottom: 10px;">
+			<a class="btn btn-primary col-sm-1 col-sm-offset-1 pull-left" ng-disabled="pageData.PrevId === 0" href="#!image?id={{ pageData.PrevId === 0 ? record.id : pageData.PrevId }}{{ searchHousehold ? '&household=' + searchHousehold : '' }}{{ searchIdent ? '&identified=' + searchIdent : '' }}{{ searchPrt ? '&portioned=' + searchPrt : '' }}">Previous</a>
+			<a class="btn btn-primary col-sm-1 col-sm-offset-1 pull-right" ng-disabled="pageData.NextId === 0" href="#!image?id={{ pageData.NextId === 0 ? record.id : pageData.NextId }}{{ searchHousehold ? '&household=' + searchHousehold : '' }}{{ searchIdent ? '&identified=' + searchIdent : '' }}{{ searchPrt ? '&portioned=' + searchPrt : '' }}">Next</a>
+		</div>
+	</div>
+
+	<span id="tag" class="glyphicon glyphicon-tag" style="font-size: 2em; position: absolute; color: {{ tag.index > 0 ? colors[tag.index] : 'black' }}; display: none;"></span>
+	<span id="tag-{{ $index }}" role="button" class="glyphicon glyphicon-tag food-tag" style="color: {{ colors[$index] }};" ng-style="styleTag(item)" ng-click="startTag(item, $index)" ng-repeat="item in record.foodItems"></span>
+
+	<div style="position: absolute; top:0; left: 0; right: 0; bottom: 0; background-color: #000000aa" class="h-100 row align-items-center" ng-show="newText != null">
+		<div style="background-color: white; border-radius: 10px; float: none; margin: 0 auto; top: 40%; padding: 0; padding-top: 10px; padding-bottom: 5px;" class="col-xs-6 col-sm-6 col-md-4 col-lg-4">
+			<strong style="margin:10px;">Enter new message.</strong>
+			<textarea name="newText" cols="40" rows="5" ng-model="newText" style="width: 100%; border-radius: 10" class="form-control"></textarea>
+			<div style="padding: 8px;" class="text-center">
+				<button class="right btn btn-primary btn-sm" style="padding-top: 4px; padding-bottom: 4px;" ng-click="saveText()">Add</button>
+				<button class="right btn btn-standard btn-sm" style="padding-top: 4px; padding-bottom: 4px;" ng-click="newText = null">Cancel</button>
+			</div>
+		</div>
+	</div>
+</div>

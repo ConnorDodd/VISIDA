@@ -1,0 +1,82 @@
+<script src="../node_modules/chart.js/dist/Chart.min.js"></script>
+<div class="container" ng-controller="testController">
+	<div class="row has-hr">
+		<span class="page-head">{{ (test.testType == 0) ? 'Identify' : (test.testType == 1) ? 'Quantify' : 'Identify & Quantify' }} Test for testuser</span>
+		<span class="glyphicon glyphicon-refresh glyph-md pull-right {{ (loading > 0) && 'loading-run' || 'loading-done' }}"></span>
+	</div>
+	<div class="row has-hr" style="padding: 20px;">
+		<div class="col-sm-6">
+			<ul class="list-group detail-list">
+				<li class="list-group-item row" ng-show="test.testType != 1"><span class="col-sm-6">Identification Accuracy: </span><span class="col-sm-6" style="color: {{ perColor(test.identificationAccuracy, true); }}">{{ test.identificationAccuracy | number : 2 }}%</span></li>
+				<li class="list-group-item row" ng-show="test.testType > 0"><span class="col-sm-6">Quantification Accuracy: </span><span class="col-sm-6" style="color: {{ perColor(test.quantificationAccuracy, true); }}">{{ test.quantificationAccuracy | number : 2  }}%</span></li>
+				<li class="list-group-item row"><span class="col-sm-6">Time Taken: </span><span class="col-sm-6">{{ metrics.timeTaken }} mins</span></li>
+				<li class="list-group-item row" ng-show="test.testType > 0"><span class="col-sm-6">Total Gram Difference: </span><span class="col-sm-6" style="color: {{metrics.diffCol}}">{{ metrics.diffGram }} g</span></li>
+				<li class="list-group-item row" ng-show="test.testType > 0"><span class="col-sm-6">Total % Difference: </span><span class="col-sm-6" style="color: {{metrics.diffCol}}">{{ metrics.diffPerc }} %</span></li>
+			</ul>
+		</div>
+	</div>
+	<div class="row has-hr" style="padding: 20px">
+		<ul class="list-group col-sm-12 col-md-6">
+			<li class="list-group-item list-group-item-header" style="text-align: center;">
+				<span class="row-head"><a href="#!image?id={{test.knownRecord.id}}">Known Weights</a></span>
+			</li>
+			<li class="list-group-item" ng-repeat="item in test.knownRecord.foodItems">
+				<span class="bold">{{ item.name }}</span><span class="pull-right">{{item.quantityGrams}}g</span>
+			</li>
+		</ul>
+		<ul class="list-group col-sm-12 col-md-6">
+			<li class="list-group-item list-group-item-header" style="text-align: center;">
+				<span class="row-head"><a href="#!image?id={{test.imageRecord.id}}">User's Estimates</a></span>
+			</li>
+			<li class="list-group-item" ng-repeat="item in test.imageRecord.foodItems">
+				<span class="bold">{{ item.name }}</span>
+				<span class="" ng-show="test.testType > 0">{{item.quantityGrams}}g <span class="" style="color: {{item.diffCol}}">{{item.diffSign }}{{ item.diffGram }}g / {{item.diffSign }}{{ item.diffPerc }}%</span></span>
+			  	<br/>
+			  	<div style="display: inline-block;" ng-if="item.identScore">
+				  	<span style="font-weight: normal; font-style: italic;">Identification: </span>
+					<div class="score-radio-div">
+						<span role="button" class="score-radio score-0" ng-click="updateScore(item.identScore, 0)" title="Perfect"><span class="inside" ng-show="item.identScore.accuracy == 0" /></span>
+						<span role="button" class="score-radio score-1" ng-click="updateScore(item.identScore, 1)" title="Close"><span class="inside" ng-show="item.identScore.accuracy == 1" /></span>
+						<span role="button" class="score-radio score-2" ng-click="updateScore(item.identScore, 2)" title="Tolerable"><span class="inside" ng-show="item.identScore.accuracy == 2" /></span>
+						<span style=" width: 10px; display: inline-block;" />
+						<span role="button" class="score-radio score-3" ng-click="updateScore(item.identScore, 3)" title="Unusable"><span class="inside" ng-show="item.identScore.accuracy == 3" /></span>
+					</div>
+				</div>
+				<div style="display: inline-block; padding-left: 15px;" ng-if="item.quantScore">
+				  	<span style="font-weight: normal; font-style: italic;">Quantification: </span>
+					<div class="score-radio-div">
+						<span role="button" class="score-radio score-0" ng-click="updateScore(item.quantScore, 0)" title="Perfect"><span class="inside" ng-show="item.quantScore.accuracy == 0" /></span>
+						<span role="button" class="score-radio score-1" ng-click="updateScore(item.quantScore, 1)" title="Close"><span class="inside" ng-show="item.quantScore.accuracy == 1" /></span>
+						<span role="button" class="score-radio score-2" ng-click="updateScore(item.quantScore, 2)" title="Tolerable"><span class="inside" ng-show="item.quantScore.accuracy == 2" /></span>
+						<span style=" width: 10px; display: inline-block;" />
+						<span role="button" class="score-radio score-3" ng-click="updateScore(item.quantScore, 3)" title="Unusable"><span class="inside" ng-show="item.quantScore.accuracy == 3" /></span>
+					</div>
+				</div>
+			</li>
+		</ul>
+		<div class="col-xs-12" style="margin: 0; overflow-x: scroll; background-color: white; padding: 0;" ng-show="test.testType > 0">
+			<table class="test-table">
+				<tr>
+					<th style="min-width: 140px;"></th>
+					<th ng-repeat="col in fctConfig" ng-if="col.show">{{ col.external }}</th>
+				</tr>
+				<tr>
+					<td>Known Values</td>
+					<td ng-repeat="col in fctConfig" ng-if="col.show">{{ knownNut[col.internal] | number:2 }}</td>
+				</tr>
+				<tr>
+					<td>User Estimates</td>
+					<td ng-repeat="col in fctConfig" ng-if="col.show">{{ testNut[col.internal] | number:2 }}</td>
+				</tr>
+				<tr>
+					<td>Comparison (g)</td>
+					<td ng-repeat="col in fctConfig" ng-if="col.show" style="color: {{ comparison[col.internal].color }}">{{ comparison[col.internal].grams | number:2 }}</td>
+				</tr>
+				<tr>
+					<td>Comparison (%)</td>
+					<td ng-repeat="col in fctConfig" ng-if="col.show" style="color: {{ comparison[col.internal].color }}">{{ comparison[col.internal].perc | number:2 }}%</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>

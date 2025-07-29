@@ -1,0 +1,86 @@
+<div ng-controller="uploadController" class="container">
+	<div class="row content">
+		<div class="col-xs-12">
+			<span class="h3 page-head left">Upload App Data</span>
+			<span class="glyphicon glyphicon-refresh glyph-md pull-right {{ (loading > 0) && 'loading-run' || 'loading-done' }}"></span>
+			<hr class="head-hr">
+		</div>
+		<div class="col-xs-12 spaced">
+			<p>Welcome to the household upload tool. To upload a new household, please drag or select all files from the export folder to the box below. If you wish to update or add some images or audio to a household, select the relevant files below and check the 'overwrite' option. If you need to create a new study you can <a href="#!/admin/studies">do so here.</a></p>
+		</div>
+		<!-- <div class="row">
+			<form class="form-inline left">
+				<span style="margin-right: 24px; vertical-align: middle;" class="row-head">Assigned Study: </span>
+				<select class="form-control left" ng-model="studyid"><option ng-repeat="s in studies" value="{{ s.id }}">{{ s.name }}</option></select>
+			</form>
+		</div> -->
+		<div class="col-xs-12">
+			<div class="row">
+				<div class="col-xs-12 col-sm-12">
+					<form class="form-inline" ng-submit="uploadFiles(files)">
+						<div style="margin-left: 10px;">
+							<span class="row-head">Files</span>
+							<div style="display: inline-block;" class="pull-right">
+								<label style="vertical-align: middle;" for="overwrite">Overwrite: </label>
+								<input id="overwrite" type=checkbox ng-model="overwrite" />
+							</div>
+						</div>
+						<div class="has-hr" ng-show="hhData" style="margin: 10px; padding: 10px;">
+							<p>You have selected a household data file. Please select what study you would like to attach the household to.<br/>
+								<span style="font-weight: bolder;">Study: </span><select class="form-control left" ng-model="studyId" ng-options="study.id as study.name for study in studies"></select><br/>
+								<span style="font-weight: bolder;">Household: </span>{{ hhData.householdMembers[0].participantHouseholdId }}
+								<span style="font-weight: bolder;">Members: </span><span ng-repeat="member in hhData.householdMembers"> {{ member.participantHouseholdMemberId }}, </span><br/>
+								<span style="font-weight: bolder;">Files: </span>{{usage.images}} Images - {{usage.audio}} Audio - 1 LogFile <span style="color: {{ files.length-1 >= usage.files ? 'green' : 'red'}}">({{files.length-1}}/{{usage.files}} selected)</span><br/>
+								<span style="font-weight: bolder;">Dates: </span><br/>
+								<span ng-repeat="day in usage.days"><span style="font-weight: bolder">{{ day.date | date : 'dd/MM/yyyy' }}</span> - Eating Occasions: {{ day.eatingOccasions }} Recordings: {{ day.foodItems }} ({{ day.files}} files)<br/></span>
+							</p>
+						</div>
+						<div ngf-select="filesChosen(files)" role="button" ngf-drop="filesChosen(files)" ng-model="files" ngf-multiple="true" ngf-pattern="pattern" ngf-accept="'*/*'" class="drop-box row" ngf-drag-over-class="dragover" ngf-allow-dir="true" style="width: 100%;">
+							<span ng-show="!files" style="vertical-align: middle; font-weight: bold;">Select or Drop Files</span>
+							<div ng-repeat="file in files" style="display: inline-block; width: 118px; height: 154px; padding: 5px; background-color: {{ file.success < 0 ? '#ffcbd2' : (file.success > 0 ? '#cbffd4' : '#e4f2fd') }}">
+								<div ng-if="file.type.startsWith('image')" style="background-image: url('images/loadingimage.png'); background-position: center; background-size: cover; width: 100%; height: 100%;" class="hoverfile">
+									<img ngf-thumbnail="file" style="padding: 0; transform: rotate(-90deg); height: 108px; width: 144px; transform-origin: 72px 72px;">
+									<span class="hoverfiletext">{{ file.name }}<br/><br/>{{ file.message }}</span>
+								</div>
+								<div ng-if="!file.type.startsWith('image')" style="display: flex;" class="hoverfile" >
+									<span class="glyphicon glyphicon-headphones" ng-if="file.type.startsWith('audio')" style="font-size: 59px; margin: auto; height: 125px; width: 108px; vertical-align: middle;"><br/></span>
+									<span class="glyphicon glyphicon-file" ng-if="!file.type.startsWith('audio')" style="font-size: 59px; margin: auto; height: 125px; width: 108px; vertical-align: middle;"><br/></span>
+									<span class="hoverfiletext">{{ file.name }}<br/><br/>{{ file.message }}</span>
+								</div>
+							</div>
+							<!-- col-xs-6 col-sm-4 col-md-2 col-lg-2 -->
+							<!-- <div class="" ng-repeat="file in files" style="">
+								<div class="uploadThumb text-center justify-center" style="background-color: {{ file.success < 0 ? '#ffcbd2' : (file.success > 0 ? '#cbffd4' : '#e4f2fd') }}" title="{{ file.message }}">
+									<div class="text-center">
+										<div style="height: 124px; padding: 5px;" ng-if="file.type.startsWith('image')" title="{{ file.name }}">
+											<img ng-if="file.type.startsWith('image')" ngf-thumbnail="file" style="padding: 0; transform: rotate(90deg);">
+											<span ng-if="file.type.startsWith('audio')" class="glyphicon glyphicon-headphones" style="font-size: 80px; "><br/></span>
+											<span ng-if="file.type === 'application/json'" class="glyphicon glyphicon-folder-open" style="font-size: 80px; "><br/></span>
+										</div>
+									</div>
+								</div>
+							</div> -->
+						</div>
+						<div style="margin: 10px;">
+							<div class="progress center-block" ng-show="progress > 0" style="width: 100%;">
+								<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0"
+									aria-valuemin="0" aria-valuemax="100" style="width:{{ progress }}%">
+							    	{{ progress }}%
+								</div>
+							</div>
+						</div>
+						<div ng-show="!uploading">
+							<input id="uploadButton" type="submit" value="Upload" class="btn btn-primary" ng-disabled="!files || (hhData && !studyId)" style="margin-left: 1em;">
+							<button type="button" class="btn btn-standard" ng-disabled="!files" style="margin-left: 1em;" ng-click="clearFiles()">Clear</button>
+						</div>
+						<div ng-show="uploading && progress >= 100">
+							<input id="retryButton" type="submit" value="Retry" class="btn btn-primary" ng-if="failures > 0" style="margin-left: 1em;">
+							<button type="button" class="btn btn-standard" style="margin-left: 1em;" ng-click="clearFiles()">Upload Another</button>
+							<a class="btn btn-primary" role="button" ng-show="hhData" style="margin-left: 1em;" href="#!/records?study={{studyId}}&household={{hhData.householdMembers[0].participantHouseholdId}}">View Data</a>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

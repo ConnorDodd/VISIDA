@@ -1,0 +1,467 @@
+angular.module('visida_cms').controller('recipereviewController', ['$scope', 'Restangular', '$routeParams', '$window', '$controller', function($scope, Restangular, $routeParams, $window, $controller) {
+	$scope.loading = 1;
+	//$controller('commonCtrl', { $scope: $scope });
+
+	Restangular.one('GetSearchConfig').get()
+	.then(function(result) {
+		$scope.searchConfig = result.data;
+		//$scope.searchHouseholds = $scope.searchConfig.households;
+		if ($scope.selectedStudy)
+			$scope.studyChanged();
+
+	}).finally(function() { $scope.loading--; });
+
+	$scope.studyChanged = function() {
+		if (!$scope.selectedStudy) {
+			$scope.searchHouseholds = $scope.searchConfig.households;
+			return;
+		}
+		//var sid = parseInt($scope.selectedStudy);
+		$scope.study = $scope.searchConfig.studies.filter(function(x) { return x.id === $scope.selectedStudy})[0];
+		$scope.searchHouseholds = $scope.study.households;
+	};
+
+	$scope.toggleAllHouseholds = function(all) {
+		for (var i = 0; i < $scope.searchHouseholds.length; i++) {
+			var hh = $scope.searchHouseholds[i];
+			hh.checked = all;
+		}
+		if (all)
+			$scope.hhCount = $scope.searchHouseholds.length;
+		else
+			$scope.hhCount = 0;
+	};
+
+	$scope.toggleHousehold = function(val) {
+		if (!val) {
+			$scope.allChecked = false;
+			return;
+		}
+		var all = true;
+		var count = 0;
+		for (var i = 0; i < $scope.searchHouseholds.length; i++) {
+			if (!$scope.searchHouseholds[i].checked)
+				all = false;
+			else
+				count++;
+		}
+		$scope.hhCount = count;
+		$scope.allChecked = all;
+	};
+
+	$scope.search = function() {
+		if ($scope.study == null)
+			return;
+		var url = "Result/Recipe?";
+		// if ($scope.selectedHousehold) {
+		// 	url += 'Household/' + $scope.selectedHousehold;
+		// } else if ($scope.selectedStudy) {
+		// 	url += 'Study/' + $scope.selectedStudy;
+		// } else {
+		// 	return;
+		// }
+
+		for (var i = 0; i < $scope.searchHouseholds.length; i++) {
+			var hh = $scope.searchHouseholds[i];
+			if (hh.checked)
+				url += "hhid=" + hh.name + "&";
+		}
+
+		$scope.loading++;
+		Restangular.one(url).get()
+		.then(function(result) {
+			$scope.updateTable(result.data);
+		}, function(error) {
+		}).finally(function() { $scope.loading--; });
+	};
+
+	$scope.exportError = null;
+	$scope.updateTable = function(data) {
+		$scope.fctConfig = $.extend(true, {}, fctConfigStart);
+		var keys;
+
+		for (var i = 0; i < data.length; i++) {
+			var recipe = data[i];
+			recipe.rawQuantity = 0;
+			recipe.foodItems = [];
+			recipe.raw = {};
+
+			if (!recipe.yieldFactor || !recipe.usageCount)
+				$scope.exportError = true;
+			for (var y = 0; y < recipe.ingredients.length; y++) {
+				var ing = recipe.ingredients[y];
+
+				for (var z = 0; z < ing.imageRecord.foodItems.length; z++) {
+					var fi = ing.imageRecord.foodItems[z];
+					if (!fi.foodCompositionDatabaseEntry)
+						continue;
+					fi.cookMethod = ing.cookMethod;
+					recipe.foodItems.push(fi);
+					recipe.rawQuantity += fi.quantityGrams;
+
+					if (!keys)
+						keys = Object.keys(fi.foodCompositionDatabaseEntry);
+					for (var l = keys.length - 1; l >= 0; l--) {
+						var key = keys[l];
+						if (!$scope.fctConfig.hasOwnProperty(key)) //Exclude inherited variables
+							continue;
+						if (recipe.raw[key])
+							recipe.raw[key] += (fi.foodCompositionDatabaseEntry[key] / 100) * fi.quantityGrams;
+						else
+							recipe.raw[key] = (fi.foodCompositionDatabaseEntry[key] / 100) * fi.quantityGrams;
+						if (fi.foodCompositionDatabaseEntry[key] != null) //If at least one variable is not null then show 
+							$scope.fctConfig[key].valid = true;
+						else
+						{
+							$scope.fctConfig[key].warning = "There is one or more food composition entries missing this column";
+							// $scope.exportError = "There is one or more food composition entries missing the column " + $scope.fctConfig[key];
+							fi.foodCompositionDatabaseEntry[key+"error"] = true;
+							fi.foodCompositionDatabaseEntry.energykCalerror = true;
+							fi.foodCompositionDatabaseEntry.energyWoFibreerror = true;
+							fi.foodCompositionDatabaseEntry.energyWFibreerror = true;
+							fi.foodCompositionDatabaseEntry.energykJerror = true;
+						}
+					}
+				}
+			}
+		}
+
+		var html = "";
+		var count = 0;
+		for (var i = 0; i < data.length; i++) {
+			var recipe = data[i];
+			if (!$scope.showHidden && recipe.hidden)
+				continue;
+			count++;
+			var body = '<tbody><tr class="header"><td>' + count + '</td>'
+			var rowR = '<tr class=""><td>' + count + '.R</td>';
+			var rowC = '<tr class=""><td>' + count + '.C</td>';
+			var rowF = '<tr class=""><td>' + count + '.F</td>';
+			var skips = "";
+
+			if ($scope.showHid) { body += '<td>' + recipe.householdParticipantId + '</td>'; skips += '<td></td>'; }
+			if ($scope.showDate) { body += '<td>' + recipe.captureTime.substring(0, 10) + '</td>'; skips += '<td></td>'; }
+			if ($scope.showTime) { body += '<td>' + recipe.captureTime.substring(11) + '</td>'; skips += '<td></td>'; }
+			if ($scope.showName) { body += '<td style="min-width: 300px;"><a href="#!/recipe?id=' + recipe.id + '">' + recipe.name + '</a></td>'; skips += '<td></td>'; }
+			if ($scope.showYF)
+				if (recipe.yieldFactor > 0) { body += '<td>' + recipe.yieldFactor + '</td>'; skips += '<td></td>'; }
+				else { body += '<td><a href="#!recipe?id=' + recipe.id + '" ><span title="No yield factor has been applied" class="glyphicon glyphicon-warning-sign text-danger"></span></a>' + '</td>'; 
+					skips += '<td></td>'; $scope.exportError = true; }
+			if ($scope.showEO)
+				if (recipe.usageCount > 0) { body += '<td>' + recipe.usageCount + '</td>'; skips += '<td></td>'; }
+				else { body += '<td><a href="#!recipe?id=' + recipe.id + '" ><span title="Recipe has not been used" class="glyphicon glyphicon-warning-sign text-danger"></span></a>' + '</td>';
+					skips += '<td></td>'; $scope.exportError = true; }
+			if ($scope.showHidden) { body += '<td>' + (recipe.hidden ? 'Yes' : 'No') + '</td>'; skips += '<td></td>'; }
+			body += '<td style="min-width: 300px;"></td><td></td>'
+			if (!keys)
+				keys = Object.keys(recipe.foodCompositionDatabaseEntry);
+			for (var l = 0; l < keys.length; l++)
+				body += '<td></td>';
+			body += '</tr>';
+
+			var rawQuantity = 0;
+			var raw = {};
+			var expErr = {};
+
+			for (var y = 0; y < recipe.ingredients.length; y++) {
+				var ing = recipe.ingredients[y];
+				var fiCount = 0;
+				for (var z = 0; z < ing.imageRecord.foodItems.length; z++) {
+					var fi = ing.imageRecord.foodItems[z];
+					if (!fi.foodCompositionDatabaseEntry)
+						continue;
+
+					fiCount++;
+					rawQuantity += fi.quantityGrams;
+					var row = "</tr>";
+					var engErr = false;
+
+					
+					for (var l = keys.length - 1; l >= 0; l--) {
+						var key = keys[l];
+						if (!$scope.fctConfig.hasOwnProperty(key)) //Exclude inherited variables
+							continue;
+
+						var isEng = key == 'energykCal' || key == 'energyWoFibre' || key == 'energyWFibre' || key == 'energykJ';
+						var amt = (fi.foodCompositionDatabaseEntry[key] ? (fi.foodCompositionDatabaseEntry[key] / 100) * fi.quantityGrams : 0);
+						if (raw[key])
+							raw[key] += amt;
+						else
+							raw[key] = amt
+
+						//If at least one variable is not null then show
+						if ($scope.fctConfig[key].valid && $scope.fctConfig[key].show) {
+							if (!fi.foodCompositionDatabaseEntry[key]) {
+								engErr = true;
+								expErr[key] = true;
+								row = '<td class="review-nutrient-error">*</td>' + row;
+							} else if (isEng && engErr) {
+								expErr[key] = true;
+								row = '<td class="review-nutrient-error">' + amt + '*</td>' + row;
+							} else {
+								row = '<td>' + amt + '</td>' + row;
+							}
+						}
+					}
+					row = '<td>' + fi.quantityGrams + '</td>' + row;
+					row = '<td>' + fi.foodCompositionDatabaseEntry.name + '</td>' + row;
+					row = skips + row;
+					row = '<tr><td>' + count + '.' + fiCount + '</td>' + row;
+					body += row;
+				}
+			}
+			body += '</tbody>';
+			html += body;
+		}
+
+		var table = document.getElementById('recipe-result-table');
+		table.innerHTML = html;
+
+		$scope.recipes = data;
+		$scope.showTable = true;
+	};
+
+	$scope.export = function() {
+		if ($scope.exportError && !confirm("There are items in this export that may require your attention. See items flagged with a red warning symbol. Do you wish to proceed with the export?"))
+			return;
+
+		var study = $scope.study.name;
+		var hh = $scope.selectedHousehold ? $scope.selectedHousehold :'All';
+		var name = 'VisidaRecipes_' + study + '_' + hh + '.xlsx';
+		var wb = XLSX.utils.table_to_book(document.getElementById("recipe-result-table"));
+		//wb.SheetNames[0] = $scope.study.name;
+		XLSX.writeFile(wb, name);
+		return;
+	}
+}]);
+<script src="../node_modules/jquery-csv/src/jquery.csv.min.js"></script>
+<div id="content" ng-controller="recipereviewController" class="container-fluid" style="margin-left: 40px;">
+	<div class="row content">
+		<div class="col-xs-12">
+			<span class="page-head h3">Review Recipes</span>
+			<span class="glyphicon glyphicon-refresh glyph-md {{ (loading) && 'loading-run' || 'loading-done' }}" style="margin-left: 15px;"></span>
+			<hr class="head-hr">
+		</div>
+		<!-- <div class="col-xs-12">
+			<div class="form-inline" style="padding: 5px 0px 8px 0px;">
+				<div class="form-group">
+					<label for="sStudy">Study:</label>
+					<select id="sStudy" name="sStudy" ng-model="selectedStudy" class="form-control btn-pulse" ng-change="studyChanged()"  ng-options="s.id as s.name for s in searchConfig.studies">
+						<option value="">Any</option>
+					</select>
+				</div>
+				<div class="form-group" ng-disabled="!selectedStudy" style="margin-left: 10px;">
+					<label for="sHousehold">Household:</label>
+					<select id="sHousehold" name="sHousehold" ng-model="selectedHousehold" class="form-control" ng-change="householdChanged()">
+						<option value="">Any</option>
+						<option ng-repeat="hh in study.households" value="{{ hh.name }}">{{ hh.name }}</option>
+					</select>
+				</div>
+				<button class="btn btn-primary btn-sm" style="margin-left: 20px;" ng-click="search()" ng-disabled="!selectedStudy">Search</button>
+			</div>
+			<div class="" style="padding: 5px 0px 8px 0px;">
+				<button class="btn btn-standard btn-sm" data-toggle="modal" data-target="#columnModal" ng-disabled="showTable != true" style="margin-left: 20px;">Choose Columns</button>
+				<button class="btn btn-primary btn-sm" style="margin-left: 20px;" ng-click="export()" ng-disabled="showTable != true">Export</button>
+			</div>
+			<hr class="head-hr">
+		</div> -->
+		<div id="searchdiv" style="display: {{ loading ? 'none' : '' }} padding-bottom: 0;" class="col-xs-12">
+			<form ng-submit="search()" class="form-inline">
+				<div class="form-group search-container" style="padding: 5px 0px 8px 0px; width: 100%">
+					<div class="col-sm-6 col-md-4" style="height: 24px;">
+						<label for="sStudy">Study:</label>
+						<div style="padding: 0; display: inline-block; width: 80%">
+							<select id="sStudy" chosen data-placeholder-text-single="'Select study'" no-results-text="'No matching studies'" ng-model="selectedStudy"
+								class="item-name align-middle" style="width: 100%" ng-options="s.id as s.name for s in searchConfig.studies" ng-change="studyChanged()">
+								<option value="">Any</option>
+							</select>
+							
+						</div>
+					</div>
+
+					<!-- <div class="col-sm-6 col-md-4">
+						<label for="sHousehold">Household:</label>
+						<div style="padding: 0; display: inline-block; width: 80%">
+							<select id="sHousehold" chosen data-placeholder-text-single="'Select household'" no-results-text="'No matching households'" ng-model="selectedHousehold"
+								class="item-name align-middle" style="width: 100%" ng-options="h.name as h.name for h in searchHouseholds" ng-change="householdChanged()">
+								<option value="">Any</option>
+							</select>
+						</div>
+					</div> -->
+
+					<button class="btn btn-standard btn-sm" type="button" data-toggle="modal" data-target="#householdModal" ng-disabled="!selectedStudy" style="margin-left: 20px;">Choose Households</button>
+					<input type="submit" value="Search" class="btn btn-primary btn-sm" style="margin-left: 20px;" ng-disabled="!(hhCount > 0)">
+				</div>
+			</form>
+			<div class="col-xs-12" style="padding: 5px 0px 8px 0px;">
+				<button class="btn btn-standard btn-sm" data-toggle="modal" data-target="#columnModal" style="margin-left: 20px;">Choose Columns</button>
+				<button class="btn btn-primary btn-sm" style="margin-left: 20px;" ng-click="export()" ng-disabled="showTable != true">Export</button>
+			</div>
+			<hr class="head-hr">
+		</div>
+		<div class="col-xs-12">
+			<div style="margin-right: 16px;">
+				<table id="recipe-result-head" class="recipe-result-table">
+					<thead>
+						<tr style="border-bottom: 2px black solid; ">
+							<th></th>
+							<th ng-if="showHid">Household</th>
+							<th ng-if="showDate">Date</th>
+							<th ng-if="showTime">Time</th>
+							<th ng-if="showName" style="min-width: 300px;">Name</th>
+							<th ng-if="showYF">Yield Factor</th>
+							<th ng-if="showEO">Linked EOs</th>
+							<th ng-if="showHiddenD">Hidden</th>
+							<th style="min-width: 300px;">Ingredient Name</th>
+							<th ng-if="showQuantity">Weight (g)</th>
+							<th ng-repeat="col in fctConfig" ng-if="col.valid && col.show">{{ col.external }}</th>
+						</tr>
+					</thead>
+				</table>
+			</div>
+			<div style="overflow-x: auto; overflow-y: auto;">
+				<table id="recipe-result-table" class="recipe-result-table" ng-show="showTable" style="overflow: scroll; height: 650px;" onscroll="document.getElementById('recipe-result-head').scrollLeft = this.scrollLeft;">
+					<tbody ng-repeat="recipe in recipes" ng-if="showHidden || !recipe.hidden">
+						<tr class="header"> <!-- ng-if="ingredient.imageRecord.foodItems.length > 0" -->
+							<td>{{$index + 1}}</td>
+							<td ng-if="showHid">{{ recipe.householdParticipantId }}</td>
+							<td ng-if="showDate"><span>{{ recipe.captureTime | date : 'dd/MM/yyyy' }}</span></td>
+							<td ng-if="showTime"><span>{{ recipe.captureTime | date : 'hh:mm a' }}</span></td>
+							<td ng-if="showName" style="min-width: 300px;"><a href="#!/recipe?id={{recipe.id}}">{{ recipe.name }}</a></td>
+							<td ng-if="showYF">
+								<span ng-if="recipe.yieldFactor">{{ recipe.yieldFactor }}</span>
+								<a ng-if="!recipe.yieldFactor" href="#!recipe?id={{ recipe.id }}" ><span title="No yield factor has been applied" class="glyphicon glyphicon-warning-sign text-danger"></span></a>
+							</td>
+							<td ng-if="showEO">
+								<span ng-if="recipe.usageCount > 0">{{ recipe.usageCount }}</span>
+								<a ng-if="recipe.usageCount == 0" href="#!recipe?id={{ recipe.id }}" ><span title="Recipe has not been used" class="glyphicon glyphicon-warning-sign text-danger"></span></a>
+							</td>
+							<td ng-if="showHiddenD">{{ recipe.hidden ? 'Yes' : 'No' }}</td>
+							<td style="min-width: 300px;"></td>
+							<td ng-if="showQuantity"></td>
+							<td ng-repeat="col in fctConfig" ng-if="col.valid"></td>
+						</tr>
+						<tr ng-repeat="item in recipe.foodItems">
+							<td>{{$parent.$index + 1}}.{{$index + 1}}</td>
+							<td ng-if="showHid"></td>
+							<td ng-if="showDate"></td>
+							<td ng-if="showTime"></td>
+							<td ng-if="showName"></td>
+							<td ng-if="showYF"></td>
+							<td ng-if="showEO"></td>
+							<td ng-if="showHiddenD"></td>
+							<td>{{ item.foodCompositionDatabaseEntry.name }}</td>
+							<td ng-if="showQuantity">{{ item.quantityGrams }}</td>
+							<td ng-repeat="col in fctConfig" ng-if="col.valid"  class="{{ item.foodCompositionDatabaseEntry[col.internal + 'error'] ? 'review-nutrient-error' : ''}}">{{ (item.foodCompositionDatabaseEntry[col.internal] / 100) * item.quantityGrams | number:1 }}</td>
+						</tr>
+						<tr class="">
+							<td></td>
+							<td ng-if="showHid"></td>
+							<td ng-if="showDate"></td>
+							<td ng-if="showTime"></td>
+							<td ng-if="showName"></td>
+							<td ng-if="showYF"></td>
+							<td ng-if="showEO"></td>
+							<td ng-if="showHiddenD"></td>
+							<td>Total Raw</td>
+							<td ng-if="showQuantity">{{ recipe.rawQuantity | number:1 }}</td>
+							<td ng-repeat="col in fctConfig" ng-if="col.valid">{{ recipe.raw[col.internal] | number:1 }}</td>
+						</tr>
+						<tr class="">
+							<td></td>
+							<td ng-if="showHid"></td>
+							<td ng-if="showDate"></td>
+							<td ng-if="showTime"></td>
+							<td ng-if="showName"></td>
+							<td ng-if="showYF"></td>
+							<td ng-if="showEO"></td>
+							<td ng-if="showHiddenD"></td>
+							<td>Total Cooked</td>
+							<td ng-if="showQuantity">{{ recipe.totalCookedGrams | number:1}}</td>
+							<td ng-repeat="col in fctConfig" ng-if="col.valid">{{ (recipe.foodComposition[col.internal] / 100 * recipe.totalCookedGrams) | number:1 }}</td>
+						</tr>
+						<tr class="">
+							<td></td>
+							<td ng-if="showHid"></td>
+							<td ng-if="showDate"></td>
+							<td ng-if="showTime"></td>
+							<td ng-if="showName"></td>
+							<td ng-if="showYF"></td>
+							<td ng-if="showEO"></td>
+							<td ng-if="showHiddenD"></td>
+							<td>Total Cooked (per 100g)</td>
+							<td ng-if="showQuantity">100</td>
+							<td ng-repeat="col in fctConfig" ng-if="col.valid">{{ recipe.foodComposition[col.internal] | number:1 }}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div id="columnModal" class="container modal fade" role="dialog">
+		<div class="modal-dialog">
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Choose Columns</h4>
+					<p class="text-danger">Column names listed in red are missing food composition data in the assigned food composition database. Affected cells will be highlighted in red and may display incorrect results if used. View by food item to find offending item.</p>
+				</div>
+				<div class="modal-body">
+					<ul>
+						<li><input type="checkbox" ng-model="showHid" ng-init="showHid = true"><span style="font-weight: bolder;">Household</span></li>
+						<li><input type="checkbox" ng-model="showPId" ng-init="showPId = true"><span style="font-weight: bolder;">Participant</span></li>
+						<li><input type="checkbox" ng-model="showDate" ng-init="showDate = true"><span style="font-weight: bolder;">Date</span></li>
+						<li><input type="checkbox" ng-model="showTime" ng-init="showTime = true"><span style="font-weight: bolder;">Time</span></li>
+						<li><input type="checkbox" ng-model="showName" ng-init="showName = true"><span style="font-weight: bolder;">Name</span></li>
+						<li><input type="checkbox" ng-model="showYF" ng-init="showYF = true"><span style="font-weight: bolder;">Yield Factor</span></li>
+						<li><input type="checkbox" ng-model="showEO" ng-init="showEO = true"><span style="font-weight: bolder;">Linked EOs</span></li>
+						<li ng-show="showHidden"><input type="checkbox" ng-model="showHiddenD" ng-init="showHiddenD = false"><span style="font-weight: bolder;">Hidden Status</span></li>
+						<!-- <li><input type="checkbox" ng-model="showQuantity" ng-init="showQuantity = true"><span style="font-weight: bolder;">Quantity</span></li> -->
+						<li><input type="checkbox" ng-change="ColCheckChange(false, showNutrients)" ng-model="showNutrients" ng-init="showNutrients = true"><span style="font-weight: bolder;">Nutrients</span></li>
+						<li>
+							<ul>
+								<li ng-repeat="col in fctConfig" ng-if="col.valid && !col.internal.startsWith('adG')">
+									<input type="checkbox" ng-model="col.show"><span class="{{ col.warning ? 'text-danger' : ''}}" title="{{col.warning}}">{{ col.external }}</span>
+								</li>
+							</ul>
+						</li>
+						<li><input type="checkbox" ng-change="ColCheckChange(true, showAdg)" ng-model="showAdg" ng-init="showAdg = true"><span style="font-weight: bolder;">Food Groups</span></li>
+						<li>
+							<ul>
+								<li ng-repeat="col in fctConfig" ng-if="col.valid && col.internal.startsWith('adG')">
+									<input type="checkbox" ng-model="col.show"><span class="{{ col.warning ? 'text-danger' : ''}}" title="{{col.warning}}">{{ col.external }}</span>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="householdModal" class="container modal fade" role="dialog">
+		<div class="modal-dialog">
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Choose Households</h4>
+				</div>
+				<div class="modal-body">
+					<input id="hiddencb" type="checkbox" ng-init="showHidden = false" ng-model="showHidden" ng-change="showHiddenD = showHidden" style="margin-left: 14px;"><label for="hiddencb" style="font-weight: bolder; padding-left: 10px;">Include Hidden Records</label>
+					<hr class="head-hr"/>
+					<ul>
+						<li><input id="allcb" type="checkbox" ng-change="toggleAllHouseholds(allChecked)" ng-model="allChecked"><label for="allcb" style="font-weight: bolder; padding-left: 10px;">All</label></li>
+						<li ng-repeat="h in searchHouseholds"><input id="hhcb-{{$index}}" name="hhcb-{{$index}}"  ng-change="toggleHousehold(h.checked)" type="checkbox" ng-model="h.checked"><label for="hhcb-{{$index}}" style="font-weight: bolder; padding-left: 10px;">{{h.name}}</label></li>
+					</ul>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

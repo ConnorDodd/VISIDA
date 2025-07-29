@@ -1,0 +1,119 @@
+<div ng-controller="homeController" class="container">
+	<div class="row content">
+		<div class="col-xs-12">
+			<span class="page-head h3" style="padding: 0; padding-bottom: 8px;" ng-click="toggleAdmin()">My Feed</span>
+			<span class="glyphicon glyphicon-refresh glyph-md pull-right {{ (loading > 0) && 'loading-run' || 'loading-done' }}"></span>
+            <hr class="head-hr">
+		</div>
+		<div class="spaced col-xs-12 col-md-4">
+			<ul class="list-group">
+				<li class="list-group-item list-group-item-header" ng-role="button" ng-click="showCommentDialog = true">Comments<span class="badge badge-primary badge-pill">{{ commentCount }}</span></li>
+				<a class="list-group-item" style="font-weight: {{ comment.unseen ? 'bold' : 'normal' }}" ng-repeat="comment in feedData.comments | limitTo:10" href="{{ comment.recordId ? '#!/image?id=' + comment.recordId : '#!/recipe?id=' + comment.recipeId }}">
+					<!-- <span style="color: #2980b9; font-weight: bold;" ng-if="comment.flag === 'Normal'">@</span>
+					<span class="glyphicon glyphicon-share-alt" style="color: #2980b9" ng-if="comment.flag === 'Reply'"/>
+					<span class="glyphicon glyphicon-exclamation-sign text-danger" ng-if="comment.flag === 'Warning'"/>
+					<span style="color: black;">{{ comment.text | limitTo : 34 }}{{ comment.text.length > 36 ? '...' : '' }} <span class="pull-right" style="font-style: italic;">{{ comment.createdTime | date : (comment.isToday ? 'hh:mm' : 'dd/MM/yy') }}</span>
+					</span> -->
+					<div>
+						<div>
+							<span>{{comment.authorName}}</span>
+							<span style="color: #2980b9; font-weight: bold;" ng-if="comment.isMention">@</span>
+							<span class="glyphicon glyphicon-share-alt" style="color: #2980b9" ng-if="comment.flag === 'Reply'" />
+							<span class="glyphicon glyphicon-check" style="color: #517329" ng-if="comment.flag === 'Task'"/>
+							<span class="glyphicon glyphicon-flag text-danger" ng-if="comment.highPriority" />
+							<span class="pull-right">{{comment.createdTime | date : 'hh:mm dd/MM/yy'}}</span>
+						</div>
+						<div>
+							<span ng-class="styleComment(comment)">{{comment.text | limitTo : 100}}{{ comment.text.length > 100 ? '...' : '' }}</span>
+						</div>
+					</div>
+				</a>
+				<li class="list-group-item list-group-item-footer" role="button" ng-click="showCommentDialog = true" style="font-size: 1em;" ng-show="!finishedComments">Show more</li>
+			</ul>
+		</div>
+		<div class="spaced col-xs-12 col-md-8" ng-show="admin !== true || isCoord">
+			<ul class="list-group">
+				<li class="list-group-item list-group-item-header">Uncompleted Tasks<!-- <span class="badge badge-primary badge-pill">{{ progress.length }}</span> --></li>
+				<a class="list-group-item" ng-repeat="comment in tasks" href="{{ comment.recordId ? '#!/image?id=' + comment.recordId : '#!/recipe?id=' + comment.recipeId }}">
+					<div>
+						<span class="check-active" style="font-weight: bolder;" >Task</span>
+						<span class="glyphicon glyphicon-flag text-danger" ng-if="comment.highPriority" />
+						<span class="pull-right">{{comment.createdTime | date : 'hh:mm dd/MM/yy'}}</span>
+					</div>
+					<div>
+						<span>{{comment.text | limitTo : 100}}{{ comment.text.length > 100 ? '...' : '' }}</span>
+					</div>
+				</a>
+			</ul>
+		</div>
+		<div class="spaced col-xs-12 col-md-8" ng-show="admin !== true || isCoord">
+			<ul class="list-group">
+				<li class="list-group-item list-group-item-header">Assignments<span class="badge badge-primary badge-pill">{{ progress.length }}</span></li>
+				<li class="list-group-item" ng-repeat="study in progress">
+					<span class="bold">{{ study.accessLevel }}: </span> {{ study.studyName }} <a href="#!/records?study={{ study.studyId }}" class="pull-right">Continue</a><br /><!-- {{ study.accessLevel === 'Quantify' ? 'portioned' : 'identified' }}=2& -->
+					<div class="progress" style="width: 100%; margin-top: 5px; margin-bottom: 10px;">
+						<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:{{ 100 * ((study.total - study.notStarted - study.inProgress) / study.total) }}%">
+							Completed
+						</div>
+						<div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:{{ 100 * (study.inProgress / study.total) }}%">
+							In Progress
+						</div>
+						<div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:{{ 100 * (study.notStarted / study.total) }}%">
+							Not Started
+						</div>
+					</div>
+				</li>
+				<li class="list-group-item list-group-item-footer" role="button">Show more</li>
+			</ul>
+		</div>
+		<div class="spaced col-xs-12 col-md-6" ng-show="admin === true && isCoord !== true">
+			<ul class="list-group">
+				<li class="list-group-item list-group-item-header">Warnings<span class="badge badge-primary badge-pill">{{ messageCount }}</span></li>
+				<a class="list-group-item" ng-repeat="message in feedData.messages" href="{{ message.href }}"><span class="{{ message.seen ? 'bold' : '' }}">{{ message.message }}</span></a>
+			</ul>
+		</div>
+		<div class="spaced col-xs-12 col-md-2" ng-if="admin === true && isCoord !== true">
+			<ul class="list-group">
+				<li class="list-group-item list-group-item-header">Current Users<span class="badge badge-primary badge-pill">{{ onlineCount }}</span></li>
+				<li class="list-group-item" ng-repeat="user in feedData.users | limitTo:userDisplayCount">
+					<span class="bold">{{ user.userName }}</span><br />
+					<span class="text-success" style="font-style: italic;" ng-if="user.online">Online</span>
+					<span class="text-danger " style="font-style: italic;" ng-if="!user.online">{{ user.loginTime }}</span>
+
+				</li>
+				<li class="list-group-item list-group-item" role="button" ng-click="showMoreUsers()" ng-if="feedData.users.length > userDisplayCount">Show more</li>
+			</ul>
+		</div>
+	</div>
+	<comment-dialog></comment-dialog>
+    <!--
+	<div class="row spaced" ng-if="false">
+		<div class="has-hr col-xs-12">
+			<span class="page-head h3" style="padding: 0; padding-bottom: 8px;">Downloads</span>
+		</div>
+		<div class="spaced col-xs-12">
+			<table>
+				<tr>
+					<td><span class="row-head">English :</span></td>
+					<td><a href="{{ getUrl }}?isKhmer=false" class="btn btn-success" download>Download APK</a></td>
+				</tr>
+				<tr>
+					<td><span class="row-head">Khmer   :</span></td>
+					<td><a href="{{ getUrl }}?isKhmer=true" class="btn btn-success" download>Download APK</a></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<br/><br/>
+	<div class="row rainbow" ng-if="getUser().username === 'josh'">
+		<h2><marquee>Hello {{ getUser().username }}!</marquee></h2>
+
+		<br/><br/>
+		<form ng-submit="uploadAPK(apkFile)" >
+			<div ngf-select="" role="button" ngf-drop ng-model="apkFile" ngf-multiple="true" ngf-pattern="pattern" ngf-accept="'.apk'" class="drop-box row" ngf-drag-over-class="dragover" ngf-allow-dir="true" style="width: 100%">
+				<span ng-show="!apkFile" style="vertical-align: middle; font-weight: bold;">Select or Drop Files</span>
+			</div>
+			<input type="submit" value="Submit">
+		</form>
+	</div> -->
+</div>

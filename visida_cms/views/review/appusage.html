@@ -1,0 +1,44 @@
+<script src="../node_modules/jquery-csv/src/jquery.csv.min.js"></script>
+<script src="../node_modules/chart.js/dist/Chart.min.js"></script>
+<div id="content" ng-controller="usageController" class="container-fluid" style="margin-left: 40px;">
+	<div class="row content">
+		<div class="col-xs-12">
+			<span class="page-head h3">App Usage</span>
+			<span class="glyphicon glyphicon-refresh glyph-md {{ (loading > 0) && 'loading-run' || 'loading-done' }}" style="margin-left: 15px;"></span>
+			<hr class="head-hr">
+		</div>
+		<div class="col-xs-12">
+			<div class="form-inline" style="padding: 5px 0px 8px 0px;">
+				<div class="form-group">
+					<label for="sStudy">Study:</label>
+					<select id="sStudy" name="sStudy" ng-model="selectedStudy" class="form-control btn-pulse" ng-change="studyChanged()" ng-options="s.id as s.name for s in searchConfig.studies">
+						<option value="">Any</option>
+						<!-- <option ng-repeat="s in searchConfig.studies" value="{{ s.id }}">{{ s.name }}</option> -->
+					</select>
+				</div>
+				<div class="form-group" style="margin-left: 10px;">
+					<label for="sHousehold">Household:</label>
+					<select id="sHousehold" name="sHousehold" ng-model="selectedHousehold" class="form-control" ng-change="householdChanged()" >
+						<option value="">Any</option>
+						<option ng-repeat="hh in searchHouseholds" value="{{ hh.id }}">{{ hh.name }}</option>
+					</select>
+				</div>
+				<button class="btn btn-primary btn-sm" style="margin-left: 20px;" ng-click="search()" ng-disabled="!selectedHousehold">Search</button>
+			</div>
+			<div ng-show="study">
+				<span class="text-danger" ng-if="!study.rdaModel">There is no model set for the selected study. You can update this <a href="#!/admin/study?id={{study.id}}">here.</a></span>
+				<span ng-if="study.rdaModel">Currently using the RDI model <span style="font-weight: bold;">{{study.rdaModel.name}}</span>. You can change this <a href="#!/admin/study?id={{study.id}}">here.</a></span>
+			</div>
+			<hr class="head-hr">
+		</div>
+		
+		<div class="col-xs-12">
+			<p ng-repeat="t in times track by $index">{{t}}</p>
+		</div>
+		<div class="col-xs-12 col-md-6">
+			<div id="chart-container" style="margin:0; padding: 0;">
+				<canvas id="chart-area"></canvas>
+			</div>
+		</div>
+	</div>
+</div>

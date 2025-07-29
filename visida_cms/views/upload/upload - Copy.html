@@ -1,0 +1,129 @@
+<div ng-controller="uploadController" class="container">
+	<div class="row spaced has-hr">
+		<span class="h3 page-head left">Upload Household</span>
+		<a href="#!/rawupload"><span class="glyphicon glyphicon-upload glyph-md pull-right" style="color: #efac56;" role="button" title="Raw Upload Tool"> </span></a>
+	</div>
+	<div class="row spaced">
+		<p>Welcome to the household upload wizard. Begin below by choosing which study this household should be connected to. If you need create a new study you can <a href="#!/admin/studies">do so here.</a> If you wish to skip the wizard and directly upload specific data, use the <a href="#!/rawupload">Raw Upload Tool</a>.</p>
+	</div>
+	<div class="row">
+		<form class="form-inline left">
+			<span style="margin-right: 24px; vertical-align: middle;" class="row-head">Assigned Study: </span>
+			<select class="form-control left" ng-model="studyid"><option ng-repeat="s in studies" value="{{ s.id }}">{{ s.name }}</option></select>
+		</form>
+	</div>
+
+	<div class="row pt2 slide" ng-show="studyid && studyid > 0" ng-class="{current: studyid && studyid > 0}">
+		<form class="form-inline" ng-submit="uploadData(dataText, studyid)">
+			<span class="row-head">Household Data:</span><br/>
+			<p>Choose the database.json file from your household data folder and hit upload.</p>
+			<div class="form-group">
+				<input type="file" class="form-control left" ngf-select="parseData(dataFile)" accept=".json" ng-model="dataFile">
+			</div>
+			<div style="margin: 10px;">
+				<small ng-class="dataMessage.success ? 'text-success' : 'text-danger'" ng-show="dataMessage">{{ dataMessage.txt }}</small>
+			</div>
+			<div class="hhDisplay" ng-show="hhJson && hhJson != null">
+				<ul>
+					<li><span style="font-weight: bold">Household:  </span> {{ hhJson.householdMembers[0].participantHouseholdId }}</li>
+					<!-- <li><span style="font-weight: bold">Country:  </span> {{ hhJson.country }}</li> -->
+					<li><span style="font-weight: bold">Members:  </span> <span ng-repeat="hhm in hhJson.householdMembers">{{ hhm.participantHouseholdMemberId }}{{ $index != hhJson.householdMembers.length-1 ? ", " : "" }}</span></li>
+					<li><span style="font-weight: bold">Recipes:  </span> {{ hhJson.householdRecipes.length }}</li>
+				</ul>
+			</div>
+			<input id="uploadDataButton" type="submit" value="Upload" class="btn btn-primary" ng-disabled="!dataText || !studyid" style="margin-left: 1em;">
+		</form>
+	</div>
+
+<!-- ng-show="hhJson.uploaded" -->
+	<div class="row pt2 slide"  ng-class="{current: hhJson.uploaded}" ng-show="hhJson.uploaded">
+		<div class="col-xs-12 col-sm-12 pt2">
+			<form class="form-inline" ng-submit="uploadImage(imageFiles)">
+				<div style="margin-left: 10px;">
+					<span class="row-head">Image</span>
+					<div style="display: inline-block;" class="pull-right">
+						<label style="vertical-align: middle;" for="overwriteImage">Overwrite: </label>
+						<input id="overwriteImage" type=checkbox ng-model="overwriteImage" />
+					</div>
+					<p>Select all images in the same folder as the household chosen above and upload. Please be aware that this may take some time and some records may not be uploaded. Hover over a success indicator for more information.</p>
+				</div>
+				<!-- <input type="file" class="form-control" ngf-select="imageRename(imageFile)" ngf-accept="'image/*'" ng-model="imageFile"> -->
+				<div ngf-select="imagesChosen(imageFiles)" role="button" ngf-drop ng-model="imageFiles" ngf-multiple="true" ngf-pattern="pattern" ngf-accept="'image/*'" class="drop-box container" ngf-drag-over-class="dragover" ngf-allow-dir="true" style="width: 100%">
+					<span ng-show="!imageFiles" style="vertical-align: middle; font-weight: bold;">Select or Drop Files</span>
+					<div class="col-xs-6 col-sm-4 col-md-2 col-lg-2" ng-repeat="file in imageFiles">
+						<div class="uploadThumb text-center justify-center">
+							<div class="upload-success text-success" ng-show="file.success">
+								<span class="glyphicon glyph-lg glyphicon-ok"/>
+							</div>
+							<div class="upload-fail" ng-show="file.fail">
+								<span title="{{ file.failmessage ? file.failmessage : 'Something went wrong.' }}" class="glyphicon glyph-lg glyphicon-remove text-danger"/>
+							</div>
+							<div class="text-center">
+								<img ngf-thumbnail="file" style="margin-bottom: 10px;">
+								<span>{{ file.name }}</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div style="margin: 10px;">
+					<div class="progress center-block" ng-show="imageProgress > 0" style="width: 100%;">
+						<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0"
+							aria-valuemin="0" aria-valuemax="100" style="width:{{ imageProgress }}%">
+					    	{{ imageProgress }}%
+						</div>
+					</div>
+				</div>
+				<input id="uploadImageButton" type="submit" value="Upload" class="btn btn-primary" ng-disabled="!imageFiles" style="margin-left: 1em;">
+				<button type="button" class="btn btn-standard" ng-disabled="!imageFiles" style="margin-left: 1em;" ng-click="clearImages()">Clear</button>
+			</form>
+		</div>
+		<div class="col-xs-12 col-sm-12 pt2">
+			<form class="form-inline" ng-submit="uploadAudio(audioFiles)">
+				<div style="margin-left: 10px;">
+					<span class="row-head">Audio</span>
+					<div style="display: inline-block;" class="pull-right">
+						<label style="vertical-align: middle;" for="overwriteAudio">Overwrite: </label>
+						<input id="overwriteAudio" type=checkbox ng-model="overwriteAudio" />
+					</div>
+					<p>Select all audio files in the same folder as the household chosen above and upload. Please be aware that some records may not be uploaded. Hover over a success indicator for more information.</p>
+				</div>
+				<div ngf-select="audioChosen(audioFiles)" role="button" ngf-drop ng-model="audioFiles" ngf-multiple="true" ngf-pattern="pattern" ngf-accept="'audio/*'" class="drop-box container" ngf-drag-over-class="dragover" ngf-allow-dir="true" style="width: 100%">
+					<span ng-show="!audioFiles" style="vertical-align: middle; font-weight: bold;">Select or Drop Files</span>
+					<ul class="list-group row" ng-hide="!audioFiles" style="margin: 10px;">
+						<li class="list-group-item col-xs-12 col-sm-6 col-lg-4" ng-repeat="file in audioFiles" ng-class="{ 'list-group-item-success': file.success == 1, 'list-group-item-danger': file.success == -1 }" style="height: 40px">
+							<span title="{{ file.failmessage }}" style="float: left; width: 90%; text-overflow: ellipsis; white-space: pre;">{{ file.name }}</span>
+							<span></span>
+						</li>
+					</ul>
+				</div>
+				<div style="margin: 10px;">
+					<div class="progress center-block" ng-show="audioProgress > 0" style="width: 100%;">
+						<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0"
+							aria-valuemin="0" aria-valuemax="100" style="width:{{ audioProgress }}%">
+					    	{{ audioProgress }}%
+						</div>
+					</div>
+				</div>
+				<input id="uploadAudioButton" type="submit" value="Upload" class="btn btn-primary" ng-disabled="!audioFiles" style="margin-left: 1em;">
+				<button type="button" class="btn btn-standard" ng-disabled="!audioFiles" style="margin-left: 1em;" ng-click="clearAudio()">Clear</button>
+			</form>
+		</div>
+
+		<div class="col-xs-12 col-sm-12 pt2">
+			<form class="form-inline" ng-submit="uploadLog()">
+				<div style="margin-left: 10px;">
+					<span class="row-head">Usage Log</span>
+					<p>Select the logcat.txt file from the same folder and click upload.</p>
+				</div>
+				<div class="form-group">
+					<input type="file" class="form-control left" accept=".txt" ng-model="logFile" ngf-select="parseLog(logFile)">
+					<input id="uploadLogButton" type="submit" value="Upload" class="btn btn-primary" ng-disabled="!logFile" style="margin-left: 1em;">
+				</div>
+			</form>
+		</div>
+	</div>
+	<div style="text-align: center; display: inline-block; width: 100%;" class="spaced" ng-show="audioProgress == 100 && imageProgress == 100">
+		<a role="button" href="#!/records" class="btn btn-success">Complete</a>
+	</div>
+	<br/>
+</div>

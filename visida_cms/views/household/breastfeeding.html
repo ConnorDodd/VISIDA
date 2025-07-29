@@ -1,0 +1,80 @@
+<div id="content" ng-controller="breastfeedingController" class="container">
+	<div class="row content">
+		<div class="col-xs-12">
+			<span class="page-head h3">Breastfeeding Occasions</span>
+			<span class="glyphicon glyphicon-refresh glyph-md {{ (loading > 0) && 'loading-run' || 'loading-done' }}" style="margin-left: 15px;"></span>
+			<hr class="head-hr">
+		</div>
+		<div class="col-xs-12">
+			<div class="form-inline form-group search-container" style="padding: 5px 0px 8px 0px;">
+				<!-- <div class="form-group">
+					<label for="sStudy">Study:</label>
+					<select id="sStudy" name="sStudy" ng-model="selectedStudy" class="form-control btn-pulse" ng-change="studyChanged()"  ng-options="s.id as s.name for s in searchConfig.studies">
+						<option value="">Any</option>
+					</select>
+				</div>
+				<div class="form-group" style="margin-left: 10px;">
+					<label for="sHousehold">Household:</label>
+					<select id="sHousehold" name="sHousehold" ng-model="selectedHousehold" class="form-control" ng-change="householdChanged()" >
+						<option value="">Any</option>
+						<option ng-repeat="hh in searchHouseholds" value="{{ hh.name }}">{{ hh.name }}</option>
+					</select>
+				</div> -->
+				<div class="col-sm-6 col-md-4" style="height: 24px;">
+					<label for="sStudy">Study:</label>
+					<div style="padding: 0; display: inline-block; width: 80%">
+						<select id="sStudy" chosen data-placeholder-text-single="'Select study'" no-results-text="'No matching studies'" ng-model="selectedStudy"
+							class="item-name align-middle" style="width: 100%" ng-options="s.id as s.name for s in searchConfig.studies" ng-change="studyChanged()">
+							<option value="">Any</option>
+						</select>
+						
+					</div>
+				</div>
+
+				<div class="col-sm-6 col-md-4">
+					<label for="sHousehold">Household:</label>
+					<div style="padding: 0; display: inline-block; width: 80%">
+						<select id="sHousehold" chosen data-placeholder-text-single="'Select household'" no-results-text="'No matching households'" ng-model="selectedHousehold"
+							class="item-name align-middle" style="width: 100%" ng-options="h.name as h.name for h in searchHouseholds" ng-change="householdChanged()">
+							<option value="">Any</option>
+						</select>
+					</div>
+				</div>
+				<div class="col-sm-4">
+					<button class="btn btn-primary btn-sm" style="margin-left: 20px;" ng-click="search()" ng-disabled="!selectedStudy || !selectedHousehold">Search</button>
+				</div>
+			</div>
+			<hr class="head-hr">
+		</div>
+		<div class="col-xs-12" ng-show="loading === 0 && allOccasions.length == 0">
+			<span class="text-danger">There is no breastfeeding occasions to display</span>
+		</div>
+		<div class="col-xs-12" ng-show="member">
+			<div>
+				<span style="font-weight: bold; font-size: larger;" ng-show="members.length == 1">{{ member.participantId }}</span><br/>
+				<select ng-show="members.length > 1" ng-model="selectedMemberId" ng-options="m.id as m.participantId for m in members" ng-change="changeSelectedMember(selectedMemberId)" class="form-control fake-chosen" style="width: 240px; margin-top: -10px;">
+				</select><br/>
+				<span>{{ member.age }} yr old {{ member.isFemale ? 'female' : 'male' }}</span><br/>
+				<hr class="head-hr">
+			</div>
+			<span class="text-danger" style="" ng-show="member.occasions.length == 0">There is no breastfeeding occasions to display.</span>
+			<table id="breastfeeding-table" ng-show="member.occasions.length > 0">
+				<tr>
+					<th>Date</th>
+					<th>Start Time</th>
+					<th>End Time</th>
+					<th>Duration</th>
+					<!-- <th>Finalized</th> -->
+				</tr>
+				<tr ng-repeat="occ in member.occasions" role="button" ng-click="displayOccasion(occ)">
+					<td>{{occ.localTimeStart  | date : 'dd/MM/yyyy' }}</td>
+					<td>{{occ.localTimeStart  | date : 'hh:mma' }}</td>
+					<td>{{occ.localTimeEnd  | date : 'hh:mma' }}</td>
+					<td>{{occ.duration }}</td>
+					<!-- <td>{{occ.finalized ? 'Yes' : 'No'}}</td> -->
+				</tr>
+			</table>
+		</div>
+	</div>
+	<breastfeeding-dialog></breastfeeding-dialog>
+</div>

@@ -1,0 +1,32 @@
+
+
+ONHOVER ICON APPEARING FOR REPORT ISSUE ON ALL PAGES
+
+<div style="
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    background-color: #758367;
+    padding: 5px 6px  8px 9px;
+    border-radius: 40px;
+    display: table;
+" role="button" class="testhover">
+    <span class="glyphicon glyphicon-share" style="
+    font-size: 30px;
+    color: white;
+    /* display: inline-block; */
+    vertical-align: middle;
+    display: table-cell;
+">
+</span>
+<p style="
+    /* display: table-cell; */
+    font-weight: bolder;
+    font-size: medium;
+    color: white;
+    vertical-align: middle;
+    /* height: 100%; */
+    padding: 5px 8px;
+    display: hidden;
+    margin: 0;
+">Report an issue</p></div>

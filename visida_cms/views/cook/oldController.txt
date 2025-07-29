@@ -1,0 +1,98 @@
+ 
+angular.module('visida_cms').controller('cookOldController', ['$scope', 'Restangular', '$routeParams', '$window', function($scope, Restangular, $routeParams, $window) {
+  $scope.dirty = false;
+
+  Restangular.all("Recipes").getList().then(function(records) {
+    $scope.recipes = records.data;
+    setTimeout(function() {
+      $(".chosen-select").chosen({width: "90%", search_contains: true}).change(function (evt, item) {
+        for (var i = 0; i < $scope.recipes.length; i++) {
+          if ($scope.recipes[i].name === item.selected) {
+            if ($scope.recipe && $scope.recipe.dirty && !confirm("Are you sure you want to cancel your current recipe entry?"))
+              return;
+            $scope.recipe = $scope.recipes[i];
+            $scope.$apply();
+          }
+        }
+      });
+    }, 100);
+
+  }, function errorCallback(response) {
+    $scope.message = {success: false, txt: "Could not load recipes from the server."};
+  });
+
+  Restangular.one('FoodCompositions/GetFoodCompositionDensities').get().then(function(record) {
+    $scope.foodItemList = record.data;
+  });
+
+  $scope.addRecipe = function() {
+    if ($scope.recipe && $scope.recipe.dirty && !confirm("Are you sure you want to clear your current recipe?"))
+      return;
+    $scope.recipe = {name: "", ingredients: new Array(), new: true, quantityGrams: 0};
+  };
+  $scope.saveRecipe = function(recipe) {
+    if (!$scope.recipe.name || $scope.recipe.name == null || $scope.recipe.name.length <= 0) {
+      $scope.message = {success: false, txt: "Name is required."};
+      return;
+    }
+    if (!$scope.recipe.ingredients || $scope.recipe.ingredients.length < 1) {
+      $scope.message = {success: false, txt: "Recipe must contain at least one ingredient."};
+      return;
+    }
+    for (var i = 0; i < $scope.recipe.ingredients.length; i++) {
+      if (!$scope.recipe.ingredients[i].name || $scope.recipe.ingredients[i].name == null) {
+        $scope.message = {success: false, txt: "Cannot leave an ingredient blank."};
+        return;
+      }
+      if (!$scope.recipe.ingredients[i].quantityGrams || $scope.recipe.ingredients[i].quantityGrams <= 0) {
+        $scope.message = {success: false, txt: "Ingredients must have a quantity."};
+        return;
+      }
+    }
+
+    $scope.loading = true;
+
+    if (recipe.id) {
+      recipe.put().then(
+      function(result) {
+        $scope.loading = false;
+        $scope.message = {success: true, txt: "Recipe updated successfully."};
+        for (var i = 0; i < $scope.recipe.ingredients.length; i++) { $scope.recipe.ingredients[i].unsaved = false; }
+      }, function(result) {
+        $scope.loading = false;
+        $scope.message = {success: false, txt: "Recipe could not be updated."};
+      });
+    } else {
+      Restangular.one("Recipes").post('', recipe).then(function(records) {
+        recipe.id = records.data.id;
+        $scope.recipes.push(recipe);
+        $scope.recipe = undefined;
+        $scope.loading = false;
+        $scope.message = {success: true, txt: "Recipe added successfully."};
+      }, function errorCallback(response) {
+        $scope.loading = false;
+        $scope.message = {success: false, txt: response.data.message ? response.data.message : "Could not add recipe." };
+      });
+    }
+  };
+
+  $scope.addItem = function() {
+    $scope.recipe.ingredients.push({unsaved: true});
+    $scope.recipe.dirty = true;
+  };
+  $scope.editItem = function(item, recipe) {
+    item.unsaved = true;
+    recipe.dirty = true;
+  };
+  $scope.removeItem = function(index) {
+    $scope.recipe.ingredients.splice(index, 1);
+  };
+
+  $scope.foodItemChanged = function(item, name) {
+    var result = $scope.foodItemList.filter(function(food) { return food.name == name })
+    item.density = result[0].density;
+  };
+  $scope.convertML = function(item) {
+    item.quantityGrams = item.quantityML * item.density;
+  };
+}]);

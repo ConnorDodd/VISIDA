@@ -1,0 +1,638 @@
+<div class="container" ng-controller="studyController">
+    <div class="row content" ng-show="loading > 0" style="height: 100%">
+        <div class="col-xs-12" style="height: 80%">
+            <span class="glyphicon glyphicon-refresh loading-run" style="font-size: 160px; position: absolute; left: 50%; top: 50%; margin: auto; margin-left: -80px"></span>
+        </div>
+    </div>
+    <div class="row content" ng-show="!loading">
+        <div class="col-xs-12 page-head">
+            <span ng-if="!edit || getUser().isCoord" class="">{{ study.name }}</span>
+            <input ng-if="edit && !getUser().isCoord" style="margin: 0;" type="text" ng-model="study.name">
+            <span class="pull-right">
+                <span class="glyphicon glyphicon-trash glyph-md" role="button" ng-click="deleteStudy()" style="color: #d7374d; padding-left: 20px; font-weight: bold" title="Delete" ng-if="!getUser().isCoord"></span>
+                <span ng-if="edit" class="glyphicon glyphicon glyphicon-floppy-disk glyph-md" style="color: #295173; " role="button" ng-click="save()" />
+                <span ng-if="!edit" class="glyphicon glyphicon-edit glyph-md" role="button" ng-click="toggleEdit()" style="" title="Edit"></span>
+                <span ng-if="edit" class="glyphicon glyphicon-remove glyph-md" role="button" ng-click="toggleEdit()" style="color: #414141; " title="Cancel"></span>
+            </span>
+            <hr class="head-hr">
+        </div>
+
+        <div class="col-xs-12">
+            <div class="form-inline left" style="padding-bottom: 10px;">
+                <span class="glyphicon glyphicon-question-sign" style="color: #295173; padding-right: 10px; font-size: 18px; vertical-align: middle;" role="button" ng-click="showHelp('helpTable')" />
+                <span style="margin-right: 24px; vertical-align: middle;" class="row-head">Food Composition Table: </span>
+                <span class="row-head" ng-if="study.foodCompositionTable">{{ study.foodCompositionTable.name }}</span>
+                <select ng-disabled="!edit" id="studySelect" name="table" class="form-control" ng-model="tableId" ng-options="t.id as t.name for t in fctables" ng-change="updateTable(tableId)" ng-if="!study.foodCompositionTable"></select>
+            </div>
+            <div class="form-inline left">
+                <span class="glyphicon glyphicon-question-sign" style="color: #295173; padding-right: 10px; font-size: 18px; vertical-align: middle;" role="button" ng-click="showHelp('helpCountry')" />
+                <span style="margin-right: 24px; vertical-align: middle;" class="row-head">Country - Language: </span>
+                <span class="row-head" ng-if="getUser().isCoord && study.countryCode != null">{{ study.countryString }}</span>
+                <select ng-disabled="!edit" id="countrySelect" name="table" class="form-control" ng-model="study.countryCode" ng-if="!study.countryCode || !getUser().isCoord">
+                    <option value="rs-AF">Afghanistan - Dari</option>
+                    <option value="ps-AF">Afghanistan - Pashto</option>
+                    <option value="sq-AL">Albania - Albanian</option>
+                    <option value="ar-DZ">Algeria - Arabic</option>
+                    <option value="zm-DZ">Algeria - Tamazight (Latin)</option>
+                    <option value="es-AR">Argentina - Spanish</option>
+                    <option value="hy-AM">Armenia - Armenian</option>
+                    <option value="en-AU">Australia - English</option>
+                    <option value="de-AT">Austria - German</option>
+                    <option value="az-AZ">Azerbaijan - Azeri (Cyrillic)</option>
+                    <option value="az-AZ">Azerbaijan - Azeri (Latin)</option>
+                    <option value="ar-BH">Bahrain - Arabic</option>
+                    <option value="bn-BD">Bangladesh - Bengali</option>
+                    <option value="be-BY">Belarus - Belarusian</option>
+                    <option value="nl-BE">Belgium - Dutch</option>
+                    <option value="fr-BE">Belgium - French</option>
+                    <option value="en-BZ">Belize - English</option>
+                    <option value="es-VE">Bolivarian Republic of Venezuela - Spanish</option>
+                    <option value="uz-BO">Bolivia - Quechua</option>
+                    <option value="es-BO">Bolivia - Spanish</option>
+                    <option value="bs-BA">Bosnia and Herzegovina - Bosnian (Cyrillic)</option>
+                    <option value="bs-BA">Bosnia and Herzegovina - Bosnian (Latin)</option>
+                    <option value="hr-BA">Bosnia and Herzegovina - Croatian</option>
+                    <option value="sr-BA">Bosnia and Herzegovina - Serbian (Cyrillic)</option>
+                    <option value="sr-BA">Bosnia and Herzegovina - Serbian (Latin)</option>
+                    <option value="pt-BR">Brazil - Portuguese</option>
+                    <option value="ms-BN">Brunei Darussalam - Malay</option>
+                    <option value="bg-BG">Bulgaria - Bulgarian</option>
+                    <option value="km-KH">Cambodia - Khmer</option>
+                    <option value="en-CA">Canada - English</option>
+                    <option value="fr-CA">Canada - French</option>
+                    <option value="iu-CA">Canada - Inuktitut (Latin)</option>
+                    <option value="iu-CA">Canada - Inuktitut (Syllabics)</option>
+                    <option value="oh-CA">Canada - Mohawk</option>
+                    <option value="n-029">Caribbean - English</option>
+                    <option value="rn-CL">Chile - Mapudungun</option>
+                    <option value="es-CL">Chile - Spanish</option>
+                    <option value="es-CO">Colombia - Spanish</option>
+                    <option value="es-CR">Costa Rica - Spanish</option>
+                    <option value="hr-HR">Croatia - Croatian</option>
+                    <option value="cs-CZ">Czech Republic - Czech</option>
+                    <option value="da-DK">Denmark - Danish</option>
+                    <option value="es-DO">Dominican Republic - Spanish</option>
+                    <option value="uz-EC">Ecuador - Quechua</option>
+                    <option value="es-EC">Ecuador - Spanish</option>
+                    <option value="ar-EG">Egypt - Arabic</option>
+                    <option value="es-SV">El Salvador - Spanish</option>
+                    <option value="et-EE">Estonia - Estonian</option>
+                    <option value="am-ET">Ethiopia - Amharic</option>
+                    <option value="fo-FO">Faroe Islands - Faroese</option>
+                    <option value="fi-FI">Finland - Finnish</option>
+                    <option value="mn-FI">Finland - Sami (Inari)</option>
+                    <option value="se-FI">Finland - Sami (Northern)</option>
+                    <option value="ms-FI">Finland - Sami (Skolt)</option>
+                    <option value="sv-FI">Finland - Swedish</option>
+                    <option value="sw-FR">France - Alsatian</option>
+                    <option value="br-FR">France - Breton</option>
+                    <option value="co-FR">France - Corsican</option>
+                    <option value="fr-FR">France - French</option>
+                    <option value="oc-FR">France - Occitan</option>
+                    <option value="ka-GE">Georgia - Georgian</option>
+                    <option value="de-DE">Germany - German</option>
+                    <option value="sb-DE">Germany - Lower Sorbian</option>
+                    <option value="sb-DE">Germany - Upper Sorbian</option>
+                    <option value="el-GR">Greece - Greek</option>
+                    <option value="kl-GL">Greenland - Greenlandic</option>
+                    <option value="ut-GT">Guatemala - K'iche</option>
+                    <option value="es-GT">Guatemala - Spanish</option>
+                    <option value="es-HN">Honduras - Spanish</option>
+                    <option value="zh-HK">Hong Kong S.A.R. - Chinese</option>
+                    <option value="hu-HU">Hungary - Hungarian</option>
+                    <option value="is-IS">Iceland - Icelandic</option>
+                    <option value="as-IN">India - Assamese</option>
+                    <option value="bn-IN">India - Bengali</option>
+                    <option value="en-IN">India - English</option>
+                    <option value="gu-IN">India - Gujarati</option>
+                    <option value="hi-IN">India - Hindi</option>
+                    <option value="kn-IN">India - Kannada</option>
+                    <option value="ok-IN">India - Konkani</option>
+                    <option value="ml-IN">India - Malayalam</option>
+                    <option value="mr-IN">India - Marathi</option>
+                    <option value="or-IN">India - Oriya</option>
+                    <option value="pa-IN">India - Punjabi</option>
+                    <option value="sa-IN">India - Sanskrit</option>
+                    <option value="ta-IN">India - Tamil</option>
+                    <option value="te-IN">India - Telugu</option>
+                    <option value="id-ID">Indonesia - Indonesian</option>
+                    <option value="fa-IR">Iran - Persian</option>
+                    <option value="ar-IQ">Iraq - Arabic</option>
+                    <option value="en-IE">Ireland - English</option>
+                    <option value="ga-IE">Ireland - Irish</option>
+                    <option value="ur-PK">Islamic Republic of Pakistan - Urdu</option>
+                    <option value="he-IL">Israel - Hebrew</option>
+                    <option value="it-IT">Italy - Italian</option>
+                    <option value="en-JM">Jamaica - English</option>
+                    <option value="ja-JP">Japan - Japanese</option>
+                    <option value="ar-JO">Jordan - Arabic</option>
+                    <option value="kk-KZ">Kazakhstan - Kazakh</option>
+                    <option value="sw-KE">Kenya - Kiswahili</option>
+                    <option value="ko-KR">Korea - Korean</option>
+                    <option value="ar-KW">Kuwait - Arabic</option>
+                    <option value="ky-KG">Kyrgyzstan - Kyrgyz</option>
+                    <option value="lo-LA">Lao P.D.R. - Lao</option>
+                    <option value="lv-LV">Latvia - Latvian</option>
+                    <option value="ar-LB">Lebanon - Arabic</option>
+                    <option value="ar-LY">Libya - Arabic</option>
+                    <option value="de-LI">Liechtenstein - German</option>
+                    <option value="lt-LT">Lithuania - Lithuanian</option>
+                    <option value="fr-LU">Luxembourg - French</option>
+                    <option value="de-LU">Luxembourg - German</option>
+                    <option value="lb-LU">Luxembourg - Luxembourgish</option>
+                    <option value="zh-MO">Macao S.A.R. - Chinese (Traditional) Legacy</option>
+                    <option value="mk-MK">Macedonia (FYROM) - Macedonian (FYROM)</option>
+                    <option value="en-MY">Malaysia - English</option>
+                    <option value="ms-MY">Malaysia - Malay</option>
+                    <option value="dv-MV">Maldives - Divehi</option>
+                    <option value="mt-MT">Malta - Maltese</option>
+                    <option value="es-MX">Mexico - Spanish</option>
+                    <option value="mn-MN">Mongolia - Mongolian (Cyrillic)</option>
+                    <option value="sr-ME">Montenegro - Serbian (Cyrillic)</option>
+                    <option value="sr-ME">Montenegro - Serbian (Latin)</option>
+                    <option value="ar-MA">Morocco - Arabic</option>
+                    <option value="ne-NP">Nepal - Nepali</option>
+                    <option value="nl-NL">Netherlands - Dutch</option>
+                    <option value="fy-NL">Netherlands - Frisian</option>
+                    <option value="en-NZ">New Zealand - English</option>
+                    <option value="mi-NZ">New Zealand - Maori</option>
+                    <option value="es-NI">Nicaragua - Spanish</option>
+                    <option value="ha-NG">Nigeria - Hausa (Latin)</option>
+                    <option value="ig-NG">Nigeria - Igbo</option>
+                    <option value="yo-NG">Nigeria - Yoruba</option>
+                    <option value="nb-NO">Norway - Norwegian (Bokmal)</option>
+                    <option value="nn-NO">Norway - Norwegian (Nynorsk)</option>
+                    <option value="mj-NO">Norway - Sami (Lule)</option>
+                    <option value="se-NO">Norway - Sami (Northern)</option>
+                    <option value="ma-NO">Norway - Sami (Southern)</option>
+                    <option value="ar-OM">Oman - Arabic</option>
+                    <option value="es-PA">Panama - Spanish</option>
+                    <option value="es-PY">Paraguay - Spanish</option>
+                    <option value="zh-CN">People's Republic of China - Chinese</option>
+                    <option value="mn-CN">People's Republic of China - Mongolian</option>
+                    <option value="bo-CN">People's Republic of China - Tibetan</option>
+                    <option value="ug-CN">People's Republic of China - Uyghur</option>
+                    <option value="ii-CN">People's Republic of China - Yi</option>
+                    <option value="uz-PE">Peru - Quechua</option>
+                    <option value="es-PE">Peru - Spanish</option>
+                    <option value="il-PH">Philippines - Filipino</option>
+                    <option value="pl-PL">Poland - Polish</option>
+                    <option value="pt-PT">Portugal - Portuguese</option>
+                    <option value="fr-MC">Principality of Monaco - French</option>
+                    <option value="es-PR">Puerto Rico - Spanish</option>
+                    <option value="ar-QA">Qatar - Arabic</option>
+                    <option value="en-PH">Republic of the Philippines - English</option>
+                    <option value="ro-RO">Romania - Romanian</option>
+                    <option value="ba-RU">Russia - Bashkir</option>
+                    <option value="ru-RU">Russia - Russian</option>
+                    <option value="tt-RU">Russia - Tatar</option>
+                    <option value="ah-RU">Russia - Yakut</option>
+                    <option value="rw-RW">Rwanda - Kinyarwanda</option>
+                    <option value="ar-SA">Saudi Arabia - Arabic</option>
+                    <option value="wo-SN">Senegal - Wolof</option>
+                    <option value="sr-RS">Serbia - Serbian (Cyrillic)</option>
+                    <option value="sr-RS">Serbia - Serbian (Latin)</option>
+                    <option value="sr-CS">Serbia and Montenegro - Cyrillic</option>
+                    <option value="sr-CS">Serbia and Montenegro - Latin</option>
+                    <option value="zh-SG">Singapore - Chinese</option>
+                    <option value="en-SG">Singapore - English</option>
+                    <option value="sk-SK">Slovakia - Slovak</option>
+                    <option value="sl-SI">Slovenia - Slovenian</option>
+                    <option value="af-ZA">South Africa - Afrikaans</option>
+                    <option value="en-ZA">South Africa - English</option>
+                    <option value="xh-ZA">South Africa - isiXhosa</option>
+                    <option value="zu-ZA">South Africa - isiZulu</option>
+                    <option value="so-ZA">South Africa - Sesotho sa Leboa</option>
+                    <option value="tn-ZA">South Africa - Setswana</option>
+                    <option value="eu-ES">Spain - Basque</option>
+                    <option value="ca-ES">Spain - Catalan</option>
+                    <option value="gl-ES">Spain - Galician</option>
+                    <option value="es-ES">Spain - Spanish</option>
+                    <option value="si-LK">Sri Lanka - Sinhala</option>
+                    <option value="mj-SE">Sweden - Sami (Lule)</option>
+                    <option value="se-SE">Sweden - Sami (Northern)</option>
+                    <option value="ma-SE">Sweden - Sami (Southern)</option>
+                    <option value="sv-SE">Sweden - Swedish</option>
+                    <option value="fr-CH">Switzerland - French</option>
+                    <option value="de-CH">Switzerland - German</option>
+                    <option value="it-CH">Switzerland - Italian</option>
+                    <option value="rm-CH">Switzerland - Romansh</option>
+                    <option value="ar-SY">Syria - Arabic</option>
+                    <option value="yr-SY">Syria - Syriac</option>
+                    <option value="zh-TW">Taiwan - Chinese</option>
+                    <option value="tg-TJ">Tajikistan - Tajik (Cyrillic)</option>
+                    <option value="sw-TZ">Tanzania - Swahili</option>
+                    <option value="th-TH">Thailand - Thai</option>
+                    <option value="en-TT">Trinidad and Tobago - English</option>
+                    <option value="ar-TN">Tunisia - Arabic</option>
+                    <option value="tr-TR">Turkey - Turkish</option>
+                    <option value="tk-TM">Turkmenistan - Turkmen</option>
+                    <option value="ar-AE">U.A.E. - Arabic</option>
+                    <option value="uk-UA">Ukraine - Ukrainian</option>
+                    <option value="en-GB">United Kingdom - English</option>
+                    <option value="gd-GB">United Kingdom - Scottish Gaelic</option>
+                    <option value="cy-GB">United Kingdom - Welsh</option>
+                    <option value="en-US">United States - English</option>
+                    <option value="es-US">United States - Spanish</option>
+                    <option value="es-UY">Uruguay - Spanish</option>
+                    <option value="uz-UZ">Uzbekistan - Uzbek (Cyrillic)</option>
+                    <option value="uz-UZ">Uzbekistan - Uzbek (Latin)</option>
+                    <option value="vi-VN">Vietnam - Vietnamese</option>
+                    <option value="ar-YE">Yemen - Arabic</option>
+                    <option value="en-ZW">Zimbabwe - English</option>
+                </select>
+            </div>
+            <div class="form-inline left" style="padding-top: 5px; padding-bottom: 5px;">
+                <span class="glyphicon glyphicon-question-sign" style="color: #295173; padding-right: 10px; font-size: 18px; vertical-align: middle;" role="button" ng-click="showHelp('helpRDI')" />
+                <span style="margin-right: 24px; vertical-align: middle;" class="row-head">Recommended Daily Intake Model: </span>
+                <select ng-disabled="!edit" name="rdaModel" class="form-control" ng-model="study.rdaModelId" ng-options="t.id as t.name for t in rdas">
+                </select>
+            </div>
+            <div class="form-inline left">
+                <span class="glyphicon glyphicon-question-sign" style="color: #295173; padding-right: 10px; font-size: 18px; vertical-align: middle;" role="button" ng-click="showHelp('helpGestalt')" />
+                <span style="margin-right: 24px; vertical-align: middle;" class="row-head">Use Gestalt Quantification: </span>
+                <input ng-disabled="!edit" type="checkbox" class="form-control" ng-model="study.gestalt" style="margin-right:50px">
+                <span class="glyphicon glyphicon-question-sign" style="color: #295173; padding-right: 10px; font-size: 18px; vertical-align: middle;" role="button" ng-click="showHelp('helpGestalt')" />
+                <span style="margin-right: 24px; vertical-align: middle;" class="row-head">Maximum Gestalt Estimates: </span>
+                <input ng-disabled="!edit" type="number" class="form-control" ng-model="study.gestaltMax">
+            </div>
+            <div class="form-inline left">
+                <span class="glyphicon glyphicon-question-sign" style="color: #295173; padding-right: 10px; font-size: 18px; vertical-align: middle;" role="button" ng-click="showHelp('helpTranscribe')" />
+                <span style="margin-right: 24px; vertical-align: middle;" class="row-head">Transcribe Audio Records: </span>
+                <input ng-disabled="!edit" type="checkbox" class="form-control" ng-model="study.transcribe" style="margin-right:50px">
+                <span class="glyphicon glyphicon-question-sign" style="color: #295173; padding-right: 10px; font-size: 18px; vertical-align: middle;" role="button" ng-click="showHelp('helpTranslate')" />
+                <span style="margin-right: 24px; vertical-align: middle;" class="row-head">Translate Audio Records : </span>
+                <input ng-disabled="!edit" type="checkbox" class="form-control" ng-model="study.translate" style="margin-left: 6px;">
+            </div>
+            <hr class="head-hr">
+        </div>
+        <br />
+        <div class="row spaced has-hr" style="margin-top: 15px;">
+            <div class="col-xs-12" style="padding-top: 15px;">
+                <ul class="list-group">
+                    <li class="list-group-item list-group-item-header">
+                        <span class="row-head">User Permissions: </span>
+                        <a class="glyphicon glyphicon-plus glyph-md pull-right" role="button" ng-click="displayAnalystForm = true" style="color: #517329; padding-right: 5px; margin-top: -5px;" title="Create" />
+                    </li>
+                    <li class="list-group-item form-inline" id="analyst-{{analyst.userId}}" ng-repeat="analyst in study.analysts" style="min-height: 55px;vertical-align: middle;">
+                        <a style="margin-top: 5px;" class="col-xs-2" href="#!/admin/user?id={{ analyst.userId }}"><span style="font-size: 16px; font-weight: bold;  height: 100%;">{{ analyst.userName }}</span></a>
+                        <select ng-model="analyst.accessLevel" class="form-control col-xs-2" ng-change="assignAnalyst(analyst)">
+                            <option value="Identify">Identification</option>
+                            <option value="Quantify">Quantification</option>
+                            <option value="Both">Ident & Quant</option>
+                            <option value="View">View Only</option>
+                            <option value="Coordinator">Study Coordinator</option>
+                        </select>
+                        <span ng-if="analyst.accessLevel !== 'Coordinator'" class="col-xs-2" style="width: 12%; margin-top: 5px;">Progress: </span>
+                        <div ng-if="analyst.accessLevel !== 'Coordinator'" class="progress col-xs-3 col-lg-5" style="margin-left: 8px; margin-right: 12px; margin-top: 5px; padding: 0;">
+                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="height: 16px; width:{{ 100 * (analyst.totalCompletedHouseholds / (analyst.totalCompletedHouseholds + analyst.totalAssignedHouseholds)) }}%" ng-show="(analyst.totalCompletedHouseholds + analyst.totalAssignedHouseholds) > 0">
+                            </div>
+                            <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="height: 16px; width:{{ 100 * (analyst.totalAssignedHouseholds / (analyst.totalCompletedHouseholds + analyst.totalAssignedHouseholds)) }}%" ng-show="(analyst.totalCompletedHouseholds + analyst.totalAssignedHouseholds) > 0">
+                            </div>
+                        </div>
+                        <button ng-if="analyst.accessLevel !== 'Coordinator'" class="btn btn-standard btn-sm" type="button" data-toggle="modal" data-target="#householdModal" style="" ng-click="updateChecked(analyst)">Allocate</button>
+                        <div style="float: right; height: 100%">
+                            <span style="font-size: 16px; vertical-align: middle; color: #e47d30;" class="glyphicon glyphicon-envelope" role="button" ng-click="reinviteAnalyst(analyst)" title="Re-Invite"></span>
+                            <span style="font-size: 16px; vertical-align: middle;" class="glyphicon glyphicon-remove" role="button" ng-click="unassignAnalyst(analyst)" title="Delete"></span>
+                        </div>
+                    </li>
+                    <!-- <li class="list-group-item">
+                        <form class="form-inline" ng-submit="assignAnalyst(newUser)">
+                            <select name="newUserId" ng-model="newUser.userId" class="form-control" ng-options="u.id as u.userName for u in users"></select>
+                            <select ng-model="newUser.accessLevel" class="form-control">
+                                <option value="Identify">Identification</option>
+                                <option value="Quantify">Quantification</option>
+                                <option value="Both">Both</option>
+                                <option value="View">View Only</option>
+                                <option value="Coordinator">Study Coordinator</option>
+                            </select>
+                            <input type="submit" class="btn btn-primary btn-sm" value="Assign">
+                        </form>
+                    </li> -->
+                </ul>
+            </div>
+
+        </div>
+        <div id="householdModal" class="container modal fade" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Choose Households to Allocate to {{ selectedAnalyst.userName }}</h4>
+                    </div>
+                    <div class="modal-body modal-days">
+                        <input id="hiddencb" type="checkbox" ng-init="showHidden = false" ng-model="showHidden" ng-change="hideCompleted = showHidden" style="margin-left: 14px;"><label for="hiddencb" style="font-weight: bolder; padding-left: 10px;">Hide Completed Households</label>
+                        <!--<div style="padding-left:10px;">
+                            <span style="text-decoration:underline; cursor: pointer;" ng-click="selectAllHouseholds()">Select All</span>
+                            <span style="text-decoration:underline; cursor: pointer;">Deselect All</span>
+                        </div> -->
+                        <hr class="head-hr" />
+                        <div class="form-inline">
+                            <label class="bolder">Search: </label>
+                            <input type="text" class="form-control" name="" ng-model="filterHouseholds" ng-change="changeFilterHouseholds(filterHouseholds)">
+                        </div>
+                        <hr class="head-hr" />
+                        <ul style="width: 50%; display: inline-block;">
+                            <li style="font-weight: bolder;">Not Selected</li>
+                            <li ng-repeat="h in study.households" ng-show="!h.hidden && (!h.hideCompleted || !hideCompleted) && !h.checked"><input id="hhcb-{{$index}}" name="hhcb-{{$index}}" ng-change="toggleHousehold(h.id, h.checked, h.participantId)" type="checkbox" ng-model="h.checked"><label for="hhcb-{{$index}}" style="font-weight: bolder; padding-left: 10px;">{{h.participantId}}</label></li>
+                        </ul>
+                        <ul style="width: 50%;  float: right;">
+                            <li style="font-weight: bolder;">Selected</li>
+                            <li ng-repeat="h in study.households" ng-show="!h.hidden && (!h.hideCompleted || !hideCompleted) && h.checked"><input id="hhcb-{{$index}}" name="hhcb-{{$index}}" ng-change="toggleHousehold(h.id, h.checked, h.participantId)" type="checkbox" ng-model="h.checked"><label for="hhcb-{{$index}}" style="font-weight: bolder; padding-left: 10px;">{{h.participantId}}</label></li>
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row spaced has-hr" style="margin-top: 15px;">
+            <div class="col-xs-12" style="padding-top: 15px;">
+                <ul class="list-group">
+                    <li class="list-group-item list-group-item-header">
+                        <span class="row-head">Study Summary: </span>
+                    </li>
+                    <li class="list-group-item" style="">
+                        <div style="padding-right: 20px; display: inline-block">
+                            Progress: {{ (study.recordTotal === 0) ? 0 : roundPercentage(100 * (study.identifyAndPortionCompleted / study.recordTotal)) }}%:
+                        </div>
+                        <div style="float: right;">
+                            <div style="display: inline-block; width: 20px; height: 20px; background-color: #5cb85c;"></div>
+                            <div style="display: inline-block; padding-right:15px;">Completed</div>
+                            <div style="display: inline-block; width: 20px; height: 20px; background-color: #f0ad4e;"></div>
+                            <div style="display: inline-block; padding-right:15px;">Identified but not Quantified</div>
+                            <div style="display: inline-block; width: 20px; height: 20px; background-color: #d9534f;"></div>
+                            <div style="display: inline-block;">Not Started</div>
+                        </div>
+                        <div class="progress hoverimage" style="width: 100%; margin-top: 10px; margin-bottom: 0; overflow: visible;">
+                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="height: 16px; width:{{ 100 * (study.identifyAndPortionCompleted / study.recordTotal) }}%">
+                            </div>
+                            <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="height: 16px; width:{{ 100 * ((study.identifyCompleted - study.identifyAndPortionCompleted) / study.recordTotal) }}%">
+                            </div>
+                            <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="height: 16px; width:{{   (study.recordTotal === 0) ? 100 : 100 - (100 * (study.identifyCompleted / study.recordTotal))}}%">
+                            </div>
+                            <p class="hoverimagetext" style="float: left; margin-top: -30px">Completed: {{  (study.recordTotal === 0) ? 0 : roundPercentage(100 * (study.identifyAndPortionCompleted / study.recordTotal)) }}% | Identified but not Quantified: {{  (study.recordTotal === 0) ? 0 : roundPercentage( 100 * ((study.identifyCompleted - study.identifyAndPortionCompleted) / study.recordTotal)) }}% | Not Started: {{   (study.recordTotal === 0) ? 0 : roundPercentage(100 - (100 * (study.identifyCompleted / study.recordTotal)))}}%</p>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        Households: {{ study.households.length }}
+                    </li>
+                    <li class="list-group-item">
+                        Participants: {{ study.participants }}
+                    </li>
+                    <li class="list-group-item">
+                        <p>Records: Total: {{ study.recordTotal + study.hiddenRecordTotal }} | Eating Occasion Records: {{ study.recordTotal - study.leftovers }} | Leftovers: {{study.leftovers}} | Total Food Items: {{ study.foodItemTotal }} | Hidden: {{ study.hiddenRecordTotal }}</p>
+                        <p>Recipes: {{ study.recipeTotal }} | Hidden Recipes: {{ study.hiddenRecipeTotal }}</p>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+        <div class="col-sm-12 container spaced">
+            <div class="list-group" style="margin: 15px;">
+                <table id="householdTable" class="table-bordered" style="border-spacing: 0; border-collapse:collapse; table-layout:fixed; width: 100%">
+                    <tr class="row-head" style="background-color: #f1f3f4;">
+                        <td colspan="7" style="padding: 10px 15px;">Household Summary:</td>
+                    </tr>
+                    <tr class="row-head">
+                        <td>Household ID</td>
+                        <td>
+                            Analysts
+                            <span class="glyphicon glyphicon-filter" style="color: #517329; float: right; padding-right: 1px; font-size: 14px; vertical-align: middle;" role="button" data-toggle="modal" data-target="#analystModal" />
+                        </td>
+                        <td>
+                            Identified (%)
+                            <span class="glyphicon glyphicon-sort" style="color: #517329; float: right; padding-right: 1px; font-size: 14px; vertical-align: middle;" role="button" ng-click="sortTable(1)" />
+                        </td>
+                        <td>
+                            Quantified (%)
+                            <span class="glyphicon glyphicon-sort" style="color: #517329; float: right; padding-right: 1px; font-size: 14px; vertical-align: middle;" role="button" ng-click="sortTable(2)" />
+                        </td>
+                        <td>
+                            Completed (%)
+                            <span class="glyphicon glyphicon-sort" style="color: #517329; float: right; padding-right: 1px; font-size: 14px; vertical-align: middle;" role="button" ng-click="sortTable(3)" />
+                        </td>
+                        <td>
+                            Hidden Records
+                            <span class="glyphicon glyphicon-sort" style="color: #517329; float: right; padding-right: 1px; font-size: 14px; vertical-align: middle;" role="button" ng-click="sortTable(4)" />
+                        </td>
+                        <td>
+                            Outstanding Tasks
+                            <span class="glyphicon glyphicon-sort" style="color: #517329; float: right; padding-right: 1px; font-size: 14px; vertical-align: middle;" role="button" ng-click="sortTable(5)" />
+                        </td>
+                    </tr>
+                    <tr class="" ng-repeat="household in study.households" ng-if="household.includeInSummary">
+                        <th style="word-wrap:break-word;"><a href="#!/household?household={{ household.participantId }}&study={{ study.id }}">{{ household.participantId }}</a></th>
+                        <td>
+                            <span ng-repeat="analyst in household.householdAssignations"><ng-container ng-if="$index !== 0">, </ng-container>{{ analyst.userName }}</span>
+                        </td>
+                        <td>
+                            {{ roundPercentage( 100 * (household.identifyCompleted / household.recordTotal)) }}
+                        </td>
+                        <td>{{ roundPercentage(100 * (household.portionCompleted / household.recordTotal)) }}</td>
+                        <td>{{ roundPercentage(100 * (household.identifyAndPortionCompleted / household.recordTotal)) }}</td>
+                        <td>{{ household.hiddenRecordTotal }}</td>
+                        <td>{{ household.recordTotal - household.identifyAndPortionCompleted }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="analystModal" class="container modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Filter Analysts</h4>
+                </div>
+                <div class="modal-body modal-days">
+                    <input id="analystcb" type="checkbox" ng-model="filterAnalysts" ng-change="filterAnalyst(false)" style="margin-left: 14px;"><label for="analystcb" style="font-weight: bolder; padding-left: 10px;">Show only selected analysts</label>
+                    <hr class="head-hr" />
+                    <ul style="width: 50%; display: inline-block;">
+                        <li ng-repeat="analyst in study.analysts" ng-show="!analyst.checked"><input id="analystcb-{{$index}}" name="analystcb-{{$index}}" ng-change="filterAnalyst(true)" type="checkbox" ng-model="analyst.checked"><label for="analystcb-{{$index}}" style="font-weight: bolder; padding-left: 10px;">{{analyst.userName}}</label></li>
+                    </ul>
+                    <ul style="width: 50%;  float: right;">
+                        <li ng-repeat="analyst in study.analysts" ng-show="analyst.checked"><input id="analystcb-{{$index}}" name="analystcb-{{$index}}" ng-change="filterAnalyst(true)" type="checkbox" ng-model="analyst.checked"><label for="analystcb-{{$index}}" style="font-weight: bolder; padding-left: 10px;">{{analyst.userName}}</label></li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="position: fixed; left: 0; right: 0; padding: 0; top: 0; bottom: 0; margin: 0; display: flex; " class="h-100 col-xs-12 align-items-center" ng-show="displayAnalystForm">
+        <div style="width: 100%; height: 100%; position: absolute; background-color: #00000066;" ng-click="displayAnalystForm = false;"></div>
+        <div class="floating-form" style="position: relative;" ng-show="displayAnalystForm">
+            <span class="row-head">Assign Analyst</span>
+            <hr style="margin: 0px; margin-bottom: 5px;">
+            <!-- <form class="form-inline" ng-submit="assignAnalyst(newUser)">
+                        <select name="newUserId" ng-model="newUser.userId" class="form-control" ng-options="u.id as u.userName for u in users"></select>
+                        <select ng-model="newUser.accessLevel" class="form-control">
+                            <option value="Identify">Identification</option>
+                            <option value="Quantify">Quantification</option>
+                            <option value="Both">Both</option>
+                            <option value="View">View Only</option>
+                            <option value="Coordinator">Study Coordinator</option>
+                        </select>
+                        <input type="submit" class="btn btn-primary btn-sm" value="Assign">
+                    </form> -->
+            <form ng-submit="assignAnalyst(newUser)">
+                <table>
+                    <tr>
+                        <td style="vertical-align: middle;"><label for="newEmail">User: </label></td>
+                        <td>
+                            <select name="newUserId" ng-model="newUser.userId" class="form-control">
+                                <!-- ng-options="u.id as u.userName for u in users"> -->
+                                <option value="{{u.id}}" ng-repeat="u in users">{{ u.userName }}</option>
+                                <option value="-1">Invite User</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <!-- <tr>
+                        <td colspan="2"><div style="width: 100%;"><span style="color: #517329; font-size: small; text-align: center; display: block;">or</span></div></td>
+                    </tr> -->
+                    <tr ng-show="newUser.userId == -1">
+                        <td style="vertical-align: middle;"><label for="newEmail">Email: </label></td>
+                        <td><input class="form-control" id="newEmail" type="text" name="newEmail" placeholder="jsmith@uon.edu.au" ng-model="newUser.email"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><div style="width: 100%"><hr style="margin: 0px;"></div></td>
+                    </tr>
+                    <tr>
+                        <td style="vertical-align: middle;"><label for="newUsername">Access: </label></td>
+                        <td>
+                            <select ng-model="newUser.accessLevel" class="form-control">
+                                <option value="Identify">Identification</option>
+                                <option value="Quantify">Quantification</option>
+                                <option value="Both">Ident & Quant</option>
+                                <option value="View">View Only</option>
+                                <option value="Coordinator">Study Coordinator</option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+                <div class="{{ (newUserLoading ) && 'loader' || '' }}"></div>
+                <div style="text-align: center;">
+                    <small class="text-danger" style="white-space: pre-line;">{{ newUserError }}</small>
+                </div>
+                <hr style="margin: 0px; margin-bottom: 5px;">
+                <div style="width: 100%; text-align: center; padding-top: 10px">
+                    <input type="submit" class="btn btn-primary btn-sm" value="Assign">
+                    <button class="btn btn-standard btn-sm" ng-click="displayAnalystForm = false;" type="button">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div ng-show="showHelpDialog == true">
+        <div style="position: fixed; left: 0; right: 0; margin: 0; background-color: #000000aa; top: 0; bottom: 0; display: flex;" class="h-100 row align-items-center" ng-click="">
+            <div class="floating-form col-xs-12 col-md-8" style="position: relative;" ng-click="">
+                <div style="padding-bottom: 3px;">
+                    <span class="row-head">Help</span>
+                    <span class="glyphicon glyphicon-remove pull-right" style="font-size: 1.2em;" ng-click="showHelpDialog = false;" role="button">
+                </div>
+                <hr style="margin: 0px; margin-bottom: 5px;">
+                <div class="panel-group" id="accordion">
+                    <div class="panel panel-default">
+                        <div class="panel-heading" class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#helpTable" role="button">
+                            <h5 class="panel-title">
+                                <span>Food Composition Table</span>
+                            </h5>
+                        </div>
+
+                        <div id="helpTable" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <p>
+                                    This is the collection of food compositions that you can choose from when identifying food items. It is recommended to use a country or region specific table, due to differences in
+                                    common items or regional ingredients. If you have your own table that you think should be included in VISIDA, please <a href="mailto:visida@newcastle.edu.au">contact us</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading" class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#helpCountry" role="button">
+                            <h5 class="panel-title">
+                                <span>Country - Language</span>
+                            </h5>
+                        </div>
+
+                        <div id="helpCountry" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <p>
+                                    This should be set to the country and language that the data is being collected in. Choosing the correct language is necessary to utilise transcription and translation features.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading" class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#helpRDI" role="button">
+                            <h5 class="panel-title">
+                                <span>Recommended Daily Intake Model</span>
+                            </h5>
+                        </div>
+
+                        <div id="helpRDI" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <p>
+                                    Choosing between different standards allows you to choose a model for energy/nutrient RDI that most closely fits your target audience.
+                                    If you have your own model that you think should be included in VISIDA, please <a href="mailto:visida@newcastle.edu.au">contact us</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading" class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#helpGestalt" role="button">
+                            <h5 class="panel-title">
+                                <span>Use Gestalt Quantification</span>
+                            </h5>
+                        </div>
+
+                        <div id="helpGestalt" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <p>
+                                    Gestalt quantification allows you to take the average of multiple quantification attempts rather than a single truth value. When quantifying in this mode each analyst will only see their own estimation, while coordinators will see the averaged value. Coordinators can overwrite this value if needed.<br /><br />
+                                    Maxiumum estimates limits the number of analysts that can quantify a single food item. Once this is reached, the item will be 'locked' for further analysts. If set to 0, there is no limit.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading" class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#helpTranscribe" role="button">
+                            <h5 class="panel-title">
+                                <span>Transcribe Audio Records</span>
+                            </h5>
+                        </div>
+
+                        <div id="helpTranscribe" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <p>
+                                    This option allows audio records to be transcribed into their native text when uploaded. The native text is set by the Country- Language option, and the transcription
+                                    will appear on the image record page when transcribed.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading" class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#helpTranslate" role="button">
+                            <h5 class="panel-title">
+                                <span>Translate Audio Records</span>
+                            </h5>
+                        </div>
+
+                        <div id="helpTranslate" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <p>
+                                    This option allows audio records to be translated into English after the translation is completed. This is beneficial to allow comparison to the selected
+                                    Food Composition Database resulting in automated suggestions of food items, which may speed up identification.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,186 @@
+<div id="content" ng-controller="cookController" class="container">
+	<div class="row content" ng-show="loading > 0" style="height: 100%">
+		<div class="col-xs-12" style="height: 80%">
+			<span class="glyphicon glyphicon-refresh loading-run" style="font-size: 160px; position: absolute; left: 50%; top: 50%; margin: auto; margin-left: -80px"></span>
+		</div>
+	</div>
+	<div class="row content" ng-show="loading == 0">
+		<div class="col-xs-12">
+			<span class="h3 page-head left">Recipes</span>
+			<!-- <span class="glyphicon glyphicon-refresh glyph-md pull-right {{ (loading) && 'loading-run' || 'loading-done' }}"></span> -->
+			<hr class="head-hr">
+		</div>
+		<div id="searchdiv" style="display: {{ loading ? 'none' : '' }} padding-bottom: 0;" class="col-xs-12">
+			<form ng-submit="search()" class="form-inline">
+				<div class="form-group search-container" style="padding: 5px 0px 8px 0px;">
+					<div class="col-sm-6">
+						<label for="sText">Search food:</label>
+						<input type="text" name="sText" placeholder="search" ng-model="searchText" class="form-control" style="width: 70%">
+						<span class="glyphicon glyphicon-remove btn-glyph" title="Clear" role="button" ng-click="searchText = ''"> </span>
+					</div>
+					<div class="col-sm-6">
+						<label for="cText">Search comments:</label>
+						<div class="display: inline-block dropdown" style="display: inline-block; vertical-align: middle; padding: 2px; padding-left: 10px;">
+							<span class="dropdown-toggle glyphicon glyphicon-tags btn-glyph" style="color: #517329;" title="Choose tag" role="button" data-toggle="dropdown"> </span>
+							<ul class="dropdown-menu comment-search-tags" style="padding: 5px; width: 500px;">
+								<li ng-click="searchCommentText = 'This record is a duplicate'">This record is a duplicate.</li>
+								<li ng-click="searchCommentText = 'The record type is incorrect'">The record type is incorrect.</li>
+								<li ng-click="searchCommentText = 'This record is not valid'">This record is not valid.</li>
+								<li ng-click="searchCommentText = 'This record contains identifying information'">This record contains identifying information.</li>
+							</ul>
+						</div>
+						<input type="text" name="cText" placeholder="search" ng-model="searchCommentText" class="form-control" style="width: 70%; margin-left: 3px;">
+						<span class="glyphicon glyphicon-remove btn-glyph" title="Clear" role="button" ng-click="searchCommentText = ''"> </span>
+					</div>
+
+					<div class="col-sm-6 col-md-4" style="height: 24px;">
+						<label for="sStudy">Study:</label>
+						<div style="padding: 0; display: inline-block; width: 80%">
+							<select id="sStudy" chosen data-placeholder-text-single="'Select study'" no-results-text="'No matching studies'" ng-model="selectedStudy"
+								class="item-name align-middle" style="width: 100%" ng-options="s.id as s.name for s in searchConfig.studies" ng-change="studyChanged(true)">
+								<option value="">Any</option>
+							</select>
+							
+						</div>
+					</div>
+
+					<div class="col-sm-6 col-md-4">
+						<label for="sHousehold">Household:</label>
+						<div style="padding: 0; display: inline-block; width: 80%">
+							<select id="sHousehold" chosen data-placeholder-text-single="'Select household'" no-results-text="'No matching households'" ng-model="selectedHousehold"
+								class="item-name align-middle" style="width: 100%" ng-options="h.name as h.name for h in searchHouseholds" ng-change="householdChanged(true)">
+								<option value="">Any</option>
+							</select>
+						</div>
+					</div>
+					<div>
+						<label for="perpage">Results per page:</label>
+						<select id="perpage" name="perpage" ng-model="pageSize" class="form-control">
+							<option value="10">10</option>
+							<option value="25">25</option>
+							<option value="50">50</option>
+						</select>
+						<button class="btn btn-standard btn-sm" type="button" role="button" data-toggle="modal" data-target="#daysModal" style="margin-left: 12px;">Choose Days</button>
+						<input type="submit" value="Search" class="btn btn-primary btn-sm" style="margin-left: 15px;">
+					</div>
+				</div>
+			</form>
+			<hr class="head-hr">
+		</div>
+		<div class="row text-center" ng-show="!recipes.length > 0">
+			<span class="text-danger">There is no recipes matching the search filters.</span>
+		</div>
+		<div class="row text-center">
+			<ul class="pagination" ng-show="recipes.length > 0">
+				<li class="page-item {{ (pageData && pageData.hasPrev) ? '' : 'disabled' }}">
+					<a ng-if="pageData && pageData.hasPrev" href="{{ buildLink(activePage - 1) }}" class="page-link">
+						Previous
+					</a>
+					<span ng-if="!pageData || !pageData.hasPrev" class="page-link">
+						Previous
+					</span>
+				</li>
+				<li class="page-item {{ (activePage == $index + 1) && 'active' || '' }}" ng-repeat="i in getPageNumber() track by $index">
+					<a href="{{ buildLink($index + 1) }}" class="page-link">{{ $index + 1 }}</a>
+				</li>
+				<li class="page-item {{ (pageData && pageData.hasNext) ? '' : 'disabled' }}">
+					<a ng-if="pageData && pageData.hasNext" href="{{ buildLink(activePage + 1) }}" class="page-link">
+						Next
+					</a>
+					<span ng-if="!pageData || !pageData.hasNext" class="page-link">
+						Next
+					</span>
+				</li>
+			</ul>
+		</div>
+		<div id="image-table-div" class="row" ng-show="recipes.length > 0">
+			<table id="image-table">
+				<tr>
+					<!-- <th>Household</th> -->
+					<th>Record</th>
+					<!-- <th>Time</th> -->
+					<th>Household</th>
+					<th>Image Capture</th>
+					<!-- <th class="text-center">Fiducial Marker</th> -->
+					<!-- <th class="text-center">Identified</th> -->
+					<!-- <th class="text-center">Quantified</th> -->
+					<th>Ingredients</th>
+					<th>Comments</th>
+				</tr>
+				<tr ng-repeat="recipe in recipes" role="button" ng-click="recipeLink(recipe, $event)" ng-mousedown="recipeMouseDown(recipe, $event)">
+					<td>
+						<span class="row-head">{{ recipe.name ? recipe.name : (recipe.foodComposition.name + " " + (recipe.foodComposition.alternateName ? recipe.foodComposition.alternateName : '')) }}</span><br/>
+						<span>{{ recipe.captureTime | date : 'dd/MM/yyyy' }}</span><br/>
+						<span>{{ recipe.captureTime | date : 'hh:mm a' }}</span>
+					</td>
+					<!-- {{ (recipe.name ? recipe.name : (recipe.foodComposition.name)) | limitTo : 30 }} -->
+					<!-- <td>{{ recipe.captureTime | date : 'HH:mm a dd/MM/yyyy' }}</td> -->
+					<td><a href="#!/cook?page=1&results={{ pageSize }}&household={{ recipe.householdParticipantId }}">{{ recipe.householdParticipantId}}</a></td>
+					<td>
+						<img class="foodimage" ng-src="{{  recipe.imageUrl != null ? recipe.imageUrl : 'images/noimage.png'  }}"/>
+					</td>
+					<!-- <td  style="text-align: center; vertical-align: middle;"><span class="glyphicon glyph-lg glyphicon-{{ recipe.isFiducialPresent && 'ok text-success' || 'remove text-danger' }}"/></td> -->
+					<!-- <td style="text-align: center; vertical-align: middle;">
+						<span class="glyphicon glyph-lg" ng-class="{'text-danger glyphicon-remove': recipe.tagIdent === -1, 'yellow glyphicon-time': recipe.tagIdent === 0, 'text-success glyphicon-ok': recipe.tagIdent === 1}"></span>
+					</td>
+					<td style="text-align: center; vertical-align: middle;">
+						<span class="glyphicon glyph-lg" ng-class="{'text-danger glyphicon-remove': recipe.tagPrt === -1, 'yellow glyphicon-time': recipe.tagPrt === 0, 'text-success glyphicon-ok': recipe.tagPrt === 1}"></span>
+					</td> -->
+					<td>
+						<span class="{{ getStatusStyle(recipe.tagIdent) }}">Identification {{ getStatusName(recipe.tagIdent) }}</span><br/>
+						<span class="{{ getStatusStyle(recipe.tagPrt) }}">Quantification {{ getStatusName(recipe.tagPrt) }}</span><br/>
+						<ul ng-repeat="ingr in recipe.ingredients" style="padding-left: 0;" ng-if="!ingr.imageRecord.hidden">
+							<li ng-repeat="fi in ingr.imageRecord.foodItems">{{ fi.quantityGrams != 0 ? fi.quantityGrams.toFixed(1) + 'g' : '~' }} {{ fi.name | limitTo : 40}}</li>
+						</ul>
+					</td>
+					<td>
+						<span ng-repeat="comment in recipe.comments" style="{{comment.hidden ? 'text-decoration: line-through;' : ''}}"><span class="bold" ng-if="comment.authorName">{{comment.authorName }}: </span>{{comment.text | limitTo : 60}}<br/></span>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div class="row text-center">
+			<ul class="pagination" ng-show="recipes.length > 0">
+				<li class="page-item {{ (pageData && pageData.hasPrev) ? '' : 'disabled' }}">
+					<a ng-if="pageData && pageData.hasPrev" href="{{ buildLink(activePage + 1) }}" class="page-link">
+						Previous
+					</a>
+					<span ng-if="!pageData || !pageData.hasPrev" class="page-link">
+						Previous
+					</span>
+				</li>
+				<li class="page-item {{ (activePage == $index + 1) && 'active' || '' }}" ng-repeat="i in getPageNumber() track by $index">
+					<a href="{{ buildLink($index + 1) }}" class="page-link">{{ $index + 1 }}</a>
+				</li>
+				<li class="page-item {{ (pageData && pageData.hasNext) ? '' : 'disabled' }}">
+					<a ng-if="pageData && pageData.hasNext" href="{{ buildLink(activePage + 1) }}" class="page-link">
+						Next
+					</a>
+					<span ng-if="!pageData || !pageData.hasNext" class="page-link">
+						Next
+					</span>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<div id="daysModal" class="container modal fade" role="dialog">
+		<div class="modal-dialog">
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Select Days</h4>
+				</div>
+				<div class="modal-body modal-days">
+					<ul>
+						<li><input id="allcb" type="checkbox" ng-change="toggleAllDays(allDaysChecked)" ng-model="allDaysChecked"><label for="allcb" style="font-weight: bolder; padding-left: 10px;">All</label></li>
+						<li ng-repeat="d in searchDays"><input id="day-cb-{{$index}}" name="day-cb-{{$index}}"  ng-change="toggleDay(d)" type="checkbox" ng-model="d.checked"><label for="day-cb-{{$index}}" style="font-weight: bolder; padding-left: 10px;">{{d.date | date:'dd/MM/yyyy'}}</label></li>
+					</ul>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

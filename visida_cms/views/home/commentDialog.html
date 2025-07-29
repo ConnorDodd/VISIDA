@@ -1,0 +1,71 @@
+<div ng-show="showCommentDialog">
+	<!-- <div style="position: fixed; left: 0; right: 0; background-color: #000000aa; margin: 0; top: 0; bottom: 0;" class="h-100 row align-items-center" ng-click="showHelpDialog = false;">
+	</div> -->
+	<div style="position: fixed; left: 0; right: 0; margin: 0; background-color: #000000aa; top: 0; bottom: 0; display: flex;" class="h-100 row align-items-center" ng-click="showCommentDialog = false">
+		<div class="floating-form col-xs-12 col-md-6 scroll-container-parent" style="position: relative; height: 80%;"  ng-click="$event.stopPropagation();">
+			<div class="scroll-container">
+				<div style="padding-bottom: 3px;">
+					<span class="row-head">Comments</span>
+					<span class="glyphicon glyphicon-remove pull-right" style="font-size: 1.2em;" ng-click="showCommentDialog = false;" role="button">
+				</div>
+				<hr style="margin: 0px; margin-bottom: 5px;">
+				<form ng-submit="updateCommentSearch(commentSearchText, commentSearchSelect)" class="form-inline">
+					<input class="form-control" type="text" style="width: 320px;" ng-model="commentSearchText" placeholder="Search:">
+					<select ng-model="commentSearchSelect" ng-init="commentSearchSelect = 'a'" class="form-control">
+						<option value="a">All</option>
+						<option value="hp">High Priority</option>
+						<option value="m">Mentions</option>
+						<option value="r">Replies</option>
+						<option value="t">Tasks</option>
+					</select>
+					<input type="submit" name="Search" value="Search" class="form-control btn btn-primary btn-sm pull-right" style="margin-right: 13px; height: 30px;">
+				</form>
+				<hr style="margin: 0px; margin-bottom: 5px;">
+				<div class="text-center" style="padding: 0;" ng-show="totalPages > 1">
+					<ul class="pagination" style="margin: 5px;">
+						<li class="page-item {{ activePage == 0 ? 'disabled' : '' }}">
+							<span class="page-link " role="button" ng-click="changePage(activePage - 1)">
+								Previous
+							</span>
+						</li>
+						<li class="page-item  {{ (activePage == i - 1) && 'active' || '' }}" ng-repeat="i in pageNumArr">
+							<span class="page-link" role="button" ng-click="changePage(i - 1)">
+								{{ i }}
+							</span>
+						</li>
+						<li class="page-item {{ activePage == (totalPages - 1) ? 'disabled' : '' }}">
+							<span class="page-link" role="button" ng-click="changePage(activePage + 1)">
+								Next
+							</span>
+						</li>
+					</ul>
+				</div>
+				<div class="text-center" style="padding: 5px;" ng-show="totalPages === 0">
+					<span class="text-danger">No matches found</span>
+				</div>
+				<ul class="list-group">
+					<a class="list-group-item" style="font-weight: {{ comment.unseen ? 'bold' : 'normal' }}" ng-repeat="comment in displayComments" 
+						href="{{ comment.recordId ? '#!/image?id=' + comment.recordId : '#!/recipe?id=' + comment.recipeId }}">
+						<div>
+							<div  style="font-weight: bolder;">
+								<span>{{comment.authorName}}</span>
+								<span style="color: #2980b9; font-weight: bold;" ng-if="comment.isMention">@</span>
+								<span class="glyphicon glyphicon-share-alt" style="color: #2980b9" ng-if="comment.flag === 'Reply'"/>
+								<span class="glyphicon glyphicon-check" style="color: #517329" ng-if="comment.flag === 'Task'"/>
+								<span class="glyphicon glyphicon-flag text-danger" ng-if="comment.highPriority"/>
+								<span class="pull-right">{{comment.createdTime | date : 'hh:mm dd/MM/yyyy'}}</span>
+							</div>
+							<div>
+								<span ng-class="styleComment(comment)">{{comment.text | limitTo : 256}}</span>
+							</div>
+						</div>
+	<!-- 					<span style="color: #2980b9; font-weight: bold;" ng-if="comment.flag === 'Normal'">@</span>
+						<span class="glyphicon glyphicon-share-alt" style="color: #2980b9" ng-if="comment.flag === 'Reply'"/>
+						<span class="glyphicon glyphicon-exclamation-sign text-danger" ng-if="comment.flag === 'Warning'"/>
+						<span style="color: black;">{{ comment.text | limitTo : 34 }}{{ comment.text.length > 36 ? '...' : '' }} <span class="pull-right" style="font-style: italic;">{{ comment.createdTime | date : (comment.isToday ? 'hh:mm' : 'dd/MM/yy') }}</span></span> -->
+					</a>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>

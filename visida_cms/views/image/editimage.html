@@ -1,0 +1,40 @@
+<!-- <script type="text/javascript" src="perspective-transform.js"></script> -->
+<div id="content" ng-controller="editImageController" class="container">
+	<br/>
+	<div id="e-img-container" ng-click="clickImage($event)" style="width: 100%; position: relative; vertical-align: middle; padding-bottom: 80px;" class="col-sm-12" ng-style="styleEdit()">
+		<img id="image" src="{{ record.imageUrl != null ? record.imageUrl : '' }}" style="width: 100%; 
+			transform: rotate({{ editRotation }}deg);
+			-webkit-filter: brightness({{ editBrightness }}%) contrast({{ editContrast }}%);
+			padding-bottom: 40px;
+		" imageonload="calcSVG()">
+		<svg id="svg" style="position: absolute; border: 2px black solid; top: 0; right: 0; left: 0; bottom: 0;margin-left: 15px;" width="0" height="0"><!--  width="{{ getHG({x:1,y:1}).x}}" height="{{ getHG({x:1,y:1}).y}}"> -->
+			<!--<polyline points="{{record.homography.topLeftX}},{{record.homography.topLeftY}} 100,100"  style="stroke: red;stroke-width:3" /> -->
+			<!-- <line style="stroke:rgb(0,0,255);stroke-width:4;" x1="{{ getHGL($index).x }}" y1="{{ getHGL($index).y }}" x2="{{ getHGL($index+1 < record.homography.points.length ? $index+1 : 0).x }}" y2="{{ getHGL($index+1 < record.homography.points.length ? $index+1 : 0).y }}" ng-repeat="point in record.homography.points" />  -->
+			<line id="line-{{ $index }}" style="stroke:rgb(0,255,0);stroke-width:2;" x1="0" y1="0" x2="0" y2="0" ng-repeat="point in record.homography.points" /> 
+			<circle id="circle-{{ $index }}" fill="red" r="6" cx="0" cy="0" ng-repeat="point in record.homography.points" role="button" corner/>
+			<text id="corner-text" x="0" y="0" class="heavy" fill="black"></text>
+			
+
+			<rect id="ruler-rect" width="85" height="25" fill="white" fill-opacity="0.4"/>
+			<line id="ruler" style="stroke:rgb(224,191,7);stroke-width:8; display: none;" />
+			<!-- <line id="ruler-ticks" style="stroke:rgb(255,255,255);stroke-width:8; display: none;" stroke-dasharray="1,10" /> -->
+			<text id="ruler-text" x="0" y="0" class="heavy" fill="black"></text>
+		</svg>
+
+
+		<div class="form-inline form-group" style=" position: absolute; vertical-align: right; margin: 10px; top: 20px; right: 40px; background-color: #ffffff44; margin:0; padding:10px;border-radius: 4px;">
+			<span class="row-head" style="color: black;">Ruler :</span><input id="ruler-output" type="text"/><span style="vertical-align: bottom;">mm</span>
+		</div>
+
+		<!-- <div class="form-inline form-group" style="position: absolute; vertical-align: right; margin: 10px; bottom: 20px; right: 40px; background-color: #ffffff44; margin:0; padding:10px;border-radius: 4px;">
+			<span style="font-size: 16px;">Save Corners :<span class="glyphicon glyphicon-floppy-disk"/></span>
+		</div> -->
+
+		<div style="position: absolute; bottom: 60px; right: 40px">
+			<button class="btn btn-sm btn-standard" ng-click="resetCorners()">Reset Corners</button>
+			<button class="btn btn-sm btn-primary" ng-disabled="dirtyCorners === false" ng-click="saveCorners()">Save Corners : <span class="glyphicon glyphicon-floppy-disk"/></button>
+		</div>
+		<!-- <button class="btn btn-sm btn-primary" ng-disabled="dirtyCorners === false" style="position: absolute; bottom: 60px; right: 40px" ng-click="saveCorners()">Save Corners : <span class="glyphicon glyphicon-floppy-disk"/></button> -->
+
+	</div>
+</div>

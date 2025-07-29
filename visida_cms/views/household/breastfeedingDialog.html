@@ -1,0 +1,29 @@
+<div ng-show="selectedOccasion != null">
+	<!-- <div style="position: fixed; left: 0; right: 0; background-color: #000000aa; margin: 0; top: 0; bottom: 0;" class="h-100 row align-items-center" ng-click="showHelpDialog = false;">
+	</div> -->
+	<div style="position: fixed; left: 0; right: 0; margin: 0; background-color: #000000aa; top: 0; bottom: 0; display: flex;" class="h-100 row align-items-center">
+		<div class="floating-form col-xs-12 col-md-4" style="position: relative;">
+			<div style="padding-bottom: 3px;">
+				<span class="row-head">Breastfeeding Occasion</span>
+				<span class="glyphicon glyphicon-remove pull-right" style="font-size: 1.2em;" ng-click="selectedOccasion = null;" role="button">
+			</div>
+			<hr style="margin: 0px; margin-bottom: 5px;">
+			<div>
+				<form id="" ng-submit="saveOccasion(selectedOccasion)">
+					<table class="" style="border-spacing: 10px 2px;">
+						<tr><th>Date:</th><th><span>{{ selectedOccasion.localTimeStart | date : 'dd/MM/yyyy' }}</span></th></tr>
+						<tr><th>Start Time:</th><th><input class="form-control" type="text" ng-model="selectedOccasion.startTimeStr" placeholder="hh:mm"></th></tr>
+						<tr><th>End Time:</th><th><input class="form-control" type="text" ng-model="selectedOccasion.endTimeStr" placeholder="hh:mm"></th></tr>
+						<tr><th>Duration:</th><th><span>{{ selectedOccasion.duration }}</span></th></tr>
+						<tr><th>Finalized:</th><th><input type="checkbox" name="occasionFinalized" ng-model="selectedOccasion.finalized"></th></tr>
+					</table>
+					<div style="width: 100%; text-align: center; padding-top: 10px">
+						<input type="submit" value="Save" class="btn btn-sm btn-primary"/>
+						<button value="Delete" class="btn btn-sm btn-danger" ng-click="deleteOccasion(selectedOccasion)">Delete</button>
+						<button class="btn btn-standard btn-sm" type="button" data-dismiss="modal">Cancel</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

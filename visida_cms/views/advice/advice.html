@@ -1,0 +1,142 @@
+<div id="" ng-controller="adviceController" class="container">
+	<div class="row content">
+		<div class="col-xs-12 page-head">
+			<span class="">Food Item Advice</span>
+			<span class="glyphicon glyphicon-plus glyph-md pull-right" role="button" style="padding-left: 10px;" ng-click="showCreateDialog = true;" title="Create"></span>
+			<span class="glyphicon glyphicon-refresh glyph-md pull-right {{ (loading > 0) && 'loading-run' || 'loading-done' }}"></span>
+			<hr class="head-hr">
+		</div>
+		<div class="col-xs-12">
+			<form class="form-inline" ng-submit="searchFunction()">
+				<div style="padding: 5px 0px;">
+					<span style="font-weight: bolder;">Table: </span><select class="form-control" ng-model="searchTable" ng-options="t.id as t.name for t in fctables"><option value="">All Tables</option></select>
+					<span style="font-weight: bolder; margin-left: 15px;">Description: </span><input type="text" name="search" class="form-control" ng-model="search" style="width: 40%;">
+					<input type="submit" class="form-control btn btn-primary" value="Search">
+				</div>
+			</form>
+			<hr class="head-hr">
+		</div>
+		<div class="col-xs-12 text-center" ng-show="pageData.totalPages > 1" style="    margin-bottom: 0px;">
+			<ul class="pagination">
+				<li class="page-item {{ (pageData && pageData.hasPrev) ? '' : 'disabled' }}">
+					<a ng-if="pageData && pageData.hasPrev"
+					href="#!/advice?page={{ activePage - 1 }}{{ search ? '&search=' + search : '' }}" class="page-link">
+						Previous
+					</a>
+					<span ng-if="!pageData || !pageData.hasPrev" class="page-link">
+						Previous
+					</span>
+				</li>
+				<li class="page-item {{ (activePage == i) && 'active' || '' }}" ng-repeat="i in getPageNumber()">
+					<a href="#!/advice?page={{ i }}{{ search ? '&search=' + search : '' }}" class="page-link">{{ i }}</a>
+				</li>
+				<li class="page-item {{ (pageData && pageData.hasNext) ? '' : 'disabled' }}">
+					<a ng-if="pageData && pageData.hasNext" href="#!/advice?page={{ activePage + 1 }}{{ search ? '&search=' + search : '' }}" class="page-link">
+						Next
+					</a>
+					<span ng-if="!pageData || !pageData.hasNext" class="page-link">
+						Next
+					</span>
+				</li>
+			</ul>
+		</div>
+		<div class="col-xs-12">
+			<ul class="list-group data-list">
+				<li class="list-group-item row" style="background-color: #f1f3f4; border-radius: 0;">
+					<div class="col-md-4">
+						<span class="row-head">Description</span><br/>
+						<span>Suggested food items<br/></span>
+					</div>
+					<div class="col-md-4">
+						<span class="row-head">Issue</span><br/>
+					</div>
+					<div class="col-md-4">
+						<span class="row-head">Solution</span><br/>
+					</div>
+				</li>
+				<li class="list-group-item row" ng-repeat="item in records">
+					<div class="col-md-4">
+						<span class="row-head">{{item.description}}</span><br/>
+						<span ng-repeat="fi in item.suggestions">{{fi}}<br/></span>
+					</div>
+					<div class="col-md-4">
+						<p>{{item.issueDescription}}</p>
+					</div>
+					<div class="col-md-4">
+						<p>{{item.solutionDescription}}</p>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<!-- <div class="col-xs-12">
+			<div class="bordered-container row">
+				<div class="col-md-4">
+					<span class="row-head">Description</span><br/>
+					<span>Suggested food items<br/></span>
+				</div>
+				<div class="col-md-4">
+					<span class="row-head">Issue</span><br/>
+				</div>
+				<div class="col-md-4">
+					<span class="row-head">Solution</span><br/>
+				</div>
+			</div>
+			<div class="bordered-container row" ng-repeat="item in records">
+				<div class="col-md-4">
+					<span class="row-head">{{item.description}}</span><br/>
+					<span ng-repeat="fi in item.suggestions">{{fi}}<br/></span>
+				</div>
+				<div class="col-md-4">
+					<p>{{item.issueDescription}}</p>
+				</div>
+				<div class="col-md-4">
+					<p>{{item.solutionDescription}}</p>
+				</div>
+			</div>
+		</div> -->
+		<div style="position: fixed; left: 0; right: 0; padding: 0; top: 0; bottom: 0; margin: 0; display: flex; " class="h-100 row align-items-center" ng-show="showCreateDialog">
+			<div style="width: 100%; height: 100%; position: absolute; background-color: #00000066;" ng-click="showCreateDialog = false;"></div>
+			<div class="floating-form" style="position: relative;" ng-show="showCreateDialog">
+				<span class="row-head">Create Advice</span>
+				<hr style="margin: 0px; margin-bottom: 5px;">
+				<form ng-submit="createAdvice(newAdvice)">
+					<div class="form-group form-inline" style="display: table; margin-bottom: 5px;">
+						<span style="display: table-cell; vertical-align: middle; font-weight: bolder; padding-right: 10px;">Food Composition Table: </span>
+						<select name="table" class="form-control" ng-model="newAdvice.tableId" ng-options="t.id as t.name for t in fctables" ng-change="changeTable(newAdvice.tableId)"></select>
+					</div>
+					<hr style="margin: 0px; margin-bottom: 5px;">
+					<div class="form-group form-inline" style="display: table; margin-bottom: 5px;">
+						<span style="display: table-cell; vertical-align: middle; font-weight: bolder;">Description:</span>
+						<input id="newDescriptionInput" class="form-control pull-right" type="text" ng-model="newAdvice.description" placeholder="Vegetables Mixed">
+					</div>
+					<hr style="margin: 0px; margin-bottom: 5px;">
+					<div class="" style="display: inline-block;">
+						<span style="font-weight: bolder;">Issue:</span><br/>
+						<textarea ng-model="newAdvice.issueDescription" rows="10" class="col-xs-12" />
+					</div>
+					<div class="" style="display: inline-block;">
+						<span style="font-weight: bolder;">Assumption:</span><br/>
+						<textarea ng-model="newAdvice.solutionDescription" rows="10" class="col-xs-12" />
+					</div>
+					<hr style="padding: 0px; margin-bottom: 5px;">
+					<div class="">
+						<span style="font-weight: bolder;">Suggested Items:</span><br/>
+						<span ng-repeat="item in newAdvice.suggestions" class="btn-glyph" ng-click="removeNewFoodComposition($index)" style="padding: 3px 0px;" role="button">{{item}}<br/></span>
+						<div class="long-chosen-container" style="padding: 5px 0px">
+							<select id="newAdviceSuggestionSelect" chosen data-placeholder-text-single="'Select food item'" no-results-text="'No food items could be found'" ng-model="newAdviceSuggestion"
+								class="item-name align-middle" style="max-width: 400px; width: 400px;" ng-options="fi for fi in foodCompositions" ng-change="selectFoodComposition(newAdviceSuggestion)">
+							</select>
+						</div>
+					</div>
+					<hr style="margin: 5px; margin-bottom: 5px;">
+					<!-- <div class="{{ (createLoading ) && 'loader' || '' }}"></div> -->
+					<div style="width: 100%; text-align: center; padding-top: 5px; display: inline-block;">
+						<small class="text-danger" style="text-align: center; margin-bottom: 5px;">{{ createError }}</small><br/>
+						<input type="submit" value="Create" class="btn btn-sm btn-primary"/>
+						<button class="btn btn-standard btn-sm" ng-click="showCreateDialog = false;" type="button">Cancel</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

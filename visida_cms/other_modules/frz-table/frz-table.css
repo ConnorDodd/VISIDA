@@ -1,0 +1,75 @@
+
+.frz-table {
+	border-collapse: collapse;
+	table-layout: fixed;
+}
+
+.frz-header {
+	width: 100%;
+	position: relative;
+}
+.frz-header-fixed {
+	position: absolute;
+	top: 0;
+	left: 0;
+	overflow: hidden;
+	height: 100%;
+}
+.frz-header-free {
+	overflow: hidden;
+	width: 100%;
+}
+
+.frz-body {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	white-space: nowrap;
+}
+.frz-body-fixed {
+	position: absolute;
+	/*width: 120px;*/
+	top: 0;
+	left: 0;
+	bottom: 17px;
+	overflow: hidden;
+}
+.frz-body-free {
+	overflow-x: scroll;
+	overflow-y: scroll;
+	width: 100%;
+	height: 100%;
+}
+.frz-body-fixed .frz-table {
+	/*width: 100%;*/
+}
+.frz-header-free .frz-table {
+	display: inline-block;
+	margin-right: 16px;
+}
+.frz-header-fixed .frz-table {
+	height: 100%;
+}
+.frz-table thead tr {
+
+}
+
+.frz-table thead tr, .frz-table tbody tr {
+	background-color: white;
+}
+
+.frz-table tbody tr:nth-child(odd) {
+	background-color: blue;
+	color: white;
+}
+.frz-table th {
+	text-align: left;
+	padding: 4px;
+	border: 1px solid white;
+}
+.frz-table td {
+	white-space: nowrap;
+	overflow: hidden;
+	border: 1px solid black;
+	padding: 4px;
+}
