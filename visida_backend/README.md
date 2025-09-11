@@ -1,1 +1,1 @@
-[logo](../images/visida_header.png "VISIDA")
+![logo](../images/visida_header.png "VISIDA")
