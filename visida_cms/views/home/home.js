@@ -144,19 +144,6 @@ app.controller('homeController', ['$scope', 'Upload', 'configSettings', 'Restang
         }
     });
 
-    $scope.uploadAPK = function (apkFile) {
-        var file = Upload.rename(apkFile[0], apkFile[0].name);
-        var url = configSettings.baseUrl + '/Upload/PostAPK';
-        Upload.upload({
-            url: url,
-            data: { file: file }
-        }).then(function (result) {
-            alert("Yea that worked");
-        }, function (result) {
-            alert("Yea nah that wasn't so good ask connor");
-        });
-    };
-
     $scope.toggleAdmin = function () {
         $scope.admin = !$scope.admin;
     };

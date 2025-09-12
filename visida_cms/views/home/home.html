@@ -9,11 +9,6 @@
 			<ul class="list-group">
 				<li class="list-group-item list-group-item-header" ng-role="button" ng-click="showCommentDialog = true">Comments<span class="badge badge-primary badge-pill">{{ commentCount }}</span></li>
 				<a class="list-group-item" style="font-weight: {{ comment.unseen ? 'bold' : 'normal' }}" ng-repeat="comment in feedData.comments | limitTo:10" href="{{ comment.recordId ? '#!/image?id=' + comment.recordId : '#!/recipe?id=' + comment.recipeId }}">
-					<!-- <span style="color: #2980b9; font-weight: bold;" ng-if="comment.flag === 'Normal'">@</span>
-					<span class="glyphicon glyphicon-share-alt" style="color: #2980b9" ng-if="comment.flag === 'Reply'"/>
-					<span class="glyphicon glyphicon-exclamation-sign text-danger" ng-if="comment.flag === 'Warning'"/>
-					<span style="color: black;">{{ comment.text | limitTo : 34 }}{{ comment.text.length > 36 ? '...' : '' }} <span class="pull-right" style="font-style: italic;">{{ comment.createdTime | date : (comment.isToday ? 'hh:mm' : 'dd/MM/yy') }}</span>
-					</span> -->
 					<div>
 						<div>
 							<span>{{comment.authorName}}</span>
@@ -86,34 +81,4 @@
 		</div>
 	</div>
 	<comment-dialog></comment-dialog>
-    <!--
-	<div class="row spaced" ng-if="false">
-		<div class="has-hr col-xs-12">
-			<span class="page-head h3" style="padding: 0; padding-bottom: 8px;">Downloads</span>
-		</div>
-		<div class="spaced col-xs-12">
-			<table>
-				<tr>
-					<td><span class="row-head">English :</span></td>
-					<td><a href="{{ getUrl }}?isKhmer=false" class="btn btn-success" download>Download APK</a></td>
-				</tr>
-				<tr>
-					<td><span class="row-head">Khmer   :</span></td>
-					<td><a href="{{ getUrl }}?isKhmer=true" class="btn btn-success" download>Download APK</a></td>
-				</tr>
-			</table>
-		</div>
-	</div>
-	<br/><br/>
-	<div class="row rainbow" ng-if="getUser().username === 'josh'">
-		<h2><marquee>Hello {{ getUser().username }}!</marquee></h2>
-
-		<br/><br/>
-		<form ng-submit="uploadAPK(apkFile)" >
-			<div ngf-select="" role="button" ngf-drop ng-model="apkFile" ngf-multiple="true" ngf-pattern="pattern" ngf-accept="'.apk'" class="drop-box row" ngf-drag-over-class="dragover" ngf-allow-dir="true" style="width: 100%">
-				<span ng-show="!apkFile" style="vertical-align: middle; font-weight: bold;">Select or Drop Files</span>
-			</div>
-			<input type="submit" value="Submit">
-		</form>
-	</div> -->
 </div>
