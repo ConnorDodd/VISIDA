@@ -21,7 +21,7 @@ namespace VISIDA_API.Models
         public static async Task<Response> SendEmail(string to, string subject, string message, string fallback = "")
         {
             var client = new SendGridClient("<your api key here>");
-            var from = new EmailAddress("connor.dodd19@gmail.com", "VISIDA");
+            var from = new EmailAddress("noreply@visida.edu.au", "VISIDA");
             var address = new EmailAddress(to, "Visida User");
 
             var msg = MailHelper.CreateSingleEmail(from, address, subject, fallback, message);
