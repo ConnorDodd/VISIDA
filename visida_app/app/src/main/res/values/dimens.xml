@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="thumbnail_small_height">112dp</dimen>
+    <dimen name="thumbnail_small_width">150dp</dimen>
+    <dimen name="icon_small_square">48dp</dimen>
+    <dimen name="icon_mediuml_square">64dp</dimen>
+    <dimen name="icon_medium_large_square">72dp</dimen>
+</resources>

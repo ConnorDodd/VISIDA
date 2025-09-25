@@ -1,0 +1,10 @@
+inst_video_1 -> home page video
+inst_video_2 -> eating occasion video
+inst_video_3 -> finalise eating
+inst_video_4 -> cooking (recipe) video
+inst_video_5 -> notifications overall
+inst_video_6 -> notifications end of day
+inst_video_7 -> breastfeeding
+
+Note that there are invalid video files placed in the default res folder that are to not be used.
+Currently these mappings only exist for Swahili.

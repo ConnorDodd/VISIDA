@@ -1,0 +1,176 @@
+<resources>
+    <string name="app_name">VISIDA</string>
+    <string name="title_activity_record_audio">Record Audio</string>
+    <string name="title_activity_select_eating_occasion">Select Eating Occasion</string>
+    <string name="title_add_recipe">Add Recipe</string>
+    <string name="title_breastfeed">Breastfeed</string>
+    <string name="title_create_householdmember">Create Household Member</string>
+    <string name="title_create_recipe">Create Recipe</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_eating_occasion">Eating Occasion</string>
+    <string name="title_finalize_food_item">Finalise Food Item</string>
+    <string name="title_finalize_food_item_shared">Finalise Food Item - SHARED</string>
+    <string name="title_home">Home</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_review_day">Review Day</string>
+    <string name="title_select_household_member">Select Person</string>
+    <string name="title_settings">Settings</string>
+    <string name="title_setup_household">Setup Household</string>
+    <string name="title_take_photo">Take a Photo</string>
+    <string name="menu_home">Home</string>
+    <string name="menu_back">Back</string>
+    <string name="menu_help">Help</string>
+    <string name="submit">Submit</string>
+    <string name="capture">Capture</string>
+    <string name="picture">Take Picture</string>
+    <string name="record_start">Start Recording</string>
+    <string name="record">Record</string>
+    <string name="stop">Stop</string>
+    <string name="audio_accept">Accept</string>
+    <string name="audio_delete">Delete</string>
+    <string name="camera_error" translatable="false">This device doesn\'t support Camera2 API.</string>
+    <string name="request_permission_camera">This application requires permission to use the camera in order to record the food you eat.</string>
+    <string name="request_permission_audio">This application requires permission to use the microphone in order to record the audio description.</string>
+    <string name="breastfed">Breastfed</string>
+    <string name="name">Name</string>
+    <string name="age">Age</string>
+    <string name="months">Months</string>
+    <string name="years">Years</string>
+    <string name="error_name">Please enter the Name</string>
+    <string name="error_age">Please enter a valid Age</string>
+    <string name="no_image">No image taken. Please take a photo.</string>
+    <string name="enter_pin">Enter PIN</string>
+    <string name="pin_hint" translatable="false">PIN</string>
+    <string name="pin_value" translatable="false">0000</string>
+    <string name="setup_household_first_use_prompt">Click the plus button to add a new household member.</string>
+    <string name="setup_household_first_use_prompt_title">Add Household member</string>
+    <string name="food_item_added">Food Item Added</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="error_gender">Select a Gender</string>
+    <string name="cancel">Cancel</string>
+    <string name="minus">-</string>
+    <string name="plus">+</string>
+    <string name="householdid">Household ID</string>
+    <string name="participantid">Participant ID</string>
+    <string name="finalize_eo_notification_channel_name">Finalise Eating Occasion</string>
+    <string name="finalize_eo_notification_channel_description">Notification to remind user to finalise eating occasions.</string>
+    <string name="whattime"><u>Time you would like to finalise your day:\u0020</u> </string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="tick">\u2714</string>
+    <string name="cross">\u2716</string>
+    <string name="addIngredients">Add Ingredients</string>
+    <string name="finalize">Finalise</string>
+    <string name="recipes">Recipes</string>
+    <string name="recipe_name">Recipe Name</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="addIngredient">Add Ingredient</string>
+    <string name="recipe_saved">Recipe Saved</string>
+    <string name="ingredient_added">Ingredient Added</string>
+    <string name="addFoodItem">Add Food</string>
+    <string name="fooditems">Food Items</string>
+    <string name="eatingoccasionrecorded">Eating Occasion Recorded</string>
+    <string name="ateall">Ate All</string>
+    <string name="atemost">Ate Most</string>
+    <string name="didnteat">Didn\'t Eat</string>
+    <string name="finalize_fooditem_prompt">What Happened to this Food Item?</string>
+    <string name="delete_item">Delete Item</string>
+    <string name="delete_confirmation">Are you sure you want to delete this item?</string>
+    <string name="householdmember_deleted">Household member deleted.</string>
+    <string name="food_item_deleted">Food item deleted.</string>
+    <string name="ingredient_deleted">Ingredient deleted.</string>
+    <string name="edit">Edit</string>
+    <string name="take_final_image">Take Final Image</string>
+    <string name="take_final_image_message">Would you like to take a final image of the dish that you have just prepared?</string>
+    <string name="title_notification_review">Review your day</string>
+    <string name="title_notification_finalize_eating_occasion">Unfinalised Eating Occasion</string>
+    <string name="notification_review_text">Click here to review your days food record.</string>
+    <string name="recipe_locked">Recipe Locked</string>
+    <string name="record_review_notification_channel_name">Record Review</string>
+    <string name="record_review_notification_channel_description">Notification to prompt user to review their days Food Record</string>
+    <string name="notification_unfinalized_eating_occasion_text">Click here to finalise your eating occasions.</string>
+    <string name="instruction">Instruction</string>
+    <string name="about">About</string>
+    <string name="error_recipename">Recipe name required.</string>
+    <string name="recipe_name_required">A recipe name is required. Please record the recipe name.</string>
+    <string name="eat">Eat</string>
+    <string name="eating">EATING</string>
+    <string name="finalizeeat">Finalise Eating</string>
+    <string name="cook">Cook</string>
+    <string name="hmnotbreastfed">Household member is not breastfed.</string>
+    <string name="noeatingoccasions">No eating occasions to finalise.</string>
+    <string name="breastfeedcaptured">Breastfeed occasion captured.</string>
+    <string name="meal">Shared Plate</string>
+    <string name="snack">Own Plate</string>
+    <string name="eatanymore">The images above show what you ate throughout today. Did you eat anything else today?</string>
+    <string name="review_your_day">Review your day:</string>
+    <string name="dishes">Shared Dishes</string>
+    <string name="addDish">Add Dish</string>
+    <string name="mealrecorded">Meal Recorded</string>
+    <string name="ate">Ate</string>
+    <string name="leftover_prompt">Are there any leftovers for this dish?</string>
+    <string name="NO_PHOTO" translatable="false">NO_IMAGE</string>
+    <string name="NO_AUDIO" translatable="false">NO_AUDIO</string>
+    <string name="invalid_pin">Invalid PIN</string>
+    <string name="guests">Guests</string>
+    <string name="adultmale">Adult Male Guest(s)</string>
+    <string name="adultfemale">Adult Female Guest(s)</string>
+    <string name="child">Child Guest(s)</string>
+    <string name="no_leftovers">No Leftovers</string>
+    <string name="error_participant_household_id">Please enter a Household ID</string>
+    <string name="error_participant_id">Please enter a participant ID</string>
+    <string name="recipe_deleted">Recipe Deleted</string>
+    <string name="shared_plates">Shared Plates</string>
+    <string name="how_many_in_household">Not including yourself, how many people usually live in your household?</string>
+    <string name="how_many_adult_male">Number adult (≥18 years) males:</string>
+    <string name="how_many_adult_female">Number adult (≥18 years) females:</string>
+    <string name="how_many_childer">Number of children:</string>
+    <string name="setup_household">Setup Household</string>
+    <string name="exportdata">Export Data</string>
+    <string name="add_text_description_dialog_title" translatable="false">Add Text Description</string>
+    <string name="toast_food_item_description" translatable="false">Food Item Description:</string>
+    <string name="empty_text" translatable="false">Empty input not allowed. Please enter a description.</string>
+    <string name="error_participant_id_already_exists">Participant ID already Exists</string>
+    <string name="title_notification_reminder">Reminder!</string>
+    <string name="notification_reminder_text">Remember to record your food intake today.</string>
+    <string name="notification_reminder_child_text">Remember to record the food intake for yourself and your child today.</string>
+    <string name="notification_reminder_channel_name">Reminder</string>
+    <string name="notification_reminder_channel_description">Notification to remind users to record their dietary intake for that day.</string>
+    <string name="title_alert_schedule">Alert Schedule</string>
+    <string name="not_all_times_set">Not all times set. Please set each time and day.</string>
+    <string name="set_times">Set Reminders</string>
+    <string name="select_recipe">Select Recipe</string>
+    <string name="linkrecipe">Link Recipe</string>
+    <string name="yes_leftovers">Yes Leftovers</string>
+    <string name="no_recipes">No Saved Recipes</string>
+    <string name="notification_sensor_channel_name">Reminder to wear the Sensor</string>
+    <string name="notification_sensor_description">Don\'t forget to put the sensor on.</string>
+    <string name="notification_sensor_title">Reminder wear the Sensor</string>
+    <string name="notification_sensor_text">Don\'t forget to wear the wrist sensor</string>
+    <string name="consent_audio_transcribe" translatable="false">Did the participating adult female consent to voice recordings being used?</string>
+    <string name="consent_audio_transcribe_title" translatable="false">Consent Required</string>
+    <string name="notification_recipe_image_reminder_channel_name">Recipe Image Reminder</string>
+    <string name="notification_recipe_image_reminder_channel_description">Reminder to take the final image of a recorded recipe</string>
+    <string name="notification_title_recipe_image_reminder">Take image for recipe</string>
+    <string name="notification_text_recipe_image_reminder">Tap here to take the image of the completed dish.</string>
+    <!-- TODO - Translations here -->
+    <string name="expired">Expired</string>
+    <string name="expired_message">Your copy of this app has expired</string>
+    <string name="close_app">Close app</string>
+
+    <string-array name="life_stages">
+        <item>None</item>
+        <item>Pregnant</item>
+        <item>Breastfeeding</item>
+        <item>Pregnant &amp; Breastfeeding </item>
+    </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
+    <string name="day_complete">Day Complete</string>
+    <string name="calendar" translatable="false">Calendar</string> <!-- Just used for image content descriptions -->
+
+
+</resources>
+

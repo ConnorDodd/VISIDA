@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:orientation="horizontal"
+    android:paddingBottom="5dp"
+    tools:layout_editor_absoluteX="117dp"
+    tools:layout_editor_absoluteY="81dp">
+
+
+    <ImageView
+        android:id="@+id/imgFoodItemImage"
+        android:layout_width="@dimen/thumbnail_small_width"
+        android:layout_height="@dimen/thumbnail_small_height"
+        android:adjustViewBounds="false"
+        android:scaleType="fitCenter"
+        app:srcCompat="@drawable/ic_btn_camera" />
+</LinearLayout>
+

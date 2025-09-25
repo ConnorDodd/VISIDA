@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+    <color name="colorPrimary">#3f51b5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="control_background">#cc4285f4</color>
+    -->
+    <color name="colorPrimary">#475932</color>
+    <color name="colorPrimaryDark">#242D1B</color>
+    <color name="colorSeconday">#758367</color>
+    <color name="colorAccent">#9E3E3F</color>
+    <color name="control_background">#D6B8C6</color>
+    <color name="button_background">#475932</color>
+    <color name="text">#242424</color>
+
+    <color name="link">#0000ff</color>
+    <color name="white">#FFFFFF</color>
+    <color name="yellow">#FFFF00</color>
+    <color name="fuchsia">#FF00FF</color>
+    <color name="red">#ff0000</color>
+    <color name="opaque_red">#66ff0000</color>
+    <color name="notification_icon_red">#E5350D</color>
+    <color name="silver">#C0C0C0</color>
+    <color name="gray">#808080</color>
+    <color name="light_gray">#D3D3D3</color>
+    <color name="olive">#808000</color>
+    <color name="purple">#800080</color>
+    <color name="maroon">#800000</color>
+    <color name="aqua">#00ffff</color>
+    <color name="lime">#00FF00</color>
+    <color name="teal">#008080</color>
+    <color name="green">#008000</color>
+    <color name="blue">#0000FF</color>
+    <color name="navy">#000080</color>
+    <color name="black">#000000</color>
+</resources>

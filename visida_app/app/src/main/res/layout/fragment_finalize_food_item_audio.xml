@@ -1,0 +1,143 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="au.edu.newcastle.jnc985.visida.activity.FinalizeFoodItemFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/imgFoodItem"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:adjustViewBounds="true"
+            android:cropToPadding="false"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_home_black_24dp"
+            app:layout_constraintBottom_toTopOf="@+id/imgvAudioFile"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/imgvAudioFile"
+            android:layout_width="@dimen/icon_small_square"
+            android:layout_height="@dimen/icon_small_square"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:adjustViewBounds="false"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_btn_play"
+            app:layout_constraintBottom_toTopOf="@+id/txtQuestion"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imgFoodItem" />
+
+        <ImageView
+            android:id="@+id/imgHelp"
+            android:layout_width="@dimen/icon_small_square"
+            android:layout_height="@dimen/icon_small_square"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="4dp"
+            android:background="@drawable/ic_btn_megaphone"
+            android:elevation="1dp"
+            app:layout_constraintBottom_toBottomOf="@+id/txtQuestion"
+            app:layout_constraintEnd_toStartOf="@+id/txtQuestion"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/txtQuestion"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/txtQuestion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center_horizontal"
+            android:text="@string/finalize_fooditem_prompt"
+            android:textAppearance="@android:style/TextAppearance.Holo"
+            app:layout_constraintBottom_toTopOf="@+id/btnAteSome"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imgvAudioFile" />
+
+        <ui.AudioButton
+            android:id="@+id/btnAteAll"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="2dp"
+            android:background="@drawable/btn_square_border_audio"
+            android:drawableTop="@drawable/ic_btn_plate"
+            android:paddingTop="4dp"
+            android:text="@string/ateall"
+            android:textColor="@color/black"
+            app:audioFile="@raw/ab_rec_5"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnAteSome"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ui.AudioButton
+            android:id="@+id/btnAteSome"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="2dp"
+            android:background="@drawable/btn_square_border_audio"
+            android:drawableTop="@drawable/ic_btn_ate_most"
+            android:paddingTop="4dp"
+            android:text="@string/atemost"
+            android:textColor="@color/black"
+            app:audioFile="@raw/ab_rec_6"
+            app:layout_constraintEnd_toStartOf="@+id/btnAteNone"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/btnAteAll"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/btnAteAll" />
+
+        <ui.AudioButton
+            android:id="@+id/btnAteNone"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="2dp"
+            android:background="@drawable/btn_square_border_audio"
+            android:drawableTop="@drawable/ic_btn_ate_none"
+            android:paddingTop="4dp"
+            android:text="@string/didnteat"
+            android:textColor="@color/black"
+            app:audioFile="@raw/ab_rec_7"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/btnAteSome"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/btnAteSome" />
+
+        <ImageView
+            android:id="@+id/imgProfilePic"
+            android:layout_width="76dp"
+            android:layout_height="76dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
+            android:adjustViewBounds="true"
+            android:src="@drawable/ic_default_person"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

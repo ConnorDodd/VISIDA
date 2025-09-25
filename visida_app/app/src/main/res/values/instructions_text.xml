@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="instruction_mainactivity">
+        <item>
+            Select \'EATING\' for foods that are served on a separate plate/bowl for each person. This might include rice or noodles. Drinks or snacks that you eat by yourself or from your own plate can also be recorded here.
+        </item>
+        <!--<item>-->
+            <!--Select \'SHARED PLATE\' for foods that are served on plates that are shared by everyone eating. The foods are usually placed in the middle of the table or mat. This might include foods such as samlor, fruit, fish, vegetables, or meat.-->
+        <!--</item>-->
+        <item>
+           Select \‘FINALISE EATING\’ to record what happened to the food items (including drinks) you recorded earlier
+        </item>
+        <item>
+            Select \'COOK\' for capturing ingredients and recipes of meals and snacks that you prepare.
+        </item>
+        <item>
+            Select \'BREASTFEED\' if you need to record when you breastfeed for your child/ren. Note: this button will only appear if you are currently breastfeeding.
+        </item>
+        <item>
+            Select \'HELP\' to be provided with instructions on how to complete this step
+        </item>
+        <item>
+            Select \'HOME\' to go to the home screen of the app.
+        </item>
+        <item>
+            Select \'BACK\' to go to previous screen
+        </item>
+        <item>
+            Select the BELL to view notifications to finalize a meal or snack
+        </item>
+    </string-array>
+    <string-array name="instruction_selecthouseholdmemberactivity">
+        <item>
+            Select the person you wish to record a meal or snack for or to finalise the meal or snack.
+
+            Only one person can be selected at one time.
+            If more than one person is eating at this time, you will need to repeat this step of selecting the person
+        </item>
+        <item>
+            All the members of the household will be listed.
+            The presence of an * after the name indicates that the person has unfinalised eating occasions.
+            Select the person to finalise their meal or snack.
+        </item>
+    </string-array>
+    <string-array name="instruction_selecthouseholdmemberactivity_finalize">
+        <item>
+            Select the person you wish to record a meal or snack for or to finalise the meal or snack.
+
+            Only one person can be selected at one time.
+            If more than one person is eating at this time, you will need to repeat this step of selecting the person
+        </item>
+        <item>
+            All the members of the household will be listed.
+            The presence of an * after the name indicates that the person has unfinalised eating occasions.
+            Select the person to finalise their meal or snack.
+        </item>
+    </string-array>
+    <string-array name="instruction_selecthouseholdmemberactivity_breastfeed">
+        <item>
+            Select the person you wish to record a meal or snack for or to finalise the meal or snack.
+
+            Only one person can be selected at one time.
+            If more than one person is eating at this time, you will need to repeat this step of selecting the person
+        </item>
+        <item>
+            All the members of the household will be listed.
+            The presence of an * after the name indicates that the person has unfinalised eating occasions.
+            Select the person to finalise their meal or snack.
+        </item>
+    </string-array>
+    <string-array name="instruction_selecthouseholdmemberactivity_eat">
+        <item>
+            Select the person you wish to record a meal or snack for or to finalise the meal or snack.
+
+            Only one person can be selected at one time.
+            If more than one person is eating at this time, you will need to repeat this step of selecting the person
+        </item>
+        <item>
+            All the members of the household will be listed.
+            The presence of an * after the name indicates that the person has unfinalised eating occasions.
+            Select the person to finalise their meal or snack.
+        </item>
+    </string-array>
+    <string-array name="instruction_breastfeedactivity">
+         <item>
+            Select the person being breastfed.
+            Tap \'CAPTURE\' to record a breastfeeding occasion.
+            The breastfeeding occasion will be recorded and the app will return to the home screen.
+         </item>
+    </string-array>
+    <string-array name="instruction_cameraactivity">
+         <item>
+             Ensure that all food items (including drinks) and the reference marker are clearly visible in the view finder.  You can include more than one food or drink per image.
+         </item>
+        <item>
+            A blue cross will appear in the bottom centre of the screen. Place the reference marker in the centre and align the cross over the middle of the marker.
+        </item>
+        <item>
+            Next to blue cross will be two green/red-coloured dots will appear in the bottom right hand corner. The colour of the dots will change as the angle of the phone moves.
+            Move the phone until both dots are green.
+        </item>
+        <item>
+            Tap the camera button to take the image.
+         </item>
+        <item>
+            A preview of the image will appear.  If you are happy with the image, tap tick. To re-take the image tap cross.
+         </item>
+    </string-array>
+    <string-array name="instruction_audioactivity">
+         <item>
+            For each of the food items (including drinks) included in the image, capture a voice recording OR text description the following:
+            &lt;br /&gt;
+             a) Name of item(s), including the type (e.g. low fat milk)
+            &lt;br /&gt;
+            b) Any additions to the food that are not clearly visible (e.g. dressing, sauces).
+            &lt;br /&gt;
+            If making a voice recording, hold the phone close to the mouth.
+         </item>
+        <item>
+            Tap the microphone icon to start recording
+        </item>
+        <item>
+            Tap the button to stop recording
+        </item>
+        <item>
+           Tap the play button to playback the recording
+        </item>
+        <item>
+            To accept the voice recording, tap the green tick.
+        </item>
+        <item>
+            Tap the red cross to delete the current recording and re-record.
+        </item>
+    </string-array>
+    <string-array name="instruction_createrecipe">
+        <item>
+            Tap the microphone icon to start a voice recording or the ‘T’ icon to add a text description
+        </item>
+        <item>
+            Tap \'add ingredient\' to capture an image of the ingredients used. You can include multiple ingredients in one image.
+        </item>
+        <item>
+            Place the card next  food items (including drinks) in the bottom left-hand corner.
+            Ensure that all food items (including drinks) and the card are clearly visible in the view finder.
+            Two green/red dots will appear in the top right hand corner. The colour of the dots will change as the angle of the phone moves.
+            Move the phone until both dots are green. You can now take the image.
+            If you are happy with the image, tap \'accept\'. To re-take the image tap \'cancel\'.
+        </item>
+        <item>
+            Capture a voice recording to describe the name of item(s), including the type (e.g. red fish, snakefish).
+            Repeat until all ingredients are captured.
+        </item>
+        <item>
+            Click \'submit\' to finalise the recipe.
+            Capture a final image of the prepared dish
+        </item>
+    </string-array>
+    <string-array name="instruction_eatingoccasionactivity">
+         <item>
+                For each person eating you will be asked to collect an image of the food and/or drinks to be consumed followed by a brief voice recording describing the contents of the image.
+         </item>
+        <item>
+                Tap \'ADD FOOD\' to capture an image and a voice recording for meals and snacks eaten individually by one person.
+         </item>
+        <item>
+            Tap \'LINK RECIPE\' to link a recipe captured using the “COOK” feature.
+        </item>
+        <item>
+            From the list, select the Recipes which are being eaten during this eating occasion.
+            Tap the play Icon to listen to the name of the Recipe.
+            Tap Tick to confirm your selection or Cross to cancel.
+        </item>
+        <item>
+                Repeat the process for each person eating, until all foods and drinks are collected.  Don\'t forget to include second servings.
+         </item>
+        <item>
+                Each food item that has been captured will appear in the form of an image with an accompanying voice recording OR text description
+                Tap the audio/text icon to play the voice recording or see the text description for that image.
+                Tap and hold down on the image to delete the image and voice recording/text description of the food item.
+         </item>
+        <item>
+                When you have captured all food items (including drinks) for a meal and snack, tap \'Submit\'.
+         </item>
+    </string-array>
+    <string-array name="instruction_finalizefooditemactivity">
+        <item>
+            For foods and drinks collected using EATING
+            You will be asked to indicate what happened with the food and/or drink in each image that you collected BEFORE eating.
+
+            Use the buttons to indicate if you \'ATE ALL\', \'ATE MOST\', \'DIDN\'T EAT\'
+            If ATE MOST (not all the food and/or drinks in the image were consumed), you will be asked to capture an image and voice recording of the leftovers.
+         </item>
+        <!--<item>-->
+            <!--For foods and drinks collected using SHARED PLATES-->
+            <!--The first person to finalise their meal, will be asked to capture an image of any leftovers from the shared dishes that were served.-->
+            <!--Tap ‘yes leftovers’ if there are leftovers for the dish. You will be asked to collect an image and voice recording.-->
+            <!--Tap ‘no leftovers’ if the dish is not present.-->
+         <!--</item>-->
+        <!--<item>-->
+            <!--In total, how many adult males, adult females and children ate from this dish?-->
+            <!--Include those who are participating in this study.-->
+        <!--</item>-->
+        <!--<item>-->
+            <!--After the leftover image and voice recording has been collected for SHARED PLATES.-->
+            <!--You will then be ask for each person of the household participating in the study, if they ‘ATE’ or ‘DIDN’T EAT’ any of the dish.-->
+         <!--</item>-->
+    </string-array>
+    <string-array name="instruction_listrecipeactivity">
+          <item>
+            For any food items (including drinks) that you prepare to eat, record the recipe details. All recipe information collected using the app for the current day will be displayed here.
+         </item>
+        <item>
+            Tap to add a recipe information for meals and snacks that you prepare.
+         </item>
+        <item>
+            Recipes that have been captured throughout the day can be edited up until  End of Day Review. Tap \'edit\' to modify the ingredients.
+         </item>
+    </string-array>
+    <string-array name="instruction_selecteatingoccasionactivity">
+         <item>
+           Images and voice records or text descriptions collected before eating on ALL food and drink items, including all shared dishes,
+             will appear in the FINALISE EATING section.
+         </item>
+        <item>
+           Click on the \‘Finalise\’ button to finalise the eating occasion.
+         </item>
+    </string-array>
+    <string-array name="instruction_mealactivity">
+         <item>
+            For foods that are served on plates that are shared by everyone eating.
+            The foods are usually placed in the middle of the table or mat.
+            This might include foods such as samlor, fruit, fish, vegetables, or meat.
+        </item>
+        <item>
+            Tap \'ADD DISH\' to capture an image of all the shared dishes to be eaten at this meal or snack time.
+            Include one dish per image.
+            Ensure the card is placed next to the dish.
+        </item>
+        <item>
+            Capture a voice recording to describe the name of the dish to be shared that appears in the image.
+            Hold the phone close to the mouth when capturing the voice recording.
+        </item>
+        <item>
+            To add another dish, tap \'ADD DISH\'
+            Repeat the process for all shared dishes.
+            When all dishes to be shared at that meal or snack time have been collected, tap \'SUBMIT\'.
+        </item>
+
+    </string-array>
+    <string-array name="instruction_setuphouseholdctivity">
+         <item>
+             Tap the Plus button to add a Household member.
+         </item>
+    </string-array>
+    <string-array name="instruction_createhouseholdmember">
+         <item>
+                Tap the Camera Icon to take a profile picture.
+                Fill the form fields to describe the household member.
+                If the household member is &lt;5yo check wether they are breastfed or not.
+                Click Submit to add the household member.
+         </item>
+    </string-array>
+    <string-array name="instruction_recordreviewactivity">
+        <item>
+            At the end of each recording day you will receive a notification to review all the foods and drinks that have been collected throughout the day.
+        </item>
+        <item>
+            This page shows all the foods and drinks collected for a participant.
+            Scroll to review the entries.
+            Was anything else eaten or drunk today?
+            If there were any eating occasions which were not captured click "ADD FOOD"  ‘+’ to add a voice-only record.
+        </item>
+        <item>
+            Click the Microphone and describe any other food items you ate during the day that you did not already capture.
+            Please briefly describe the types and approximate amounts foods and drinks that you did not take images for at the time of eating/drinking.
+        </item>
+        <item>Click "DAY COMPLETE" if all foods and drinks eaten by that household member are shown on the screen or when you have finished making the voice recording of any forgotten foods or drinks.</item>
+    </string-array>
+    <string-array name="instruction_settingsactivity">
+         <item>
+             Tap Setup Household to add new household members.
+             Tap Export Data to export the data from the app. Exported data is saved at sdcard/Downloads
+             Tap about to see information about the app.
+        </item>
+    </string-array>
+    <string-array name="instruction_verify">
+        <item>No Instructions for Verify</item>
+    </string-array>
+</resources>

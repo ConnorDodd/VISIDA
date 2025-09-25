@@ -1,0 +1,67 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:4.1.3'
+        classpath "org.codehaus.groovy.modules.http-builder:http-builder:0.5.2"
+        
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+plugins {
+    id "io.github.http-builder-ng.http-plugin" version "0.1.1"
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        maven {url 'https://maven.google.com'}
+    }
+}
+
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.impl.client.HttpClientBuilder;
+def upload(apk){
+    println "Uploading APK To VISIDA Server..."
+
+    //Create HTTP Client
+    HttpClient client = HttpClientBuilder.create().build();
+
+    //Create Post Obeject
+    HttpPost httpPost = new HttpPost("https://visidaapi.azurewebsites.net/api/Upload/PostAPK")
+    //Create File Body
+    FileBody fileBody = new FileBody(apk)
+    //Get MultiPart Builder add the file
+    MultipartEntityBuilder builder = MultipartEntityBuilder.create()
+    //Add the file to the Body
+    builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
+    builder.addPart("apkfile", fileBody)
+
+    //Create the http entity.
+    HttpEntity entity = builder.build()
+    //Set the Entity for the post
+    httpPost.setEntity(entity);
+
+    //Execute the post
+    HttpResponse response = client.execute(httpPost)
+
+    println "Upload Completed with: "
+    println response.getStatusLine()
+}

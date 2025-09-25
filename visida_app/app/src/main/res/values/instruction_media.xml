@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Placeholder -->
+    <array name="inst_media_ph">
+        <item>@drawable/ic_info</item>
+    </array>
+
+    <array name="inst_media_ph_audio">
+        <item>@raw/inst_audio_v1</item>
+    </array>
+
+    <array name="inst_media_main">
+        <!--<item>@raw/video_home_cropped_converted</item>-->
+        <!--<item>@raw/video_notifications_finalise_meal_cropped_converted</item>-->
+        <item>@drawable/inst_main_ownplate</item>
+        <item>@drawable/inst_main_finalize</item>
+        <item>@drawable/inst_main_cook</item>
+        <item>@drawable/inst_main_breastfeed</item>
+        <item>@drawable/inst_main_help</item>
+        <item>@drawable/inst_main_home</item>
+        <item>@drawable/inst_main_back</item>
+        <item>@drawable/inst_main_notification</item>
+    </array>
+    <array name="inst_media_main_audio">
+        <!--<item>VIDEO PLACEHOLDER</item>-->
+        <!--<item>VIDEO PLACEHOLDER</item>-->
+        <item>@raw/inst_audio_v1</item>
+        <item>@raw/inst_audio_v3</item>
+        <item>@raw/inst_audio_v4</item>
+        <item>@raw/inst_audio_v5</item>
+        <item>@raw/inst_audio_v6</item>
+        <item>@raw/inst_audio_v7</item>
+        <item>@raw/inst_audio_v8</item>
+        <item>@raw/inst_audio_v9</item>
+    </array>
+
+    <array name="inst_media_select_household_member">
+        <item>@drawable/inst_select_hm</item>
+        <item>@drawable/inst_main_finalize</item>
+    </array>
+    <array name="inst_media_select_household_member_audio">
+        <item>@raw/inst_audio_v10</item>
+        <item>@raw/inst_audio_v11</item>
+    </array>
+
+    <array name="inst_media_select_household_member_finalize">
+        <item>@drawable/inst_select_hm</item>
+        <item>@drawable/inst_main_finalize</item>
+    </array>
+    <array name="inst_media_select_household_member_audio_finalize">
+        <item>@raw/inst_audio_v10</item>
+        <item>@raw/inst_audio_v11</item>
+    </array>
+
+    <array name="inst_media_select_household_member_breastfeed">
+        <item>@drawable/inst_select_hm</item>
+        <item>@drawable/inst_main_finalize</item>
+    </array>
+    <array name="inst_media_select_household_member_audio_breastfeed">
+        <item>@raw/inst_audio_v10</item>
+        <item>@raw/inst_audio_v11</item>
+    </array>
+
+    <array name="inst_media_select_household_member_eat">
+        <item>@drawable/inst_select_hm</item>
+        <item>@drawable/inst_main_finalize</item>
+    </array>
+    <array name="inst_media_select_household_member_audio_eat">
+        <item>@raw/inst_audio_v10</item>
+        <item>@raw/inst_audio_v11</item>
+    </array>
+
+    <array name="inst_media_breastfeed">
+        <item>@drawable/inst_breastfeed</item>
+    </array>
+    <array name="inst_media_breastfeed_audio">
+        <item>@raw/inst_audio_v45</item>
+    </array>
+
+    <array name="inst_media_record_audio">
+        <item>@drawable/inst_record_audio</item>
+        <item>@drawable/inst_record_audio_mic</item>
+        <item>@drawable/inst_record_audio_stop</item>
+        <item>@drawable/inst_record_audio_play</item>
+        <item>@drawable/inst_record_audio_tick</item>
+        <item>@drawable/inst_record_audio_cross</item>
+    </array>
+    <array name="inst_media_record_audio_audio">
+        <item>@raw/inst_audio_v21</item>
+        <item>@raw/inst_audio_v22</item>
+        <item>@raw/inst_audio_v23</item>
+        <item>@raw/inst_audio_v24</item>
+        <item>@raw/inst_audio_v25</item>
+        <item>@raw/inst_audio_v26</item>
+    </array>
+
+
+    <array name="inst_media_camera">
+        <item>@drawable/inst_fiducial_marker</item>
+        <item>@drawable/inst_camera_marker</item>
+        <item>@drawable/inst_camera_marker_dots</item>
+        <item>@drawable/inst_camera_take_picture</item>
+        <item>@drawable/inst_camera_preview</item>
+    </array>
+    <array name="inst_media_camera_audio">
+        <item>@raw/inst_audio_v17</item>
+        <item>@raw/inst_audio_v48</item>
+        <item>@raw/inst_audio_v49</item>
+        <item>@raw/inst_audio_v19</item>
+        <item>@raw/inst_audio_v20</item>
+    </array>
+
+    <array name="inst_create_recipe">
+        <!--<item>@raw/video_cook_cropped_converted</item>-->
+        <item>@drawable/inst_create_recipe_title</item>
+        <item>@drawable/inst_create_recipe_add_ingredient</item>
+        <item>@drawable/inst_fiducial_marker</item>
+        <item>@drawable/inst_create_recipe_audio</item>
+        <item>@drawable/inst_create_recipe_final_image</item>
+    </array>
+    <array name="inst_create_recipe_audio">
+        <!--<item>VIDEO PLACEHOLDER</item>-->
+        <item>@raw/inst_audio_v40</item>
+        <item>@raw/inst_audio_v41</item>
+        <item>@raw/inst_audio_v42</item>
+        <item>@raw/inst_audio_v43</item>
+        <item>@raw/inst_audio_v44</item>
+    </array>
+
+    <array name="inst_eating_occasion">
+        <!--<item>@raw/video_ownplate_cropped_converted</item>-->
+        <item>@drawable/inst_eating_occasion_main</item>
+        <item>@drawable/inst_eating_occasion_add</item>
+        <item>@drawable/inst_eating_occasion_link_recipe</item>
+        <item>@drawable/inst_eating_occasion_select_recipe</item>
+        <item>@drawable/inst_eating_occasion_select_hm</item>
+        <item>@drawable/inst_eating_occasion_with_items</item>
+        <item>@drawable/inst_eating_occasion_submit</item>
+    </array>
+    <array name="inst_eating_occasion_audio">
+        <!--<item>VIDEOPLACEHOLDER</item>-->
+        <item>@raw/inst_audio_v12</item>
+        <item>@raw/inst_audio_v13</item>
+        <item>@raw/inst_audio_v46</item>
+        <item>@raw/inst_audio_v47</item>
+        <item>@raw/inst_audio_v14</item>
+        <item>@raw/inst_audio_v15</item>
+        <item>@raw/inst_audio_v16</item>
+    </array>
+
+    <array name="inst_media_meal">
+        <!--<item>@raw/video_shared_plate_cropped_converted</item>-->
+        <item>@drawable/inst_main_sharedplate</item>
+        <item>@drawable/inst_meal_add</item>
+        <item>@drawable/inst_meal_activity_audio</item>
+        <item>@drawable/inst_meal_submit</item>
+    </array>
+    <array name="inst_media_meal_audio">
+        <!--<item>VIDEO PLACEHOLDER</item>-->
+        <item>@raw/inst_audio_v27</item>
+        <item>@raw/inst_audio_v28</item>
+        <item>@raw/inst_audio_v29</item>
+        <item>@raw/inst_audio_v30</item>
+    </array>
+
+    <array name="inst_media_select_eating_occasion">
+        <item>@drawable/inst_select_eating_occasion</item>
+        <item>@drawable/inst_select_eating_occasion_finalize</item>
+    </array>
+    <array name="inst_media_select_eating_occasion_audio">
+        <item>@raw/inst_audio_v31</item>
+        <item>@raw/inst_audio_v32</item>
+    </array>
+
+    <array name="inst_media_list_recipe">
+        <item>@drawable/inst_main_cook</item>
+        <item>@drawable/inst_fab</item>
+        <item>@drawable/inst_recipe_edit</item>
+    </array>
+    <array name="inst_media_list_recipe_audio">
+        <item>@raw/inst_audio_v37</item>
+        <item>@raw/inst_audio_v38</item>
+        <item>@raw/inst_audio_v39</item>
+    </array>
+
+    <array name="inst_media_finalize">
+        <item>@drawable/inst_finalise_ate_some_didnt_eat_ate_all</item>
+    </array>
+    <array name="inst_media_finalize_audio">
+        <item>@raw/inst_audio_v33</item>
+    </array>
+
+    <array name="inst_record_review">
+        <item>@drawable/inst_record_review</item>
+        <item>@drawable/inst_record_review_yes</item>
+        <item>@drawable/inst_record_review_audio</item>
+        <item>@drawable/inst_record_review_no</item>
+    </array>
+    <array name="inst_record_review_audio">
+        <!--<item>VIDEO PLACEHOLDER</item>-->
+        <item>@raw/inst_audio_v56</item>
+        <item>@raw/inst_audio_v53</item>
+        <item>@raw/inst_audio_v54</item>
+        <item>@raw/inst_audio_v55</item>
+    </array>
+
+</resources>

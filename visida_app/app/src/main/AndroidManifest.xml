@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="au.edu.newcastle.jnc985.visida">
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- Note: if you are using the camera by invoking an existing camera app, your application does not need to request this permission. -->
+    <uses-permission android:name="android.permission.CAMERA" /> <!-- To tag image with GPS location we need to access location -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- Used for checking the network is WIFI-->
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- required for uploading the data to CMS -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- To record voice descriptions we need the RECORD AUDIO permission -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" /> <!-- Needed only if your app targets Android 5.0 (API level 21) or higher. -->
+
+    <application
+        android:requestLegacyExternalStorage="true"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
+        <receiver android:name="notification.NotificationPublisher" />
+        <receiver android:name="notification.MediaBroadcastReceiver" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <activity
+            android:name=".activity.SelectHouseholdMemberActivity"
+            android:label="@string/title_select_household_member"
+            android:theme="@style/NoActionBar"
+            android:screenOrientation="portrait">
+
+            <!--
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="au.edu.newcastle.jnc985.visida.activity.MainActivity" />
+            -->
+        </activity>
+        <activity
+            android:name=".activity.MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.CameraActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/NoActionBar">
+
+            <!--
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="au.edu.newcastle.jnc985.visida.activity.SelectHouseholdMemberActivity" />
+            -->
+        </activity>
+        <activity
+            android:name=".activity.AudioActivity"
+            android:label="@string/title_activity_record_audio"
+            android:screenOrientation="portrait">
+
+            <!--
+            <meta-data
+                            android:name="android.support.PARENT_ACTIVITY"
+                            android:value="au.edu.newcastle.jnc985.visida.activity.CameraActivity" />
+            -->
+
+        </activity>
+        <activity
+            android:name=".activity.SelectEatingOccasionActivity"
+            android:label="@string/title_activity_select_eating_occasion"
+            android:screenOrientation="portrait">
+
+            <!--
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="au.edu.newcastle.jnc985.visida.activity.SelectHouseholdMemberActivity" />
+            -->
+        </activity>
+        <activity
+            android:name=".activity.FinalizeFoodItemActivity"
+            android:label="@string/title_finalize_food_item"
+            android:theme="@style/NoActionBar"
+            android:screenOrientation="portrait">
+
+            <!--
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="au.edu.newcastle.jnc985.visida.activity.SelectEatingOccasionActivity" />
+            -->
+        </activity>
+        <activity
+            android:name=".activity.SetupHouseholdActivity"
+            android:label="@string/title_setup_household"
+            android:screenOrientation="portrait">
+
+            <!--
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="au.edu.newcastle.jnc985.visida.activity.SettingsActivity" />
+            -->
+        </activity>
+        <activity
+            android:name=".activity.CreateHouseholdMemberActivity"
+            android:label="@string/title_create_householdmember"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan">
+
+            <!--
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="au.edu.newcastle.jnc985.visida.activity.SetupHouseholdActivity" />
+            -->
+        </activity>
+        <activity
+            android:name=".activity.BreastfeedActivity"
+            android:label="@string/title_breastfeed"
+            android:theme="@style/NoActionBar"
+            android:screenOrientation="portrait">
+
+            <!--
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="au.edu.newcastle.jnc985.visida.activity.MainActivity" />
+            -->
+        </activity>
+        <activity
+            android:name=".activity.SettingsActivity"
+            android:label="@string/title_settings"
+            android:screenOrientation="portrait">
+
+            <!--
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="au.edu.newcastle.jnc985.visida.activity.MainActivity" />
+            -->
+        </activity>
+        <activity
+            android:name=".activity.RecordReviewActivity"
+            android:label="@string/title_review_day"
+            android:screenOrientation="portrait">
+
+            <!--
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="au.edu.newcastle.jnc985.visida.activity.MainActivity" />
+            -->
+        </activity>
+        <activity
+            android:name=".activity.ListRecipesActivity"
+            android:label="@string/title_add_recipe"
+            android:screenOrientation="portrait">
+
+            <!--
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="au.edu.newcastle.jnc985.visida.activity.MainActivity" />
+            -->
+        </activity>
+        <activity
+            android:name=".activity.CreateRecipeActivity"
+            android:label="@string/title_create_recipe"
+            android:theme="@style/NoActionBar"
+            android:screenOrientation="portrait">
+
+            <!--
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="au.edu.newcastle.jnc985.visida.activity.ListRecipesActivity" />
+            -->
+        </activity> <!-- We are providing our own toolbar for this activity. Set theme to NoActionBar -->
+        <activity
+            android:name=".activity.EatingOccasionActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/NoActionBar" /> <!-- We are providing our own toolbar for this activity. Set theme to NoActionBar -->
+        <activity
+            android:name=".activity.MealActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/NoActionBar" />
+        <activity
+            android:name=".activity.SetupTimesActivity"
+            android:label="@string/title_alert_schedule"
+            android:screenOrientation="portrait" />
+        <activity android:name="instruction.InstructionActivity"
+            android:label="@string/instruction"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name="recordverification.RecordVerificationActivity"
+            android:screenOrientation="portrait"/>
+    </application>
+
+</manifest>

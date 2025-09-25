@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- \"&lt;b&gt;TEXT&lt;/b&gt;\" -->
+    <string-array name="instruction_mainactivity">
+        <item>
+            Error. This should be displaying a video.
+        </item>
+        <item>
+            Error. This should be displaying a video.
+        </item>
+        <item>
+            Error. This should be displaying a video.
+        </item>
+        <item>
+            Chagua \'\"&lt;b&gt;KULA\"&lt;/b&gt;\' kukusanya taarifa ya vyakula kabla ya kula.
+            Weka milo yote na asusa/vitafunwa, pamoja na vinywaji ambavyo vinaliwa kwa siku nzima.
+            Vyakula na vinywaji vinakusanywa tofauti kwa kila mtu anayeshiriki katika utafiti.
+        </item>
+        <item>
+            Chagua \'\"&lt;b&gt;KAMILISHA KULA\'\"&lt;/b&gt; kurekodi nini kimetokea kwa chakula hiki (pamoja na vinywaji) ulivyorekodi kutumia ‘KULA’
+        </item>
+        <item>
+           Chagua \'\"&lt;b&gt;KUPIKA\'\"&lt;/b&gt; kuchukua picha ya viungo na mapishi ya milo na asusa uliyotengeneza
+        </item>
+        <item>
+            Chagua \'\"&lt;b&gt;KUNYONYESHA\'\"&lt;/b&gt; kama unahitaji kurekodi unaponyonyesha mtoto au watoto wako.
+        </item>
+        <item>
+            Chagua \'\"&lt;b&gt;MSAADA\'\"&lt;/b&gt; kupata maelekezo ya namna ya kumaliza hatua hii
+        </item>
+        <item>
+            Chagua \'\"&lt;b&gt;NYUMBANI\'\"&lt;/b&gt; kwenda mwanzo wa app/programu
+        </item>
+        <item>
+            Chagua \'\"&lt;b&gt;RUDI\'\"&lt;/b&gt; kurudi kwenye hatua uliyopita
+        </item>
+        <item>
+            Chagua \'\"&lt;b&gt;KENGELE\'\"&lt;/b&gt; kuona taarifa ya kukamilisha mlo au asusa au kumalizia tathmini ya mwisho wa siku
+        </item>
+    </string-array>
+    <string-array name="instruction_selecthouseholdmemberactivity">
+        <item>
+           Wanakaya wote wataorodheshwa
+
+            Chagua mtu unayetaka kurekodi mlo au asusa au kukamilisha mlo au asusa
+
+            Ni mtu mmoja tu anaweza kuchaguliwa kwa wakati mmoja. Kama kuna zaidi ya mmoja anakula wakati huu, utahitajika kurudia hatua hii.
+        </item>
+        <item>
+             Kuwapo kwa alama ya nyota (*) baada ya jina inaonesha kwamba mtu huyo hajakamilisha tukio la kula Chagua huyo mtu kukamilisha mlo au asusa
+        </item>
+    </string-array>
+    <string-array name="instruction_selecthouseholdmemberactivity_finalize">
+        <item>
+            Error. This should be displaying a video.
+        </item>
+        <item>
+           Wanakaya wote wataorodheshwa
+
+            Chagua mtu unayetaka kurekodi mlo au asusa au kukamilisha mlo au asusa
+
+            Ni mtu mmoja tu anaweza kuchaguliwa kwa wakati mmoja. Kama kuna zaidi ya mmoja anakula wakati huu, utahitajika kurudia hatua hii.
+        </item>
+        <item>
+             Kuwapo kwa alama ya nyota (*) baada ya jina inaonesha kwamba mtu huyo hajakamilisha tukio la kula Chagua huyo mtu kukamilisha mlo au asusa
+        </item>
+    </string-array>
+    <string-array name="instruction_selecthouseholdmemberactivity_breastfeed">
+        <item>
+            Error. This should be displaying a video.
+        </item>
+        <item>
+           Wanakaya wote wataorodheshwa
+
+            Chagua mtu unayetaka kurekodi mlo au asusa au kukamilisha mlo au asusa
+
+            Ni mtu mmoja tu anaweza kuchaguliwa kwa wakati mmoja. Kama kuna zaidi ya mmoja anakula wakati huu, utahitajika kurudia hatua hii.
+        </item>
+        <item>
+             Kuwapo kwa alama ya nyota (*) baada ya jina inaonesha kwamba mtu huyo hajakamilisha tukio la kula Chagua huyo mtu kukamilisha mlo au asusa
+        </item>
+    </string-array>
+    <string-array name="instruction_selecthouseholdmemberactivity_eat">
+        <item>
+            Error. This should be displaying a video.
+        </item>
+        <item>
+           Wanakaya wote wataorodheshwa
+
+            Chagua mtu unayetaka kurekodi mlo au asusa au kukamilisha mlo au asusa
+
+            Ni mtu mmoja tu anaweza kuchaguliwa kwa wakati mmoja. Kama kuna zaidi ya mmoja anakula wakati huu, utahitajika kurudia hatua hii.
+        </item>
+        <item>
+             Kuwapo kwa alama ya nyota (*) baada ya jina inaonesha kwamba mtu huyo hajakamilisha tukio la kula Chagua huyo mtu kukamilisha mlo au asusa
+        </item>
+    </string-array>
+    <string-array name="instruction_breastfeedactivity">
+        <item>
+            Error. This should be displaying a video.
+        </item>
+         <item>
+             Chagua mtu anayenyonyeshwa. Bonyeza  \"&lt;b&gt;KAMATA \"&lt;/b&gt; kurekodi tukio la unyonyeshaji. Tukio la unyonyeshaji litarekodiwa na app/programu itarudia kwenye skrini yake ya nyumbani au ya mwanzo.
+         </item>
+    </string-array>
+    <string-array name="instruction_cameraactivity">
+        <item>
+            Error. This should be displaying a video.
+        </item>
+         <item>
+             Hakikisha kwa vipengele vyote vya chakula (pamoja na vinywaji) na kadi ya alama ya rejea vinaonekana vizuri katika skrini ya kuonea. Unaweza kuweka zaidi ya chakula kimoja au kinywaji katika picha.
+         </item>
+        <item>
+            Msalaba wa rangi ya bluu utatokea sehemu ya chini katikati ya skrini. Weka kadi ya alama ya rejea katikati na weka msalaba juu katikati ya alama ya rejea
+        </item>
+        <item>
+            Karibu na msalaba wa rangi ya bluu kutakuwa na vidoti viwili vya rangi ya kijani au nyekundu vitatokea chini kwenye kona ya mkono wa kulia. Rangi ya vidoti inabadilika kutokana na simu inavyosogea. Sogeza simu hadi vidoti vyote viwili vimekuwa vya kijani.
+        </item>
+        <item>
+            Bonyeza kitufe cha kamera kupiga picha.
+         </item>
+        <item>
+           Mwonekano wa picha utatokea. Kama unafurahia jinsi inavyoonekana picha, bonyeza alama ya tiki. Kuchukua picha ingine bonyeza alama ya x.
+         </item>
+    </string-array>
+    <string-array name="instruction_audioactivity">
+         <item>
+            Kwa kila kipengele cha chakula (pamoja na vinywaji) vilivyo katika picha, rekodi sauti kuelezea yafuatayo: a) Jina la kipengele/vipengele, pamoja na aina (mfano ugali wa dona, wali wa nazi, wali wa maji) b) nyongeza yoyote ambayo hainokeni vizuri (mfano michuzi) Shika simu karibu na mdomo wakati unarekodi sauti.
+         </item>
+        <item>
+           Bonyeza alama ya kipaza sauti kuanza kurekodi.
+        </item>
+        <item>
+            Bonyeza \"&lt;b&gt;ACHA&lt;/b&gt;\" kama umemaliza kurekodi
+        </item>
+        <item>
+            Bonyeza kitufe cha \'play\' kusikiliza rekodi yako
+        </item>
+        <item>
+            Kuikubali rekodi ya sauti, bonyeza tiki ya rangi ya kijani.
+        </item>
+        <item>
+            Bonyeza alama nyekundu ya x kufuta rekodi ya sauti uliyorekodi na kurekodi upya.
+        </item>
+    </string-array>
+    <string-array name="instruction_createrecipe">
+        <item>
+            Error. This should be displaying a video.
+        </item>
+        <item>
+            Bonyeza kipaza sauti kurekodi kwa sauti jina la chakula au mapishi. Bonyeza kipaza sauti kurekodi kwa sauti jina la pishi. Kama umemaliza kurekodi bonyeza ‘acha’
+        </item>
+        <item>
+           Bonyeza \'ongeza kiungo\' au \'+\' kupiga picha na kurekodi sauti ya viungo vilivyotumika. Unaweza kuweka viungo vingi katika picha moja. Rudia hadi viungo vyote viwe vimepigwa picha.
+        </item>
+        <item>
+            Weka kadi pembeni ya chakula (pamoja na vinywaji) chini kwenye kona ya mkono wa kushoto. Hakikisha vyakula vyote (pamoja na vinywaji) na kadi vinaonekana vizuri katika skrini ya kuonea.
+            Doti mbili za kijani/nyekundu zitatokea juu kwenye kona ya kulia. Rangi ya doti itabadilika kadiri simu inavyosogea.
+            Sogeza simu hadi doti zote mbili ziwe za kijani. Unaweza sasa kupiga picha. Kama unafurahia picha bonyeza \'\u2714\'.
+            Kupiga picha ingine bonyeza ‘x
+        </item>
+        <item>
+            Rekodi kwa sauti kuelezea jina la chakula/vinywaji, pamoja na aina. Rudia, hadi picha na rekodi za sauti za viungo vyote zimekusanywa.
+        </item>
+        <item>
+            Ukishamaliza kukusanya picha na rekodi za sauti ya mafaili yote, bonyeza \'\u2714\' kukamilisha mapishi. Utaambiwa uchukue picha ya mwisho ya chakula ulichopika.
+        </item>
+    </string-array>
+    <string-array name="instruction_eatingoccasionactivity">
+        <item>
+            Error. This should be displaying a video.
+        </item>
+         <item>
+             Kwa kila mtu anayekula utahitajika kukusanya picha ya chakula na/au vinywaji vitakavyoliwa ikifuatiwa na rekodi ya sauti ikielezea yaliyomo katika picha
+         </item>
+        <item>
+            Bonyeza \"&lt;b&gt;ONGEZA CHAKULA&lt;/b&gt;\" au ‘+’ kupiga picha na kurekodi sauti ya milo na asusa kila kimoja peke yake vinavyoliwa na mtu mmoja
+         </item>
+        <item>
+           Bonyeza ‘UNGANISHA MAPISHI’ au ‘ALAMA YA UNGANISHA’ kuunganisha mapishi ya chakula ulichotengeneza nyumbani uliyokusanya kwa kutumia kitufe cha ‘KUPIKA’
+        </item>
+        <item>
+            Kutoka kwenye hii orodha, chagua mapishi ambayo yameliwa wakati wa tukio hili la kula.
+            Bonyeza kitufe cha sauti kusikiliza jina la pishi.
+            Bonyeza kubali kuhakiki chaguo lako au hapana kukataa.
+        </item>
+        <item>
+            Rudia mchakato kwa kila mtu anayekula, hadi vyakula vyote na vinywaji vimekusanywa. Usisahau kujumuisha nyongeza ya chakula.
+         </item>
+        <item>
+            Kwa kila mtu, kipengele cha chakula kilichopigwa picha kitaonekana kwa namna ya picha kikiambatana na rekodi ya sauti.
+            Bonyeza kitufe kinachoonesha rekodi ya sauti kusikiliza sauti iliyorekodiwa ya hiyo picha.
+            Bonyeza na shikilia chini kwenye picha kufuta picha na rekodi ya sauti ya kipengele cha chakula.
+        </item>
+        <item>
+            Ukichukua picha za vipengele vyote vya chakula (pamoja na vinywaji) kwa mlo na asusa, bonyeza ‘TUMA’ au \u2714
+         </item>
+    </string-array>
+    <string-array name="instruction_finalizefooditemactivity">
+        <item>
+            Error. This should be displaying a video.
+        </item>
+        <item>
+            "Kwa vyakula na vinywaji vilivyokusanywa kutumia \'\"&lt;b&gt;SAHANI YAKO MWENYEWE\"&lt;/b&gt;\'
+            Utaulizwa kuonesha nini kimetokea kwenye chakula na/au kinywaji kwa kila picha ambayo uliikusanya KABLA ya kula.
+
+            Tumia vitufe kuonesha kama
+            \'UMEKULA/AMEKULA CHOTE\'
+            \'UMEKULA/AMEKULA KINGI\'
+            \'SIKULA/HAKULA\'
+
+            Kama UMEKULA/AMEKULA KINGI (si chakula chote na/au vinywaji katika picha vimeliwa), utaambiwa upige picha na urekodi sauti ya mabaki ya chakula na/au vinywaji.
+         </item>
+    </string-array>
+    <string-array name="instruction_listrecipeactivity">
+        <item>
+            Error. This should be displaying a video.
+        </item>
+          <item>
+              "Kwa kila kipengele cha chakula (pamoja na vinywaji) ambavyo umevitengeneza, rekodi maelezo ya mapishi.
+
+              Taarifa zote za mapishi zilizokusanywa kupitia hii app/programu kwa siku hii zitaonekana hapa"
+          </item>
+        <item>
+            Bonyeza kuongeza maelezo ya mapishi kwa milo na asusa ulizotengeneza
+         </item>
+        <item>
+            Mapishi uliyoyaingiza kwa siku nzima yanaweza kuhaririwa/kurekebishwa hadi wakati wa tathmini ya mwisho wa siku. Bonyeza \'HARIRI\' kurekebisha viungo.
+         </item>
+    </string-array>
+    <string-array name="instruction_selecteatingoccasionactivity">
+        <item>
+            Error. This should be displaying a video.
+        </item>
+         <item>
+            Picha na rekodi za sauti zilizokusanywa kabla ya kula za vyakula vyote na vinywaji, pamoja na vyakula mlivyokula kwa pamoja, vitatokea kwenye sehemu ya \'KUKAMILISHA KULA\'
+         </item>
+        <item>
+            Bonyeza kitufe cha \"&lt;b&gt;KAMILISHA&lt;/b&gt;\" ili kukamilisha tukio la kula
+         </item>
+    </string-array>
+    <string-array name="instruction_mealactivity">
+         <item>EMPTY</item>
+         <item>EMPTY</item>
+         <item>EMPTY</item>
+         <item>EMPTY</item>
+         <item>EMPTY</item>
+    </string-array>
+    <string-array name="instruction_setuphouseholdctivity">
+         <item>
+             CURRENTLY NO INSTRUCTIONS FOR SETUP HOUSEHOLD
+         </item>
+    </string-array>
+    <string-array name="instruction_createhouseholdmember">
+         <item>
+                CURRENTLY NO INSTRUCTIONS FOR CREATE HOUSEHOLD MEMBMER
+         </item>
+    </string-array>
+    <string-array name="instruction_recordreviewactivity">
+        <item>
+            Mwisho wa kila siku ya kurekodi utapokea taarifa kutathmini vyakula na vinywaji vyote ulivyokusanya siku nzima.
+        </item>
+        <item>
+            Ukurasa huu unaonesha vyakula vyote na vinywaji vilivyokusanywa na mshiriki.
+            Pandisha juu au chini kutathmini ulivyoingiza.
+            Kuna kingine chochote kimeliwa au kunywewa leo?
+            Kama kuna tukio lolote la kula ambalo halikuchukuliwa leo bonyeza “ONGEZA CHAKULA” au + kuongeza rekodi ya sauti tuu.
+        </item>
+        <item>
+            Bonyeza kipaza sauti na eleza kipengele chochote cha chakula ambacho umekula leo na haukuwa umekiingiza.
+
+            Tafadhali elezea kwa ufupi aina na kadirio la kiasi cha vyakula na vinywaji ambavyo hukuchukua picha wakati unakula au unakunywa.
+        </item>
+        <item>
+            Bonyeza “SIKU IMEKAMILIKA” kama vyakula na vinywaji vyote vilivyoliwa na mwanakaya vinaonekana katika skrini au kama umemaliza kurekodi kwa sauti kwa vyakula au vinywaji vilivyosahaulika.
+        </item>
+    </string-array>
+    <string-array name="instruction_settingsactivity">
+         <item>
+             CURRENTLY NO INSTRUCTIONS FOR SETTINGS
+        </item>
+    </string-array>
+</resources>

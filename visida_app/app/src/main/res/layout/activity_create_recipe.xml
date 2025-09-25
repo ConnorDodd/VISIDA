@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="au.edu.newcastle.jnc985.visida.activity.CreateRecipeActivity">
+
+    <include
+        android:id="@+id/customToolbar"
+        layout="@layout/toolbar_title_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:contentInsetStart="0dp"
+        app:layout_constraintBottom_toTopOf="@id/txtRecipename"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!--Include the bottom Toolbar (do this for everypage) -->
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+    <TextView
+        android:id="@+id/txtIngredients"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/rounded_corner"
+        android:gravity="center"
+        android:text="@string/ingredients"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toTopOf="@+id/rvIngredientList"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imgAudioFile" />
+
+    <TextView
+        android:id="@+id/txtRecipename"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/rounded_corner"
+        android:gravity="center"
+        android:text="@string/recipe_name"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toTopOf="@+id/imgAudioFile"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/customToolbar"
+        app:layout_constraintVertical_chainStyle="spread" />
+
+    <ImageView
+        android:id="@+id/imgAudioFile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:adjustViewBounds="false"
+        android:minHeight="@dimen/thumbnail_small_height"
+        android:minWidth="@dimen/thumbnail_small_width"
+        android:scaleType="centerCrop"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/txtIngredients"
+        app:layout_constraintEnd_toStartOf="@+id/imgRecordAudioBtn"
+        app:layout_constraintHorizontal_bias="0.4"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtRecipename"
+        app:srcCompat="@drawable/ic_audio_file" />
+
+    <ImageView
+        android:id="@+id/imgRecordAudioBtn"
+        android:layout_width="100dp"
+        android:layout_height="0dp"
+        android:outlineProvider="bounds"
+        android:elevation="1dp"
+        app:layout_constraintBottom_toBottomOf="@+id/imgAudioFile"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/imgAudioFile"
+        app:layout_constraintTop_toTopOf="@+id/imgAudioFile"
+        android:background="@drawable/ic_btn_microphone" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvIngredientList"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:scrollbars="vertical"
+        android:fadeScrollbars="false"
+        app:layout_constraintBottom_toTopOf="@id/btnFinish"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtIngredients">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <Button
+        android:id="@+id/btnAddIngredient"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:layout_marginEnd="2dp"
+        android:layout_marginBottom="2dp"
+        android:background="@drawable/btn_square_border"
+        android:drawableTop="@drawable/ic_btn_plus"
+        android:drawableTint="@color/black"
+        android:paddingTop="4dp"
+        android:textColor="@color/black"
+        android:text="@string/addIngredient"
+        app:layout_constraintEnd_toStartOf="@id/btnFinish"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/container"
+        app:layout_constraintTop_toBottomOf="@id/rvIngredientList"/>
+
+    <Button
+        android:id="@+id/btnFinish"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:layout_marginEnd="2dp"
+        android:layout_marginBottom="2dp"
+        android:paddingTop="4dp"
+        android:background="@drawable/btn_square_border"
+        android:textColor="@color/black"
+        android:drawableTop="@drawable/ic_btn_tick"
+        android:drawableTint="@color/black"
+        android:text="@string/submit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btnAddIngredient"
+        app:layout_constraintTop_toBottomOf="@id/rvIngredientList"
+        app:layout_constraintBottom_toTopOf="@id/container"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

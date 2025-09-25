@@ -1,0 +1,725 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 7,
+    "identityHash": "9c840a1a5643563b78f65be73f6450ff",
+    "entities": [
+      {
+        "tableName": "Household",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`householdId` TEXT NOT NULL, `country` TEXT, `creationTime` TEXT, `exportTime` TEXT, `finalizeTime` TEXT, `consent` INTEGER NOT NULL, PRIMARY KEY(`householdId`))",
+        "fields": [
+          {
+            "fieldPath": "householdId",
+            "columnName": "householdId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "country",
+            "columnName": "country",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "creationTime",
+            "columnName": "creationTime",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "exportTime",
+            "columnName": "exportTime",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "finalizeTime",
+            "columnName": "finalizeTime",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "consent",
+            "columnName": "consent",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "householdId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "HouseholdMember",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uid` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `householdId` TEXT, `participantHouseholdId` TEXT, `name` TEXT, `participantHouseholdMemberId` TEXT, `avatar` TEXT, `age` INTEGER NOT NULL, `isFemale` INTEGER NOT NULL, `isMother` INTEGER NOT NULL, `isBreastfed` INTEGER NOT NULL, `lifeStage` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "uid",
+            "columnName": "uid",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "householdId",
+            "columnName": "householdId",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "participantHouseholdId",
+            "columnName": "participantHouseholdId",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "participantHouseholdMemberId",
+            "columnName": "participantHouseholdMemberId",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "avatar",
+            "columnName": "avatar",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "age",
+            "columnName": "age",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isFemale",
+            "columnName": "isFemale",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isMother",
+            "columnName": "isMother",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isBreastfed",
+            "columnName": "isBreastfed",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lifeStage",
+            "columnName": "lifeStage",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "uid"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "FoodRecord",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`foodRecordId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `householdMemberId` INTEGER NOT NULL, `reviewed` INTEGER NOT NULL, `date` TEXT, FOREIGN KEY(`householdMemberId`) REFERENCES `HouseholdMember`(`uid`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "foodRecordId",
+            "columnName": "foodRecordId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "householdMemberId",
+            "columnName": "householdMemberId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "reviewed",
+            "columnName": "reviewed",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "date",
+            "columnName": "date",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "foodRecordId"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "hmId",
+            "unique": false,
+            "columnNames": [
+              "householdMemberId"
+            ],
+            "createSql": "CREATE  INDEX `hmId` ON `${TABLE_NAME}` (`householdMemberId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "HouseholdMember",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "householdMemberId"
+            ],
+            "referencedColumns": [
+              "uid"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "EatingOccasion",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`eatingOccasionId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `foodRecordId` INTEGER NOT NULL, `startTime` TEXT, `endTime` TEXT, `finalized` INTEGER NOT NULL, `isBreastfeedOccasion` INTEGER NOT NULL, `hasCondiments` INTEGER NOT NULL, `recipeIds` TEXT, FOREIGN KEY(`foodRecordId`) REFERENCES `FoodRecord`(`foodRecordId`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "eatingOccasionId",
+            "columnName": "eatingOccasionId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "foodRecordId",
+            "columnName": "foodRecordId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "startTime",
+            "columnName": "startTime",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "endTime",
+            "columnName": "endTime",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "finalized",
+            "columnName": "finalized",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isBreastfeedOccasion",
+            "columnName": "isBreastfeedOccasion",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hasCondiments",
+            "columnName": "hasCondiments",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "recipeIds",
+            "columnName": "recipeIds",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "eatingOccasionId"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "FrId",
+            "unique": false,
+            "columnNames": [
+              "foodRecordId"
+            ],
+            "createSql": "CREATE  INDEX `FrId` ON `${TABLE_NAME}` (`foodRecordId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "FoodRecord",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "foodRecordId"
+            ],
+            "referencedColumns": [
+              "foodRecordId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "FoodItem",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`foodItemId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `eatingOccasionId` INTEGER NOT NULL, `mealId` INTEGER NOT NULL, `imageUrl` TEXT, `leftoverImageUrl` TEXT, `description` TEXT, `captureTime` TEXT, `finalizeTime` TEXT, `finalized` INTEGER NOT NULL, `audioUrls` TEXT, `leftoverAudioUrls` TEXT, `didnteat` INTEGER NOT NULL, `leftoverDescription` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "foodItemId",
+            "columnName": "foodItemId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "eatingOccasionId",
+            "columnName": "eatingOccasionId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mealId",
+            "columnName": "mealId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "imageUrl",
+            "columnName": "imageUrl",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "leftoverImageUrl",
+            "columnName": "leftoverImageUrl",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "captureTime",
+            "columnName": "captureTime",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "finalizeTime",
+            "columnName": "finalizeTime",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "finalized",
+            "columnName": "finalized",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "audioUrls",
+            "columnName": "audioUrls",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "leftoverAudioUrls",
+            "columnName": "leftoverAudioUrls",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "didnteat",
+            "columnName": "didnteat",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "leftoverDescription",
+            "columnName": "leftoverDescription",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "foodItemId"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "FoodItemId",
+            "unique": false,
+            "columnNames": [
+              "foodItemId"
+            ],
+            "createSql": "CREATE  INDEX `FoodItemId` ON `${TABLE_NAME}` (`foodItemId`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "Recipe",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`recipeId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `captureTime` TEXT, `recipeNameAudioUrl` TEXT, `recipeNameText` TEXT, `finalImageUrl` TEXT, `methodAudioUrl` TEXT, `isLocked` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "recipeId",
+            "columnName": "recipeId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "captureTime",
+            "columnName": "captureTime",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "recipeNameAudioUrl",
+            "columnName": "recipeNameAudioUrl",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "recipeNameText",
+            "columnName": "recipeNameText",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "finalImageUrl",
+            "columnName": "finalImageUrl",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "methodAudioUrl",
+            "columnName": "methodAudioUrl",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "isLocked",
+            "columnName": "isLocked",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "recipeId"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "IngredientCapture",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`ingredientId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `recipeId` INTEGER NOT NULL, `imageUrl` TEXT, `audioUrl` TEXT, `description` TEXT, `captureTime` TEXT, FOREIGN KEY(`recipeId`) REFERENCES `Recipe`(`recipeId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "ingredientId",
+            "columnName": "ingredientId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "recipeId",
+            "columnName": "recipeId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "imageUrl",
+            "columnName": "imageUrl",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "audioUrl",
+            "columnName": "audioUrl",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "captureTime",
+            "columnName": "captureTime",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "ingredientId"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "ingredientId",
+            "unique": false,
+            "columnNames": [
+              "ingredientId"
+            ],
+            "createSql": "CREATE  INDEX `ingredientId` ON `${TABLE_NAME}` (`ingredientId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "Recipe",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "recipeId"
+            ],
+            "referencedColumns": [
+              "recipeId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "EatingOccasionNotification",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`eatingOccasionId` INTEGER NOT NULL, `seen` INTEGER NOT NULL, `notificationId` INTEGER NOT NULL, `ppid` TEXT, `issueDate` TEXT, `deliveryDate` TEXT, PRIMARY KEY(`eatingOccasionId`))",
+        "fields": [
+          {
+            "fieldPath": "eatingOccasionId",
+            "columnName": "eatingOccasionId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "seen",
+            "columnName": "seen",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "notificationId",
+            "columnName": "notificationId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ppid",
+            "columnName": "ppid",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "issueDate",
+            "columnName": "issueDate",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "deliveryDate",
+            "columnName": "deliveryDate",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "eatingOccasionId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "eonotificationId",
+            "unique": false,
+            "columnNames": [
+              "eatingOccasionId"
+            ],
+            "createSql": "CREATE  INDEX `eonotificationId` ON `${TABLE_NAME}` (`eatingOccasionId`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "ReviewNotification",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`reviewNotificationId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `seen` INTEGER NOT NULL, `ppid` TEXT, `issueDate` TEXT, `deliveryDate` TEXT, `foodRecordId` INTEGER NOT NULL, `notificationId` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "reviewNotificationId",
+            "columnName": "reviewNotificationId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "seen",
+            "columnName": "seen",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ppid",
+            "columnName": "ppid",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "issueDate",
+            "columnName": "issueDate",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "deliveryDate",
+            "columnName": "deliveryDate",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "foodRecordId",
+            "columnName": "foodRecordId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "notificationId",
+            "columnName": "notificationId",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "reviewNotificationId"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "notificationId",
+            "unique": false,
+            "columnNames": [
+              "reviewNotificationId"
+            ],
+            "createSql": "CREATE  INDEX `notificationId` ON `${TABLE_NAME}` (`reviewNotificationId`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "Meal",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`mealId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `finalized` INTEGER NOT NULL, `startTime` TEXT, `adultMaleGuests` INTEGER NOT NULL, `adultFemaleGuests` INTEGER NOT NULL, `childGuests` INTEGER NOT NULL, `guestInfoCaptured` INTEGER NOT NULL, `recipeIds` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "mealId",
+            "columnName": "mealId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "finalized",
+            "columnName": "finalized",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "startTime",
+            "columnName": "startTime",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "adultMaleGuests",
+            "columnName": "adultMaleGuests",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "adultFemaleGuests",
+            "columnName": "adultFemaleGuests",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "childGuests",
+            "columnName": "childGuests",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "guestInfoCaptured",
+            "columnName": "guestInfoCaptured",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "recipeIds",
+            "columnName": "recipeIds",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "mealId"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "Reminder",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`reminderDay` INTEGER NOT NULL, `date` TEXT, PRIMARY KEY(`reminderDay`))",
+        "fields": [
+          {
+            "fieldPath": "reminderDay",
+            "columnName": "reminderDay",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "date",
+            "columnName": "date",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "reminderDay"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"9c840a1a5643563b78f65be73f6450ff\")"
+    ]
+  }
+}

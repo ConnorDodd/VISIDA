@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Household>
+    <HouseholdMember >
+        <Name>Woman</Name>
+        <Age>45</Age>
+    </HouseholdMember>
+    <HouseholdMember>
+        <Name>Girl</Name>
+        <Age>33</Age>
+    </HouseholdMember>
+    <HouseholdMember>
+        <Name>Boy</Name>
+        <Age>4</Age>
+    </HouseholdMember>
+    <HouseholdMember>
+        <Name>Baby</Name>
+        <Age>1</Age>
+    </HouseholdMember>
+</Household>
