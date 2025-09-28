@@ -9,12 +9,14 @@ Figure 1. VISIDA system design
 
 Installation and config details can be found inside each folder. Further details and training materials for the system are located in [documentation](documentation).
 
+Available for use under the [MIT License](LICENSE.md)
+
 # Content Management System
-##Web Client
+## Web Client
 Files related to the web client are included in [visida_cms](visida_cms). The client is developed in [Angular.js](https://angularjs.org/), and requires Node.js to be installed.
 
-##API
+## API
 Files related to the REST API and SQL database are included in [visida_backend](visida_backend). The API is developed with AspNet .NET.
 
-#Android App
-Files related to the Android app are included in [visida_app](visida_app). The most recent build is provided as VISIDA-master-release_31_03_22.apk. This app was developed in Android Studio, which is recommended for any further updates or changes. Some documentation on updating the localization for a new region is provided in visida_app/Documents.
+# Android App
+Files related to the Android app are included in [visida_app](visida_app). This app was developed in Android Studio, which is recommended for any further updates or changes. Some documentation on updating the localization for a new region is provided in visida_app/Documents.
