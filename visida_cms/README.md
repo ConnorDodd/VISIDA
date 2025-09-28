@@ -1,4 +1,6 @@
-![logo](../images/header_icon.png "VISIDA")
+![logo](../images/header_icon.png "VISIDA")  
+
+
 Files related to the web client are included in visida_cms. The client is developed in Angular.js, and requires Node.js to be installed.
 
 ## Installation
@@ -21,7 +23,6 @@ http-server -o
 
 ## Config
 The client must be set up to point at the API. Config settings can be found in /package.json. Edit baseUrl inside the configSettings constant to the address of your API, retaining the /api suffix.
-
 ``` JavaScript
 	app.constant('configSettings', {
 	    'baseUrl': 'http://localhost:39548/api'

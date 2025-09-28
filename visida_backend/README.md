@@ -1,4 +1,5 @@
-![logo](../images/header_icon.png "VISIDA")
+![logo](../images/header_icon.png "VISIDA")  
+
 
 Files related to the REST API and SQL database are included in visida_backend. The API is developed with AspNet .NET.
 

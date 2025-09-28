@@ -4,7 +4,7 @@
 The VISIDA system is a toolkit for the collection and analysis of image-and-voice-base food records. Core functionality requires the installation and use of an Android App and Content Management System (CMS) visible in Figure 1. The CMS is further partitioned into an Angular.js web client, a .NET RESTful API, and a SQL Server.
 This document give an overview of the basic steps required for installation of these core features. The software is provided as-is, and assumes a high familiarity with software development.
 
-![figure1](./images/system_overview.png "Figure 1")
+![figure1](./images/system_overview.png "Figure 1")  
 Figure 1. VISIDA system design
 
 Installation and config details can be found inside each folder. Further details and training materials for the system are located in [documentation](documentation).
