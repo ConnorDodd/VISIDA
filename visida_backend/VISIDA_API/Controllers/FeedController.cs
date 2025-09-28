@@ -46,7 +46,7 @@ namespace VISIDA_API.Controllers
                     .Distinct().OrderByDescending(x => x.LastSeen).ToList().Select(x => (ELoginUser)x).ToList();
             }
 
-            HttpContext.Current.Response.Headers.Add("lastLogin", user.LastFeedRefresh?.ToString("yyyy-MM-ddTHH:mm:ss"));
+            HttpContext.Current.Response.Headers.Add("lastLogin", user.LastFeedRefresh?.ToString("yyyy-MM-ddTHH:mm:ss") ?? "0001-01-01");
             HttpContext.Current.Response.Headers.Add("Access-Control-Expose-Headers", "lastLogin");
 
             user.LastFeedRefresh = DateTime.Now;

@@ -27,5 +27,5 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Connor Dodd",
-  "license": "ISC"
+  "license": "MIT"
 }

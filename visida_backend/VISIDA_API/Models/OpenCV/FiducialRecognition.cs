@@ -21,7 +21,7 @@ namespace VISIDA_API.Models.OpenCV
 
         public static bool IsFiducial_Orb(Bitmap bmp)
         {
-            var img = new Image<Gray, Byte>(bmp);
+            var img = bmp.ToImage<Bgr, byte>();
 
             return IsFiducial_Orb(img.Mat);
         }
@@ -54,7 +54,7 @@ namespace VISIDA_API.Models.OpenCV
             using (UMat uModelImage = model.GetUMat(AccessType.Read))
             using (UMat uObservedImage = observe.GetUMat(AccessType.Read))
             {
-                ORBDetector featureDetector = new ORBDetector();
+                Emgu.CV.Features2D.ORBDetector featureDetector = new ORBDetector();
                 VectorOfKeyPoint modelKeyPoints = new VectorOfKeyPoint();
                 VectorOfKeyPoint observedKeyPoints = new VectorOfKeyPoint();
                 Mat mask;
@@ -81,7 +81,7 @@ namespace VISIDA_API.Models.OpenCV
 
         public static bool IsFiducial(Bitmap bmp, IUploadImage image)
         {
-            var img = new Image<Gray, Byte>(bmp);
+            var img = bmp.ToImage<Bgr, byte>();
             //img._Mul()
             //img._EqualizeHist();
             //img.Save(@"C:\Users\Connor Dodd\Documents\ExportMedia\TestOutput\histimage.png");

@@ -2,7 +2,7 @@ packages
 VISIDA_API/App_Data
 VISIDA_API/bin
 VISIDA_API/obj
-VISIDA_API/Web.config
+# VISIDA_API/Web.config
 VISIDA_API/Properties/PublishProfiles
 VISIDA_API/x64/
 VISIDA_API/x86/

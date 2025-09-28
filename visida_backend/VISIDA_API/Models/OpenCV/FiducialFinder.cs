@@ -16,7 +16,7 @@ namespace VISIDA_API.Models.OpenCV
     {
         public static ImageHomography FindImageHomography(Bitmap bmp)
         {
-            var points = FindFiducial(new Image<Bgr, byte>(bmp), bmp);
+            var points = FindFiducial(bmp.ToImage<Bgr, byte>(), bmp);
             if (points == null)
                 return null;
             //var xes = points.OrderBy(x => x.X);
@@ -73,9 +73,9 @@ namespace VISIDA_API.Models.OpenCV
             return bounds;
         }
         public static Point[] FindCorners(Image<Bgr, byte> image, Bitmap bmp, Rectangle bounds)
-        { 
+        {
             // Histogram
-            var labImage = new Image<Lab, byte>(bmp);
+            var labImage = bmp.ToImage<Bgr, byte>();
 
             // If there are bounds
             if (!bounds.IsEmpty)
@@ -213,7 +213,7 @@ namespace VISIDA_API.Models.OpenCV
                 Image<Bgr, byte> fCheck = new Image<Bgr, byte>(new Size(255, 158));
                 var fArr = new PointF[4] { new Point(0, 0), new Point(255, 0), new Point(255, 158), new Point(0, 158) };
                 var transform = CvInvoke.GetPerspectiveTransform(arr, fArr);
-                var color3 = new Image<Bgr, byte>(bmp);
+                var color3 = bmp.ToImage<Bgr, byte>();
                 CvInvoke.WarpPerspective(color3, fCheck, transform, fCheck.Size);
 
                 fCheck.ROI = new Rectangle(8, 8, 38, 38);

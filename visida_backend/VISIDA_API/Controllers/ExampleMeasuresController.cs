@@ -1,6 +1,11 @@
 ﻿using VISIDA_API.Models;
 using VISIDA_API.Models.FCT;
 using VISIDA_API.Models.ExternalObjects;
+using System.Web.Http;
+using System.Web.Http.Description;
+using System.Collections.Generic;
+using System.Linq;
+using System.Data.Entity;
 
 namespace VISIDA_API.Controllers
 {
