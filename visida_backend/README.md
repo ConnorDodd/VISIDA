@@ -18,8 +18,8 @@ Create an SQL database and update the connection string at visida_backend/VISIDA
          Integrated Security=True; MultipleActiveResultSets=True;" providerName="System.Data.SqlClient" />
   </connectionStrings>
 ```
-    - "Initial Catalog" is used to reference the database name.
-    - The name must remain as VISIDA_APIContext
+- "Initial Catalog" is used to reference the database name.
+- The name must remain as VISIDA_APIContext
  
 Run the migrations to update the database by opening the Package Manager console and running:
 ```bash
