@@ -20,3 +20,24 @@ Files related to the REST API and SQL database are included in [visida_backend](
 
 # Android App
 Files related to the Android app are included in [visida_app](visida_app). This app was developed in Android Studio, which is recommended for any further updates or changes. Some documentation on updating the localization for a new region is provided in visida_app/Documents.
+
+# Acknowledgements
+The VISIDA Project would like to thank and acknowledge contributions from the following.
+
+# The Team
+**Software Development**
+- Connor Dodd (connor.dodd@newcastle.edu.au)
+- Josh Crompton
+
+**Research**
+- Megan Rollo
+- Marc Adam
+- Tracy Burrows
+- Clare Collins
+- Kerith Duncanson
+- Shamus Smith
+- Sam Stewart
+- Janelle Windus
+
+# Funding
+The VISIDA Project was supported by the Bill & Melinda Gates Foundation, grant number OPP1171389.
